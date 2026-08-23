@@ -4,66 +4,66 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class TrainingSession extends Model
+class TrainingBarcode extends Model
 {
     protected $fillable = [
-        'training_date',
-        'sport',
-        'location',
-        'start_time',
-        'end_time',
-        'notes',
-        'created_by',
+        'training_session_id',
+        'token',
+        'expired_at',
+        'is_active',
+        'used_by_student_id',
+        'used_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'training_date' => 'date',
+            'expired_at' => 'datetime',
+            'is_active' => 'boolean',
+            'used_at' => 'datetime',
         ];
     }
 
     /*
     |--------------------------------------------------------------------------
-    | PEMBUAT SESI
+    | SESI LATIHAN
     |--------------------------------------------------------------------------
     */
 
-    public function creator(): BelongsTo
+    public function trainingSession(): BelongsTo
     {
         return $this->belongsTo(
-            User::class,
-            'created_by'
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | DATA KEHADIRAN
-    |--------------------------------------------------------------------------
-    */
-
-    public function attendances(): HasMany
-    {
-        return $this->hasMany(
-            TrainingAttendance::class,
+            TrainingSession::class,
             'training_session_id'
         );
     }
 
     /*
     |--------------------------------------------------------------------------
-    | BARCODE SESI LATIHAN
+    | SISWA YANG MENGGUNAKAN BARCODE
     |--------------------------------------------------------------------------
     */
 
-    public function barcodes(): HasMany
+    public function usedByStudent(): BelongsTo
     {
-        return $this->hasMany(
-            TrainingBarcode::class,
-            'training_session_id'
+        return $this->belongsTo(
+            Student::class,
+            'used_by_student_id'
         );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CEK BARCODE MASIH VALID
+    |--------------------------------------------------------------------------
+    */
+
+    public function isValid(): bool
+    {
+        return $this->is_active
+            && is_null($this->used_at)
+            && $this->expired_at
+            && $this->expired_at->isFuture();
     }
 }

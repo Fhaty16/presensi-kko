@@ -12,7 +12,10 @@
     <title>Dashboard Siswa - KKO SMANDA</title>
 
     <!-- FONT -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -38,7 +41,6 @@
     >
 
     <style>
-
         /*
         |--------------------------------------------------------------------------
         | MATERIAL SYMBOLS
@@ -71,9 +73,6 @@
         |--------------------------------------------------------------------------
         | LINK CARD
         |--------------------------------------------------------------------------
-        |
-        | Menjaga tampilan card tetap sama walaupun menggunakan tag <a>.
-        |
         */
 
         a.student-mini-card {
@@ -97,6 +96,65 @@
 
         /*
         |--------------------------------------------------------------------------
+        | SIDE ACTIONS
+        |--------------------------------------------------------------------------
+        |
+        | Sekarang terdapat 3 menu:
+        |
+        | - Pengajuan Izin / Sakit
+        | - Riwayat Presensi
+        | - Jadwal Latihan KKO
+        |
+        */
+
+        .student-side-actions {
+            display: grid;
+            grid-template-rows: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JADWAL LATIHAN CARD
+        |--------------------------------------------------------------------------
+        */
+
+        .training-menu-card {
+            position: relative;
+        }
+
+        .training-menu-card .student-mini-icon {
+            background: rgba(157, 202, 255, 0.10);
+            color: #9dcaff;
+        }
+
+        .training-menu-card::after {
+            content: '';
+
+            position: absolute;
+
+            left: 0;
+            top: 18%;
+            bottom: 18%;
+
+            width: 2px;
+
+            background: #9dcaff;
+
+            border-radius: 10px;
+
+            opacity: 0;
+            transition: opacity .2s ease;
+        }
+
+        .training-menu-card:hover::after {
+            opacity: 1;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
         | MOBILE NAV
         |--------------------------------------------------------------------------
         */
@@ -104,7 +162,6 @@
         .mobile-bottom-nav a {
             text-decoration: none;
         }
-
     </style>
 
 </head>
@@ -206,7 +263,6 @@
 @endphp
 
 
-
 <!-- =====================================================
      HEADER
 ===================================================== -->
@@ -214,7 +270,6 @@
 <header class="kko-header">
 
     <div class="kko-header-inner">
-
 
         <!-- BRAND -->
 
@@ -245,11 +300,9 @@
         </div>
 
 
-
         <!-- HEADER RIGHT -->
 
         <div class="kko-header-actions">
-
 
             <!-- NOTIFICATION -->
 
@@ -266,7 +319,6 @@
                 <span class="notification-dot"></span>
 
             </button>
-
 
 
             <!-- PROFILE -->
@@ -301,7 +353,6 @@
             </div>
 
 
-
             <!-- LOGOUT -->
 
             <form
@@ -325,13 +376,11 @@
 
             </form>
 
-
         </div>
 
     </div>
 
 </header>
-
 
 
 <!-- =====================================================
@@ -346,7 +395,6 @@
     ================================================== -->
 
     <section class="student-welcome">
-
 
         <div>
 
@@ -373,7 +421,6 @@
         </div>
 
 
-
         <div class="date-badge">
 
             <span class="material-symbols-outlined">
@@ -386,9 +433,7 @@
 
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -397,9 +442,7 @@
 
     <section class="student-status-card {{ $statusClass }}">
 
-
         <div class="student-status-left">
-
 
             <span class="student-card-label">
                 STATUS HARI INI
@@ -407,7 +450,6 @@
 
 
             <div class="student-status-content">
-
 
                 <div class="student-status-icon">
 
@@ -430,17 +472,14 @@
 
                 </div>
 
-
             </div>
 
         </div>
 
 
-
         <!-- JAM PRESENSI -->
 
         <div class="student-status-time">
-
 
             @if($todayAttendance?->check_in_time)
 
@@ -456,9 +495,7 @@
                     WIB
                 </span>
 
-
             @else
-
 
                 <strong>
                     --:--
@@ -468,15 +505,11 @@
                     WIB
                 </span>
 
-
             @endif
-
 
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -487,7 +520,7 @@
 
 
         <!-- =================================================
-             SCAN KEHADIRAN
+             SCAN KEHADIRAN SEKOLAH
         ================================================== -->
 
         <a
@@ -528,7 +561,6 @@
             </div>
 
         </a>
-
 
 
         <!-- =================================================
@@ -576,7 +608,6 @@
             </a>
 
 
-
             <!-- =================================================
                  RIWAYAT PRESENSI
             ================================================== -->
@@ -615,11 +646,46 @@
             </a>
 
 
+            <!-- =================================================
+                 JADWAL LATIHAN KKO
+            ================================================== -->
+
+            <a
+                href="{{ route('siswa.training.index') }}"
+                class="student-mini-card training-menu-card"
+            >
+
+                <div class="student-mini-icon">
+
+                    <span class="material-symbols-outlined">
+                        event
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Jadwal Latihan KKO
+                    </strong>
+
+                    <p>
+                        Lihat jadwal & presensi latihan
+                    </p>
+
+                </div>
+
+
+                <span class="material-symbols-outlined student-mini-arrow">
+                    chevron_right
+                </span>
+
+            </a>
+
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -628,9 +694,7 @@
 
     <section class="dashboard-section">
 
-
         <div class="section-heading">
-
 
             <div>
 
@@ -661,9 +725,7 @@
 
             </span>
 
-
         </div>
-
 
 
         <div class="student-stat-grid">
@@ -692,7 +754,6 @@
             </article>
 
 
-
             <!-- IZIN -->
 
             <article class="student-stat-card stat-izin">
@@ -714,7 +775,6 @@
                 </span>
 
             </article>
-
 
 
             <!-- SAKIT -->
@@ -740,7 +800,6 @@
             </article>
 
 
-
             <!-- ALFA -->
 
             <article class="student-stat-card stat-alfa">
@@ -763,12 +822,9 @@
 
             </article>
 
-
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -777,9 +833,7 @@
 
     <section class="dashboard-section">
 
-
         <div class="section-heading">
-
 
             <div>
 
@@ -807,13 +861,10 @@
 
             </button>
 
-
         </div>
 
 
-
         <div class="student-news-card">
-
 
             <div class="student-news-image">
 
@@ -825,7 +876,6 @@
 
 
             <div class="student-news-content">
-
 
                 <span class="student-news-category">
                     PENGUMUMAN
@@ -855,18 +905,13 @@
 
                 </span>
 
-
             </div>
-
 
         </div>
 
-
     </section>
 
-
 </main>
-
 
 
 <!-- =====================================================
@@ -894,6 +939,20 @@
     </a>
 
 
+    <!-- LATIHAN -->
+
+    <a href="{{ route('siswa.training.index') }}">
+
+        <span class="material-symbols-outlined">
+            event
+        </span>
+
+        <span>
+            Latihan
+        </span>
+
+    </a>
+
 
     <!-- IZIN -->
 
@@ -910,7 +969,6 @@
     </a>
 
 
-
     <!-- RIWAYAT -->
 
     <a href="{{ route('siswa.attendance.history') }}">
@@ -925,26 +983,8 @@
 
     </a>
 
-
-
-    <!-- PROFILE -->
-
-    <a href="#">
-
-        <span class="material-symbols-outlined">
-            person
-        </span>
-
-        <span>
-            Profil
-        </span>
-
-    </a>
-
-
 </nav>
 
 
 </body>
-
 </html>

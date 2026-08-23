@@ -12,7 +12,10 @@
     <title>Dashboard Pelatih - KKO SMANDA</title>
 
     <!-- FONT -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -37,32 +40,40 @@
         href="{{ asset('css/kko.css') }}"
     >
 
-
     <style>
-
-        /* =====================================================
-           MATERIAL SYMBOLS
-        ===================================================== */
+        /*
+        |--------------------------------------------------------------------------
+        | MATERIAL SYMBOLS
+        |--------------------------------------------------------------------------
+        */
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
             font-style: normal;
+
             line-height: 1;
+
             letter-spacing: normal;
             text-transform: none;
+
             white-space: nowrap;
             word-wrap: normal;
+
             direction: ltr;
+
             font-feature-settings: 'liga';
+
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
 
 
-        /* =====================================================
-           LINK FIX
-        ===================================================== */
+        /*
+        |--------------------------------------------------------------------------
+        | LINK FIX
+        |--------------------------------------------------------------------------
+        */
 
         a.teacher-action-card {
             color: inherit;
@@ -73,10 +84,21 @@
             color: inherit;
         }
 
+        a.management-card {
+            color: inherit;
+            text-decoration: none;
+        }
 
-        /* =====================================================
-           DISABLED ACTION
-        ===================================================== */
+        a.management-card:visited {
+            color: inherit;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISABLED ACTION
+        |--------------------------------------------------------------------------
+        */
 
         .pelatih-disabled-action {
             width: 100%;
@@ -87,9 +109,11 @@
         }
 
 
-        /* =====================================================
-           MANAGEMENT 2 COLUMN
-        ===================================================== */
+        /*
+        |--------------------------------------------------------------------------
+        | MANAGEMENT 2 COLUMN
+        |--------------------------------------------------------------------------
+        */
 
         .pelatih-management-grid {
             display: grid;
@@ -101,9 +125,11 @@
         }
 
 
-        /* =====================================================
-           MOBILE
-        ===================================================== */
+        /*
+        |--------------------------------------------------------------------------
+        | MOBILE
+        |--------------------------------------------------------------------------
+        */
 
         @media (max-width: 720px) {
 
@@ -112,7 +138,6 @@
             }
 
         }
-
     </style>
 
 </head>
@@ -216,7 +241,6 @@
 @endphp
 
 
-
 <!-- =====================================================
      HEADER
 ===================================================== -->
@@ -255,7 +279,6 @@
         </div>
 
 
-
         <!-- HEADER ACTIONS -->
 
         <div class="kko-header-actions">
@@ -274,7 +297,6 @@
                 </span>
 
             </button>
-
 
 
             <!-- PROFILE -->
@@ -309,7 +331,6 @@
             </div>
 
 
-
             <!-- LOGOUT -->
 
             <form
@@ -333,13 +354,11 @@
 
             </form>
 
-
         </div>
 
     </div>
 
 </header>
-
 
 
 <!-- =====================================================
@@ -395,7 +414,6 @@
     </section>
 
 
-
     <!-- =================================================
          TOP GRID
     ================================================== -->
@@ -438,7 +456,6 @@
             </div>
 
 
-
             <div class="attendance-percentage">
 
                 <strong>
@@ -453,7 +470,6 @@
                 </span>
 
             </div>
-
 
 
             <div class="attendance-breakdown">
@@ -474,7 +490,6 @@
                 </div>
 
 
-
                 <!-- SAKIT -->
 
                 <div class="breakdown-item breakdown-sakit">
@@ -488,7 +503,6 @@
                     </strong>
 
                 </div>
-
 
 
                 <!-- IZIN -->
@@ -506,7 +520,6 @@
                 </div>
 
 
-
                 <!-- ALFA -->
 
                 <div class="breakdown-item breakdown-alfa">
@@ -521,11 +534,9 @@
 
                 </div>
 
-
             </div>
 
         </article>
-
 
 
         <!-- =================================================
@@ -542,7 +553,7 @@
             <button
                 type="button"
                 class="teacher-action-card pelatih-disabled-action"
-                title="Input manual presensi saat ini dikelola Guru"
+                title="Input manual presensi sekolah saat ini dikelola Guru"
             >
 
                 <div class="action-icon">
@@ -569,9 +580,8 @@
             </button>
 
 
-
             <!-- =================================================
-                 BARCODE
+                 BARCODE SEKOLAH
             ================================================== -->
 
             <a
@@ -595,18 +605,16 @@
                     </strong>
 
                     <p>
-                        Tampilkan barcode dinamis presensi siswa
+                        Tampilkan barcode dinamis presensi sekolah
                     </p>
 
                 </div>
 
             </a>
 
-
         </div>
 
     </section>
-
 
 
     <!-- =================================================
@@ -647,13 +655,10 @@
         </div>
 
 
-
         <div class="sports-grid">
 
 
-            <!-- =================================================
-                 ATLETIK
-            ================================================== -->
+            <!-- ATLETIK -->
 
             <button
                 type="button"
@@ -675,10 +680,7 @@
             </button>
 
 
-
-            <!-- =================================================
-                 BASKET
-            ================================================== -->
+            <!-- BASKET -->
 
             <button
                 type="button"
@@ -700,10 +702,7 @@
             </button>
 
 
-
-            <!-- =================================================
-                 SEPAK BOLA
-            ================================================== -->
+            <!-- SEPAK BOLA -->
 
             <button
                 type="button"
@@ -725,10 +724,7 @@
             </button>
 
 
-
-            <!-- =================================================
-                 BOLA VOLI
-            ================================================== -->
+            <!-- BOLA VOLI -->
 
             <button
                 type="button"
@@ -749,11 +745,9 @@
 
             </button>
 
-
         </div>
 
     </section>
-
 
 
     <!-- =================================================
@@ -780,7 +774,6 @@
         </div>
 
 
-
         <div class="pelatih-management-grid">
 
 
@@ -788,10 +781,9 @@
                  KEHADIRAN LATIHAN
             ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route('training.index') }}"
                 class="management-card"
-                title="Fitur Kehadiran Latihan sedang dibuat"
             >
 
                 <div class="management-icon">
@@ -810,7 +802,7 @@
                     </strong>
 
                     <p>
-                        Catat kehadiran siswa saat latihan
+                        Kelola jadwal, barcode, dan presensi latihan
                     </p>
 
                 </div>
@@ -820,8 +812,7 @@
                     arrow_forward
                 </span>
 
-            </button>
-
+            </a>
 
 
             <!-- =================================================
@@ -861,14 +852,11 @@
 
             </button>
 
-
         </div>
 
     </section>
 
-
 </main>
-
 
 
 <!-- =====================================================
@@ -896,7 +884,6 @@
     </a>
 
 
-
     <!-- BERITA -->
 
     <a href="#">
@@ -912,10 +899,9 @@
     </a>
 
 
-
     <!-- LATIHAN -->
 
-    <a href="#">
+    <a href="{{ route('training.index') }}">
 
         <span class="material-symbols-outlined">
             exercise
@@ -926,7 +912,6 @@
         </span>
 
     </a>
-
 
 
     <!-- PROFILE -->
@@ -942,7 +927,6 @@
         </span>
 
     </a>
-
 
 </nav>
 

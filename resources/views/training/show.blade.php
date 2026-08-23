@@ -36,6 +36,10 @@
 
     <style>
 
+        /* =====================================================
+           MATERIAL ICON
+        ===================================================== */
+
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
@@ -50,11 +54,21 @@
             -webkit-font-smoothing: antialiased;
         }
 
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
         .training-show-container {
             max-width: 1180px;
             margin: 0 auto;
             padding: 38px 24px 100px;
         }
+
+
+        /* =====================================================
+           BACK
+        ===================================================== */
 
         .training-back {
             display: inline-flex;
@@ -70,6 +84,8 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 700;
+
+            transition: .18s ease;
         }
 
         .training-back:hover {
@@ -79,6 +95,11 @@
         .training-back .material-symbols-outlined {
             font-size: 18px;
         }
+
+
+        /* =====================================================
+           HEADING
+        ===================================================== */
 
         .training-heading {
             display: flex;
@@ -145,6 +166,11 @@
             font-size: 15px;
         }
 
+
+        /* =====================================================
+           SUCCESS
+        ===================================================== */
+
         .success-message {
             display: flex;
             align-items: center;
@@ -167,6 +193,11 @@
             font-size: 19px;
         }
 
+
+        /* =====================================================
+           SESSION CARD
+        ===================================================== */
+
         .session-card {
             padding: 23px;
 
@@ -175,7 +206,7 @@
             border: 1px solid #34485d;
             border-radius: 16px;
 
-            margin-bottom: 22px;
+            margin-bottom: 18px;
         }
 
         .session-card-header {
@@ -231,6 +262,11 @@
             font-weight: 800;
         }
 
+
+        /* =====================================================
+           SESSION INFO
+        ===================================================== */
+
         .session-info-grid {
             display: grid;
 
@@ -281,6 +317,11 @@
             line-height: 1.45;
         }
 
+
+        /* =====================================================
+           NOTES
+        ===================================================== */
+
         .session-notes {
             margin-top: 13px;
             padding: 14px;
@@ -306,6 +347,179 @@
             font-size: 7px;
             font-weight: 700;
         }
+
+
+        /* =====================================================
+           BARCODE PANEL
+        ===================================================== */
+
+        .barcode-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 28px;
+            padding: 18px 20px;
+
+            background:
+                linear-gradient(
+                    110deg,
+                    rgba(0, 114, 188, .11),
+                    rgba(27, 37, 49, 1) 45%
+                );
+
+            border: 1px solid #34485d;
+            border-radius: 14px;
+        }
+
+        .barcode-panel-left {
+            display: flex;
+            align-items: center;
+
+            gap: 13px;
+
+            min-width: 0;
+        }
+
+        .barcode-panel-icon {
+            width: 48px;
+            height: 48px;
+
+            flex: 0 0 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .18);
+
+            border: 1px solid rgba(157, 202, 255, .16);
+            border-radius: 12px;
+        }
+
+        .barcode-panel-icon .material-symbols-outlined {
+            font-size: 25px;
+        }
+
+        .barcode-panel-content {
+            min-width: 0;
+        }
+
+        .barcode-panel-label {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #9dcaff;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+
+            letter-spacing: .7px;
+        }
+
+        .barcode-panel-content strong {
+            display: block;
+
+            color: #e0e3e5;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .barcode-panel-content p {
+            margin: 5px 0 0;
+
+            color: #818c96;
+
+            font-size: 9px;
+        }
+
+        .barcode-rules {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            margin-top: 9px;
+
+            flex-wrap: wrap;
+        }
+
+        .barcode-rule {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 5px 7px;
+
+            color: #8796a3;
+            background: #151b20;
+
+            border: 1px solid #303c48;
+            border-radius: 6px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 6px;
+            font-weight: 700;
+        }
+
+        .barcode-rule .material-symbols-outlined {
+            color: #9dcaff;
+
+            font-size: 12px;
+        }
+
+        .barcode-button {
+            min-height: 42px;
+
+            flex: 0 0 auto;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            padding: 0 16px;
+
+            color: #ffffff;
+            background: #0072bc;
+
+            border: 1px solid #1685d2;
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 9px;
+            font-weight: 700;
+
+            white-space: nowrap;
+
+            transition: .18s ease;
+        }
+
+        .barcode-button:hover {
+            background: #1685d2;
+
+            transform: translateY(-1px);
+        }
+
+        .barcode-button .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+
+        /* =====================================================
+           ATTENDANCE HEADING
+        ===================================================== */
 
         .attendance-heading {
             display: flex;
@@ -349,11 +563,16 @@
             font-weight: 700;
         }
 
+
+        /* =====================================================
+           ATTENDANCE STATS
+        ===================================================== */
+
         .attendance-stats {
             display: grid;
 
             grid-template-columns:
-                repeat(4, minmax(0, 1fr));
+                repeat(5, minmax(0, 1fr));
 
             gap: 9px;
 
@@ -393,6 +612,10 @@
             color: #8ce8c3;
         }
 
+        .attendance-stat.late strong {
+            color: #ffb866;
+        }
+
         .attendance-stat.permission strong {
             color: #eacb84;
         }
@@ -404,6 +627,11 @@
         .attendance-stat.absent strong {
             color: #ffaaa5;
         }
+
+
+        /* =====================================================
+           ATTENDANCE LIST
+        ===================================================== */
 
         .attendance-list {
             overflow: hidden;
@@ -428,12 +656,18 @@
 
             padding: 15px 18px;
 
-            border-bottom: 1px solid rgba(64, 71, 81, .48);
+            border-bottom:
+                1px solid rgba(64, 71, 81, .48);
         }
 
         .attendance-row:last-child {
             border-bottom: 0;
         }
+
+
+        /* =====================================================
+           STUDENT
+        ===================================================== */
 
         .student-info strong {
             display: block;
@@ -455,6 +689,11 @@
             font-size: 8px;
         }
 
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
         .status-badge {
             width: fit-content;
 
@@ -470,6 +709,11 @@
         .status-present {
             color: #8ce8c3;
             background: rgba(80, 200, 150, .09);
+        }
+
+        .status-late {
+            color: #ffb866;
+            background: rgba(255, 184, 102, .09);
         }
 
         .status-permission {
@@ -492,6 +736,11 @@
 
             font-size: 9px;
         }
+
+
+        /* =====================================================
+           EMPTY ATTENDANCE
+        ===================================================== */
 
         .attendance-empty {
             padding: 50px 20px;
@@ -535,39 +784,38 @@
         }
 
         .attendance-empty p {
-            margin: 6px 0 0;
+            max-width: 490px;
+
+            margin: 6px auto 0;
 
             color: #7e8994;
 
             font-size: 9px;
+
+            line-height: 1.6;
         }
 
-        .next-feature {
-            margin-top: 14px;
-            padding: 12px 14px;
 
-            color: #8a919c;
-            background: rgba(157, 202, 255, .04);
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
 
-            border: 1px dashed #394a5a;
-            border-radius: 10px;
-
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
-
-            text-align: center;
-        }
-
-        @media (max-width: 850px) {
+        @media (max-width: 900px) {
 
             .session-info-grid {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
 
+            .attendance-stats {
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+
         }
 
-        @media (max-width: 650px) {
+
+        @media (max-width: 700px) {
 
             .training-show-container {
                 padding: 25px 14px 100px;
@@ -590,6 +838,22 @@
                 grid-template-columns: 1fr;
             }
 
+            .barcode-panel {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .barcode-button {
+                width: 100%;
+
+                box-sizing: border-box;
+            }
+
+            .attendance-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
             .attendance-stats {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
@@ -609,31 +873,53 @@
 
 </head>
 
+
 <body class="dashboard-page">
 
 
 @php
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATISTIK KEHADIRAN
+    |--------------------------------------------------------------------------
+    */
 
     $presentCount =
         $trainingSession->attendances
             ->where('status', 'present')
             ->count();
 
+
+    $lateCount =
+        $trainingSession->attendances
+            ->where('status', 'late')
+            ->count();
+
+
     $permissionCount =
         $trainingSession->attendances
             ->where('status', 'permission')
             ->count();
+
 
     $sickCount =
         $trainingSession->attendances
             ->where('status', 'sick')
             ->count();
 
+
     $absentCount =
         $trainingSession->attendances
             ->where('status', 'absent')
             ->count();
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | JAM LATIHAN
+    |--------------------------------------------------------------------------
+    */
 
     $startTime =
         $trainingSession->start_time
@@ -650,7 +936,27 @@
             )->format('H:i')
             : null;
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATAS HADIR NORMAL
+    |--------------------------------------------------------------------------
+    |
+    | 10 menit setelah jam mulai masih dianggap Hadir.
+    |
+    */
+
+    $lateLimit =
+        $trainingSession->start_time
+            ? \Carbon\Carbon::parse(
+                $trainingSession->start_time
+            )
+                ->addMinutes(10)
+                ->format('H:i')
+            : null;
+
 @endphp
+
 
 
 <!-- =====================================================
@@ -693,6 +999,7 @@
         </div>
 
 
+
         <div class="kko-header-actions">
 
 
@@ -730,6 +1037,7 @@
             </div>
 
 
+
             <form
                 method="POST"
                 action="{{ route('logout') }}"
@@ -760,6 +1068,10 @@
 
 
 
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
 <main class="training-show-container">
 
 
@@ -779,6 +1091,7 @@
     </a>
 
 
+
     @if(session('success'))
 
         <div class="success-message">
@@ -792,6 +1105,7 @@
         </div>
 
     @endif
+
 
 
     <!-- =================================================
@@ -812,7 +1126,7 @@
             </h1>
 
             <p>
-                Kelola informasi dan kehadiran siswa pada sesi latihan ini.
+                Kelola informasi dan presensi siswa pada sesi latihan ini.
             </p>
 
         </div>
@@ -1009,6 +1323,115 @@
 
 
     <!-- =================================================
+         BARCODE PRESENSI LATIHAN
+    ================================================== -->
+
+    <section class="barcode-panel">
+
+
+        <div class="barcode-panel-left">
+
+
+            <div class="barcode-panel-icon">
+
+                <span class="material-symbols-outlined">
+                    qr_code_2
+                </span>
+
+            </div>
+
+
+            <div class="barcode-panel-content">
+
+                <span class="barcode-panel-label">
+                    PRESENSI LATIHAN
+                </span>
+
+                <strong>
+                    Barcode Presensi {{ $trainingSession->sport }}
+                </strong>
+
+                <p>
+                    Tampilkan QR khusus untuk sesi latihan ini agar siswa dapat melakukan presensi.
+                </p>
+
+
+                <div class="barcode-rules">
+
+
+                    @if($startTime)
+
+                        <span class="barcode-rule">
+
+                            <span class="material-symbols-outlined">
+                                check_circle
+                            </span>
+
+                            Hadir sampai {{ $lateLimit }} WIB
+
+                        </span>
+
+                    @endif
+
+
+                    @if($lateLimit && $endTime)
+
+                        <span class="barcode-rule">
+
+                            <span class="material-symbols-outlined">
+                                schedule
+                            </span>
+
+                            Lewat {{ $lateLimit }} WIB = Terlambat
+
+                        </span>
+
+                    @endif
+
+
+                    @if($endTime)
+
+                        <span class="barcode-rule">
+
+                            <span class="material-symbols-outlined">
+                                event_busy
+                            </span>
+
+                            Ditutup {{ $endTime }} WIB
+
+                        </span>
+
+                    @endif
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <a
+            href="{{ route('training.barcode.display', $trainingSession) }}"
+            class="barcode-button"
+        >
+
+            <span class="material-symbols-outlined">
+                qr_code_2
+            </span>
+
+            Buka Barcode Latihan
+
+        </a>
+
+
+    </section>
+
+
+
+    <!-- =================================================
          KEHADIRAN SISWA
     ================================================== -->
 
@@ -1025,7 +1448,7 @@
                 </h2>
 
                 <p>
-                    Data kehadiran siswa pada sesi latihan ini.
+                    Data otomatis dari hasil scan barcode latihan siswa.
                 </p>
 
             </div>
@@ -1043,7 +1466,9 @@
 
 
 
-        <!-- STATISTIK -->
+        <!-- =================================================
+             STATISTIK
+        ================================================== -->
 
         <div class="attendance-stats">
 
@@ -1056,6 +1481,19 @@
 
                 <strong>
                     {{ $presentCount }}
+                </strong>
+
+            </div>
+
+
+            <div class="attendance-stat late">
+
+                <span>
+                    TERLAMBAT
+                </span>
+
+                <strong>
+                    {{ $lateCount }}
                 </strong>
 
             </div>
@@ -1105,7 +1543,7 @@
 
 
         <!-- =================================================
-             DATA SISWA SUDAH TERCATAT
+             DATA KEHADIRAN
         ================================================== -->
 
         @if($trainingSession->attendances->isNotEmpty())
@@ -1122,6 +1560,7 @@
                             $attendance->status
                         ) {
                             'present' => 'Hadir',
+                            'late' => 'Terlambat',
                             'permission' => 'Izin',
                             'sick' => 'Sakit',
                             'absent' => 'Alfa',
@@ -1133,6 +1572,7 @@
                             $attendance->status
                         ) {
                             'present' => 'status-present',
+                            'late' => 'status-late',
                             'permission' => 'status-permission',
                             'sick' => 'status-sick',
                             'absent' => 'status-absent',
@@ -1144,6 +1584,8 @@
 
                     <div class="attendance-row">
 
+
+                        <!-- SISWA -->
 
                         <div class="student-info">
 
@@ -1167,6 +1609,8 @@
                         </div>
 
 
+                        <!-- STATUS -->
+
                         <span
                             class="status-badge {{ $statusClass }}"
                         >
@@ -1176,10 +1620,12 @@
                         </span>
 
 
+                        <!-- CATATAN -->
+
                         <div class="attendance-note">
 
                             {{ $attendance->notes
-                                ?? 'Tidak ada catatan.' }}
+                                ?? 'Presensi melalui barcode latihan.' }}
 
                         </div>
 
@@ -1197,7 +1643,7 @@
 
 
             <!-- =================================================
-                 BELUM ADA DATA
+                 BELUM ADA SCAN
             ================================================== -->
 
             <div class="attendance-empty">
@@ -1206,19 +1652,19 @@
                 <div class="attendance-empty-icon">
 
                     <span class="material-symbols-outlined">
-                        fact_check
+                        qr_code_scanner
                     </span>
 
                 </div>
 
 
                 <strong>
-                    Belum ada kehadiran siswa
+                    Belum ada siswa melakukan presensi
                 </strong>
 
 
                 <p>
-                    Sesi berhasil dibuat. Selanjutnya kita akan menambahkan daftar siswa untuk pencatatan kehadiran latihan.
+                    Buka Barcode Latihan di atas. Siswa kemudian melakukan scan menggunakan akun masing-masing dan data kehadiran akan muncul otomatis di halaman ini.
                 </p>
 
 
@@ -1226,13 +1672,6 @@
 
 
         @endif
-
-
-        <div class="next-feature">
-
-            INPUT KEHADIRAN SISWA • TAHAP BERIKUTNYA
-
-        </div>
 
 
     </section>

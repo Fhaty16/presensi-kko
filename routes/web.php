@@ -2,37 +2,62 @@
 
 use Illuminate\Support\Facades\Route;
 
+
+/*
+|--------------------------------------------------------------------------
+| CONTROLLER GURU
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\LeaveRequestController as GuruLeaveRequestController;
 use App\Http\Controllers\Guru\AttendanceRecapController;
 use App\Http\Controllers\Guru\MonthlyAttendanceRecapController;
 use App\Http\Controllers\Guru\ManualAttendanceController;
 
+
+/*
+|--------------------------------------------------------------------------
+| CONTROLLER SISWA
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Siswa\AttendanceController as SiswaAttendanceController;
 use App\Http\Controllers\Siswa\LeaveRequestController as SiswaLeaveRequestController;
 use App\Http\Controllers\Siswa\AttendanceHistoryController;
+use App\Http\Controllers\Siswa\TrainingScanController;
+
+
+/*
+|--------------------------------------------------------------------------
+| CONTROLLER PELATIH
+|--------------------------------------------------------------------------
+*/
 
 use App\Http\Controllers\Pelatih\DashboardController as PelatihDashboardController;
 
+
+/*
+|--------------------------------------------------------------------------
+| CONTROLLER UMUM
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\BarcodeDisplayController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\TrainingBarcodeController;
 
 
 /*
 |--------------------------------------------------------------------------
 | HALAMAN UTAMA
 |--------------------------------------------------------------------------
-|
-| Saat membuka website, user diarahkan ke halaman login.
-|
 */
 
 Route::get('/', function () {
-
     return redirect()
         ->route('login');
-
 });
 
 
@@ -40,11 +65,6 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 | REDIRECT DASHBOARD BERDASARKAN ROLE
 |--------------------------------------------------------------------------
-|
-| Guru    -> /guru/dashboard
-| Siswa   -> /siswa/dashboard
-| Pelatih -> /pelatih/dashboard
-|
 */
 
 Route::middleware('auth')
@@ -52,32 +72,23 @@ Route::middleware('auth')
 
         $user = auth()->user();
 
+        return match ($user->role) {
 
-        if ($user->role === 'guru') {
+            'guru' =>
+                redirect()
+                    ->route('guru.dashboard'),
 
-            return redirect()
-                ->route('guru.dashboard');
+            'siswa' =>
+                redirect()
+                    ->route('siswa.dashboard'),
 
-        }
+            'pelatih' =>
+                redirect()
+                    ->route('pelatih.dashboard'),
 
-
-        if ($user->role === 'siswa') {
-
-            return redirect()
-                ->route('siswa.dashboard');
-
-        }
-
-
-        if ($user->role === 'pelatih') {
-
-            return redirect()
-                ->route('pelatih.dashboard');
-
-        }
-
-
-        abort(403);
+            default =>
+                abort(403),
+        };
 
     })
     ->name('dashboard');
@@ -97,10 +108,9 @@ Route::middleware([
     ->name('guru.')
     ->group(function () {
 
-
         /*
         |--------------------------------------------------------------------------
-        | DASHBOARD GURU
+        | DASHBOARD
         |--------------------------------------------------------------------------
         */
 
@@ -112,6 +122,32 @@ Route::middleware([
             ]
         )
         ->name('dashboard');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | INPUT MANUAL PRESENSI SEKOLAH
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/presensi/manual',
+            [
+                ManualAttendanceController::class,
+                'index',
+            ]
+        )
+        ->name('attendance.manual');
+
+
+        Route::post(
+            '/presensi/manual',
+            [
+                ManualAttendanceController::class,
+                'store',
+            ]
+        )
+        ->name('attendance.manual.store');
 
 
         /*
@@ -148,39 +184,7 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | INPUT MANUAL PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        Route::get(
-            '/presensi/manual',
-            [
-                ManualAttendanceController::class,
-                'index',
-            ]
-        )
-        ->name('attendance.manual');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | SIMPAN INPUT MANUAL PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        Route::post(
-            '/presensi/manual',
-            [
-                ManualAttendanceController::class,
-                'store',
-            ]
-        )
-        ->name('attendance.manual.store');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | DAFTAR PENGAJUAN IZIN / SAKIT
+        | PENGAJUAN IZIN / SAKIT
         |--------------------------------------------------------------------------
         */
 
@@ -194,12 +198,6 @@ Route::middleware([
         ->name('leave.index');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | SETUJUI PENGAJUAN
-        |--------------------------------------------------------------------------
-        */
-
         Route::post(
             '/pengajuan-izin/{leaveRequest}/approve',
             [
@@ -210,12 +208,6 @@ Route::middleware([
         ->name('leave.approve');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TOLAK PENGAJUAN
-        |--------------------------------------------------------------------------
-        */
-
         Route::post(
             '/pengajuan-izin/{leaveRequest}/reject',
             [
@@ -224,8 +216,6 @@ Route::middleware([
             ]
         )
         ->name('leave.reject');
-
-
     });
 
 
@@ -243,10 +233,9 @@ Route::middleware([
     ->name('siswa.')
     ->group(function () {
 
-
         /*
         |--------------------------------------------------------------------------
-        | DASHBOARD SISWA
+        | DASHBOARD
         |--------------------------------------------------------------------------
         */
 
@@ -262,7 +251,93 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | RIWAYAT PRESENSI SISWA
+        | PRESENSI MASUK SEKOLAH
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/presensi/scan',
+            [
+                SiswaAttendanceController::class,
+                'scanner',
+            ]
+        )
+        ->name('presensi.scan');
+
+
+        Route::post(
+            '/presensi/scan',
+            [
+                SiswaAttendanceController::class,
+                'store',
+            ]
+        )
+        ->name('presensi.store');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JADWAL LATIHAN KKO
+        |--------------------------------------------------------------------------
+        |
+        | Halaman daftar jadwal latihan untuk siswa.
+        |
+        | URL:
+        | /siswa/latihan
+        |
+        */
+
+        Route::get(
+            '/latihan',
+            [
+                TrainingScanController::class,
+                'index',
+            ]
+        )
+        ->name('training.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SCANNER PRESENSI LATIHAN
+        |--------------------------------------------------------------------------
+        |
+        | Dibuka dari jadwal latihan.
+        |
+        | Contoh:
+        | /siswa/latihan/scan?session=3
+        |
+        */
+
+        Route::get(
+            '/latihan/scan',
+            [
+                TrainingScanController::class,
+                'scanner',
+            ]
+        )
+        ->name('training.scan');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PROSES SCAN PRESENSI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post(
+            '/latihan/scan',
+            [
+                TrainingScanController::class,
+                'store',
+            ]
+        )
+        ->name('training.store');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
         */
 
@@ -278,39 +353,7 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | SCANNER PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        Route::get(
-            '/presensi/scan',
-            [
-                SiswaAttendanceController::class,
-                'scanner',
-            ]
-        )
-        ->name('presensi.scan');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | PROSES PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        Route::post(
-            '/presensi/scan',
-            [
-                SiswaAttendanceController::class,
-                'store',
-            ]
-        )
-        ->name('presensi.store');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | HALAMAN PENGAJUAN IZIN / SAKIT
+        | IZIN / SAKIT
         |--------------------------------------------------------------------------
         */
 
@@ -324,12 +367,6 @@ Route::middleware([
         ->name('leave.create');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | SIMPAN PENGAJUAN IZIN / SAKIT
-        |--------------------------------------------------------------------------
-        */
-
         Route::post(
             '/izin',
             [
@@ -338,8 +375,6 @@ Route::middleware([
             ]
         )
         ->name('leave.store');
-
-
     });
 
 
@@ -357,10 +392,9 @@ Route::middleware([
     ->name('pelatih.')
     ->group(function () {
 
-
         /*
         |--------------------------------------------------------------------------
-        | DASHBOARD PELATIH
+        | DASHBOARD
         |--------------------------------------------------------------------------
         */
 
@@ -372,28 +406,25 @@ Route::middleware([
             ]
         )
         ->name('dashboard');
-
-
     });
 
 
 /*
 |--------------------------------------------------------------------------
-| KEHADIRAN LATIHAN
+| PENGELOLAAN KEHADIRAN LATIHAN
 |--------------------------------------------------------------------------
 |
-| Fitur ini bisa diakses oleh:
+| Digunakan oleh Guru dan Pelatih.
 |
-| - Guru
-| - Pelatih
+| Role tetap diperiksa di:
 |
-| Pengecekan role dilakukan kembali di TrainingController.
+| - TrainingController
+| - TrainingBarcodeController
 |
 */
 
 Route::middleware('auth')
     ->group(function () {
-
 
         /*
         |--------------------------------------------------------------------------
@@ -413,12 +444,8 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
-        | FORM BUAT SESI LATIHAN
+        | BUAT SESI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Route /latihan/buat harus berada sebelum
-        | /latihan/{trainingSession}.
-        |
         */
 
         Route::get(
@@ -449,8 +476,57 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
+        | BARCODE PRESENSI LATIHAN
+        |--------------------------------------------------------------------------
+        |
+        | Setiap sesi latihan mempunyai QR sendiri.
+        |
+        | Contoh:
+        |
+        | /latihan/1/barcode
+        |
+        */
+
+        Route::get(
+            '/latihan/{trainingSession}/barcode',
+            [
+                TrainingBarcodeController::class,
+                'show',
+            ]
+        )
+        ->name('training.barcode.display');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOKEN BARCODE LATIHAN AKTIF
+        |--------------------------------------------------------------------------
+        |
+        | Dipanggil oleh JavaScript halaman barcode.
+        |
+        */
+
+        Route::get(
+            '/latihan/{trainingSession}/barcode/current',
+            [
+                TrainingBarcodeController::class,
+                'current',
+            ]
+        )
+        ->name('training.barcode.current');
+
+
+        /*
+        |--------------------------------------------------------------------------
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
+        |
+        | Route parameter harus berada setelah:
+        |
+        | /latihan/buat
+        | /latihan/{trainingSession}/barcode
+        | /latihan/{trainingSession}/barcode/current
+        |
         */
 
         Route::get(
@@ -461,28 +537,26 @@ Route::middleware('auth')
             ]
         )
         ->name('training.show');
-
-
     });
 
 
 /*
 |--------------------------------------------------------------------------
-| BARCODE DINAMIS
+| BARCODE PRESENSI MASUK SEKOLAH
 |--------------------------------------------------------------------------
 |
-| Barcode dapat dibuka oleh Guru dan Pelatih.
-| Pembatasan role dilakukan di BarcodeDisplayController.
+| Barcode ini khusus presensi masuk sekolah.
+|
+| Tidak digunakan untuk presensi latihan.
 |
 */
 
 Route::middleware('auth')
     ->group(function () {
 
-
         /*
         |--------------------------------------------------------------------------
-        | HALAMAN BARCODE
+        | HALAMAN BARCODE SEKOLAH
         |--------------------------------------------------------------------------
         */
 
@@ -498,7 +572,7 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
-        | BARCODE AKTIF
+        | TOKEN BARCODE SEKOLAH AKTIF
         |--------------------------------------------------------------------------
         */
 
@@ -510,8 +584,6 @@ Route::middleware('auth')
             ]
         )
         ->name('barcode.current');
-
-
     });
 
 
