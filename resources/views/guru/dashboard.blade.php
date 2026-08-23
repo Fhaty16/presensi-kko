@@ -37,6 +37,7 @@
         href="{{ asset('css/kko.css') }}"
     >
 
+
     <style>
 
         /* =====================================================
@@ -45,7 +46,7 @@
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
-            font-weight: normal;
+            font-weight: normal !important;
             font-style: normal;
             line-height: 1;
             letter-spacing: normal;
@@ -81,7 +82,7 @@
 
 
         /* =====================================================
-           BADGE JUMLAH
+           BADGE NOTIFIKASI
         ===================================================== */
 
         .guru-notification-count {
@@ -115,7 +116,7 @@
 
 
         /* =====================================================
-           DROPDOWN
+           NOTIFICATION DROPDOWN
         ===================================================== */
 
         .guru-notification-dropdown {
@@ -159,7 +160,7 @@
 
 
         /* =====================================================
-           DROPDOWN HEADER
+           NOTIFICATION HEADER
         ===================================================== */
 
         .guru-notification-header {
@@ -433,7 +434,7 @@
 
 
         /* =====================================================
-           LINK CARD FIX
+           LINK CARD
         ===================================================== */
 
         a.management-card,
@@ -445,6 +446,10 @@
         a.management-card:visited,
         a.teacher-action-card:visited {
             color: inherit;
+        }
+
+        a.management-card {
+            cursor: pointer;
         }
 
 
@@ -478,7 +483,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | DATA NOTIFIKASI IZIN / SAKIT
+    | NOTIFIKASI IZIN / SAKIT
     |--------------------------------------------------------------------------
     */
 
@@ -499,12 +504,13 @@
 
     /*
     |--------------------------------------------------------------------------
-    | JAM BATAS
+    | JAM BATAS PRESENSI
     |--------------------------------------------------------------------------
     */
 
     $attendanceSetting =
         \App\Models\AttendanceSetting::first();
+
 
     $cutoffDisplay = substr(
         $attendanceSetting?->cutoff_time ?? '07:01:00',
@@ -588,7 +594,9 @@
 
                         <span class="guru-notification-count">
 
-                            {{ $pendingLeaveCount > 99 ? '99+' : $pendingLeaveCount }}
+                            {{ $pendingLeaveCount > 99
+                                ? '99+'
+                                : $pendingLeaveCount }}
 
                         </span>
 
@@ -638,7 +646,10 @@
                     <div class="guru-notification-list">
 
 
-                        @forelse($pendingLeaveNotifications as $notification)
+                        @forelse(
+                            $pendingLeaveNotifications
+                            as $notification
+                        )
 
                             <a
                                 href="{{ route('guru.leave.index') }}#request-{{ $notification->id }}"
@@ -664,7 +675,9 @@
 
                                     <strong>
 
-                                        {{ $notification->student?->user?->name ?? 'Siswa KKO' }}
+                                        {{ $notification
+                                            ->student?->user?->name
+                                            ?? 'Siswa KKO' }}
 
                                     </strong>
 
@@ -680,12 +693,25 @@
 
                                     <small>
 
-                                        {{ $notification->start_date->format('d M Y') }}
+                                        {{ $notification
+                                            ->start_date
+                                            ->format('d M Y') }}
 
-                                        @if($notification->start_date->toDateString() !== $notification->end_date->toDateString())
+                                        @if(
+                                            $notification
+                                                ->start_date
+                                                ->toDateString()
+                                            !==
+                                            $notification
+                                                ->end_date
+                                                ->toDateString()
+                                        )
 
                                             -
-                                            {{ $notification->end_date->format('d M Y') }}
+
+                                            {{ $notification
+                                                ->end_date
+                                                ->format('d M Y') }}
 
                                         @endif
 
@@ -742,19 +768,28 @@
 
                     </a>
 
+
                 </div>
 
             </div>
 
 
 
-            <!-- PROFILE -->
+            <!-- =================================================
+                 PROFILE
+            ================================================== -->
 
             <div class="header-profile">
 
                 <div class="header-avatar">
 
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    {{ strtoupper(
+                        substr(
+                            auth()->user()->name,
+                            0,
+                            1
+                        )
+                    ) }}
 
                 </div>
 
@@ -775,7 +810,9 @@
 
 
 
-            <!-- LOGOUT -->
+            <!-- =================================================
+                 LOGOUT
+            ================================================== -->
 
             <form
                 method="POST"
@@ -798,6 +835,7 @@
 
             </form>
 
+
         </div>
 
     </div>
@@ -818,6 +856,7 @@
     ================================================== -->
 
     <section class="dashboard-welcome">
+
 
         <div>
 
@@ -847,10 +886,15 @@
             </span>
 
             <span>
-                {{ now()->translatedFormat('l, d F Y') }}
+
+                {{ now()
+                    ->locale('id')
+                    ->translatedFormat('l, d F Y') }}
+
             </span>
 
         </div>
+
 
     </section>
 
@@ -864,7 +908,7 @@
 
 
         <!-- =================================================
-             KEHADIRAN
+             KEHADIRAN SEKOLAH
         ================================================== -->
 
         <article class="attendance-main-card">
@@ -873,6 +917,7 @@
 
 
             <div class="attendance-card-header">
+
 
                 <h2>
 
@@ -907,6 +952,7 @@
 
                 </div>
 
+
             </div>
 
 
@@ -918,7 +964,10 @@
                 </strong>
 
                 <span>
-                    / {{ $totalSiswa }} Total Atlet Terdaftar
+
+                    / {{ $totalSiswa }}
+                    Total Atlet Terdaftar
+
                 </span>
 
             </div>
@@ -927,6 +976,8 @@
 
             <div class="attendance-breakdown">
 
+
+                <!-- HADIR -->
 
                 <div class="breakdown-item breakdown-hadir">
 
@@ -941,6 +992,9 @@
                 </div>
 
 
+
+                <!-- SAKIT -->
+
                 <div class="breakdown-item breakdown-sakit">
 
                     <span>
@@ -953,6 +1007,9 @@
 
                 </div>
 
+
+
+                <!-- IZIN -->
 
                 <div class="breakdown-item breakdown-izin">
 
@@ -967,6 +1024,9 @@
                 </div>
 
 
+
+                <!-- ALFA -->
+
                 <div class="breakdown-item breakdown-alfa">
 
                     <span>
@@ -979,7 +1039,9 @@
 
                 </div>
 
+
             </div>
+
 
         </article>
 
@@ -993,7 +1055,7 @@
 
 
             <!-- =================================================
-                 INPUT MANUAL - SUDAH BISA DIKLIK
+                 INPUT MANUAL
             ================================================== -->
 
             <a
@@ -1026,7 +1088,9 @@
 
 
 
-            <!-- BARCODE -->
+            <!-- =================================================
+                 BARCODE GLOBAL
+            ================================================== -->
 
             <a
                 href="{{ route('barcode.display') }}"
@@ -1056,7 +1120,9 @@
 
             </a>
 
+
         </div>
+
 
     </section>
 
@@ -1071,6 +1137,7 @@
 
         <div class="section-heading">
 
+
             <div>
 
                 <h2>
@@ -1078,7 +1145,7 @@
                 </h2>
 
                 <p>
-                    Filter presensi berdasarkan bidang cabor
+                    Kelola data siswa berdasarkan cabang olahraga
                 </p>
 
             </div>
@@ -1097,12 +1164,17 @@
 
             </button>
 
+
         </div>
 
 
 
         <div class="sports-grid">
 
+
+            <!-- =================================================
+                 ATLETIK
+            ================================================== -->
 
             <button
                 type="button"
@@ -1125,6 +1197,10 @@
 
 
 
+            <!-- =================================================
+                 BASKET
+            ================================================== -->
+
             <button
                 type="button"
                 class="sport-card sport-silver"
@@ -1145,6 +1221,10 @@
             </button>
 
 
+
+            <!-- =================================================
+                 SEPAK BOLA
+            ================================================== -->
 
             <button
                 type="button"
@@ -1167,6 +1247,10 @@
 
 
 
+            <!-- =================================================
+                 VOLI
+            ================================================== -->
+
             <button
                 type="button"
                 class="sport-card sport-silver"
@@ -1186,7 +1270,9 @@
 
             </button>
 
+
         </div>
+
 
     </section>
 
@@ -1220,17 +1306,19 @@
         <div class="management-grid">
 
 
-            <!-- PRESENSI -->
+            <!-- =================================================
+                 KEHADIRAN LATIHAN
+            ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route('training.index') }}"
                 class="management-card"
             >
 
                 <div class="management-icon">
 
                     <span class="material-symbols-outlined">
-                        fact_check
+                        exercise
                     </span>
 
                 </div>
@@ -1239,11 +1327,11 @@
                 <div>
 
                     <strong>
-                        Presensi
+                        Kehadiran Latihan
                     </strong>
 
                     <p>
-                        Kelola kehadiran siswa
+                        Catat kehadiran siswa saat latihan
                     </p>
 
                 </div>
@@ -1253,11 +1341,13 @@
                     arrow_forward
                 </span>
 
-            </button>
+            </a>
 
 
 
-            <!-- BERITA -->
+            <!-- =================================================
+                 BERITA
+            ================================================== -->
 
             <button
                 type="button"
@@ -1294,7 +1384,9 @@
 
 
 
-            <!-- LAPORAN -->
+            <!-- =================================================
+                 LAPORAN
+            ================================================== -->
 
             <a
                 href="{{ route('guru.attendance.recap') }}"
@@ -1329,9 +1421,12 @@
 
             </a>
 
+
         </div>
 
+
     </section>
+
 
 </main>
 
@@ -1343,6 +1438,10 @@
 
 <nav class="mobile-bottom-nav">
 
+
+    <!-- =================================================
+         HOME
+    ================================================== -->
 
     <a
         href="{{ route('guru.dashboard') }}"
@@ -1360,6 +1459,11 @@
     </a>
 
 
+
+    <!-- =================================================
+         BERITA
+    ================================================== -->
+
     <a href="#">
 
         <span class="material-symbols-outlined">
@@ -1373,18 +1477,28 @@
     </a>
 
 
-    <a href="{{ route('guru.attendance.recap') }}">
+
+    <!-- =================================================
+         LATIHAN
+    ================================================== -->
+
+    <a href="{{ route('training.index') }}">
 
         <span class="material-symbols-outlined">
-            history
+            exercise
         </span>
 
         <span>
-            History
+            Latihan
         </span>
 
     </a>
 
+
+
+    <!-- =================================================
+         PROFILE
+    ================================================== -->
 
     <a href="#">
 
@@ -1397,6 +1511,7 @@
         </span>
 
     </a>
+
 
 </nav>
 
@@ -1424,12 +1539,19 @@
         notificationButton
     ) {
 
+        /*
+        |--------------------------------------------------------------------------
+        | BUKA / TUTUP NOTIFIKASI
+        |--------------------------------------------------------------------------
+        */
+
         notificationButton.addEventListener(
             'click',
             function (event) {
 
                 event.preventDefault();
                 event.stopPropagation();
+
 
                 notificationWrapper
                     .classList
@@ -1451,6 +1573,12 @@
         );
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | KLIK DI LUAR
+        |--------------------------------------------------------------------------
+        */
+
         document.addEventListener(
             'click',
             function (event) {
@@ -1465,6 +1593,7 @@
                         .classList
                         .remove('active');
 
+
                     notificationButton
                         .setAttribute(
                             'aria-expanded',
@@ -1477,6 +1606,12 @@
         );
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | ESC
+        |--------------------------------------------------------------------------
+        */
+
         document.addEventListener(
             'keydown',
             function (event) {
@@ -1486,6 +1621,7 @@
                     notificationWrapper
                         .classList
                         .remove('active');
+
 
                     notificationButton
                         .setAttribute(

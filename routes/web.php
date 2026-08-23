@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\LeaveRequestController as GuruLeaveRequestController;
 use App\Http\Controllers\Guru\AttendanceRecapController;
+use App\Http\Controllers\Guru\MonthlyAttendanceRecapController;
 use App\Http\Controllers\Guru\ManualAttendanceController;
 
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Siswa\AttendanceHistoryController;
 use App\Http\Controllers\Pelatih\DashboardController as PelatihDashboardController;
 
 use App\Http\Controllers\BarcodeDisplayController;
+use App\Http\Controllers\TrainingController;
 
 
 /*
@@ -114,11 +116,8 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | REKAP PRESENSI
+        | REKAP PRESENSI HARIAN
         |--------------------------------------------------------------------------
-        |
-        | Menampilkan rekap presensi seluruh siswa berdasarkan tanggal.
-        |
         */
 
         Route::get(
@@ -133,11 +132,24 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
+        | REKAP PRESENSI BULANAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/rekap-presensi/bulanan',
+            [
+                MonthlyAttendanceRecapController::class,
+                'index',
+            ]
+        )
+        ->name('attendance.monthly');
+
+
+        /*
+        |--------------------------------------------------------------------------
         | INPUT MANUAL PRESENSI
         |--------------------------------------------------------------------------
-        |
-        | Halaman untuk Guru mencatat atau mengubah presensi siswa.
-        |
         */
 
         Route::get(
@@ -252,9 +264,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | RIWAYAT PRESENSI SISWA
         |--------------------------------------------------------------------------
-        |
-        | Menampilkan riwayat kehadiran siswa berdasarkan bulan.
-        |
         */
 
         Route::get(
@@ -271,9 +280,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | SCANNER PRESENSI
         |--------------------------------------------------------------------------
-        |
-        | Membuka halaman scanner kamera siswa.
-        |
         */
 
         Route::get(
@@ -290,14 +296,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | PROSES PRESENSI
         |--------------------------------------------------------------------------
-        |
-        | Mengirim:
-        |
-        | - Token QR
-        | - Latitude
-        | - Longitude
-        | - Akurasi GPS
-        |
         */
 
         Route::post(
@@ -381,17 +379,15 @@ Route::middleware([
 
 /*
 |--------------------------------------------------------------------------
-| BARCODE DINAMIS KKO
+| KEHADIRAN LATIHAN
 |--------------------------------------------------------------------------
 |
-| Halaman barcode hanya bisa diakses user yang sudah login.
-|
-| Controller BarcodeDisplayController akan memastikan hanya:
+| Fitur ini bisa diakses oleh:
 |
 | - Guru
 | - Pelatih
 |
-| yang diperbolehkan membuka barcode.
+| Pengecekan role dilakukan kembali di TrainingController.
 |
 */
 
@@ -401,7 +397,92 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
-        | LAYAR BARCODE
+        | DAFTAR SESI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/latihan',
+            [
+                TrainingController::class,
+                'index',
+            ]
+        )
+        ->name('training.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORM BUAT SESI LATIHAN
+        |--------------------------------------------------------------------------
+        |
+        | Route /latihan/buat harus berada sebelum
+        | /latihan/{trainingSession}.
+        |
+        */
+
+        Route::get(
+            '/latihan/buat',
+            [
+                TrainingController::class,
+                'create',
+            ]
+        )
+        ->name('training.create');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN SESI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post(
+            '/latihan',
+            [
+                TrainingController::class,
+                'store',
+            ]
+        )
+        ->name('training.store');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DETAIL SESI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/latihan/{trainingSession}',
+            [
+                TrainingController::class,
+                'show',
+            ]
+        )
+        ->name('training.show');
+
+
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| BARCODE DINAMIS
+|--------------------------------------------------------------------------
+|
+| Barcode dapat dibuka oleh Guru dan Pelatih.
+| Pembatasan role dilakukan di BarcodeDisplayController.
+|
+*/
+
+Route::middleware('auth')
+    ->group(function () {
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HALAMAN BARCODE
         |--------------------------------------------------------------------------
         */
 
@@ -419,15 +500,6 @@ Route::middleware('auth')
         |--------------------------------------------------------------------------
         | BARCODE AKTIF
         |--------------------------------------------------------------------------
-        |
-        | Dipanggil JavaScript secara berkala.
-        |
-        | Barcode:
-        |
-        | - aktif maksimal 60 detik
-        | - berubah saat expired
-        | - langsung berubah setelah berhasil dipakai siswa
-        |
         */
 
         Route::get(
@@ -447,9 +519,6 @@ Route::middleware('auth')
 |--------------------------------------------------------------------------
 | AUTHENTICATION
 |--------------------------------------------------------------------------
-|
-| Login dan logout Laravel.
-|
 */
 
 require __DIR__.'/auth.php';
