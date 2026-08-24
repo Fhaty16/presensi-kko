@@ -74,6 +74,11 @@
             color: inherit;
         }
 
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
         .sport-page {
             width: min(
                 1120px,
@@ -84,6 +89,11 @@
 
             padding: 34px 0 100px;
         }
+
+
+        /* =====================================================
+           BACK
+        ===================================================== */
 
         .back-link {
             display: inline-flex;
@@ -105,6 +115,11 @@
         .back-link .material-symbols-outlined {
             font-size: 17px;
         }
+
+
+        /* =====================================================
+           HEADING
+        ===================================================== */
 
         .page-heading {
             display: flex;
@@ -165,11 +180,37 @@
             font-weight: 800;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | FILTER / STATISTIK
-        |--------------------------------------------------------------------------
-        */
+
+        /* =====================================================
+           MESSAGE
+        ===================================================== */
+
+        .success-message {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 16px;
+            padding: 12px 14px;
+
+            color: #8ce8c3;
+            background: rgba(80, 200, 150, .07);
+
+            border: 1px solid rgba(80, 200, 150, .20);
+            border-radius: 10px;
+
+            font-size: 9px;
+        }
+
+        .success-message .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+
+        /* =====================================================
+           FILTER CABANG
+        ===================================================== */
 
         .filter-bar {
             display: flex;
@@ -181,7 +222,7 @@
             margin-bottom: 11px;
         }
 
-        .filter-bar span {
+        .filter-bar > span {
             color: #72808c;
 
             font-family: 'JetBrains Mono', monospace;
@@ -219,6 +260,11 @@
             font-size: 15px;
         }
 
+
+        /* =====================================================
+           CARD CABANG
+        ===================================================== */
+
         .stats-grid {
             display: grid;
 
@@ -227,7 +273,7 @@
 
             gap: 9px;
 
-            margin-bottom: 23px;
+            margin-bottom: 18px;
         }
 
         .stat-card {
@@ -303,11 +349,64 @@
             color: #ffb866;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | LIST
-        |--------------------------------------------------------------------------
-        */
+
+        /* =====================================================
+           TAB
+        ===================================================== */
+
+        .sport-tabs {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-bottom: 24px;
+            padding: 5px;
+
+            background: #151b20;
+
+            border: 1px solid #303c48;
+            border-radius: 10px;
+        }
+
+        .sport-tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            min-height: 35px;
+
+            padding: 0 14px;
+
+            color: #7d8c97;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .sport-tab:hover {
+            color: #dce7ef;
+        }
+
+        .sport-tab.active {
+            color: #101415;
+            background: #9dcaff;
+        }
+
+        .sport-tab .material-symbols-outlined {
+            font-size: 16px;
+        }
+
+
+        /* =====================================================
+           LIST HEADING
+        ===================================================== */
 
         .list-heading {
             display: flex;
@@ -341,27 +440,10 @@
             font-size: 8px;
         }
 
-        .success-message {
-            display: flex;
-            align-items: center;
 
-            gap: 8px;
-
-            margin-bottom: 16px;
-            padding: 12px 14px;
-
-            color: #8ce8c3;
-            background: rgba(80, 200, 150, .07);
-
-            border: 1px solid rgba(80, 200, 150, .20);
-            border-radius: 10px;
-
-            font-size: 9px;
-        }
-
-        .success-message .material-symbols-outlined {
-            font-size: 18px;
-        }
+        /* =====================================================
+           STUDENT LIST
+        ===================================================== */
 
         .student-list {
             display: grid;
@@ -450,11 +532,10 @@
             font-size: 7px;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | SPORT SELECT
-        |--------------------------------------------------------------------------
-        */
+
+        /* =====================================================
+           SPORT SELECT
+        ===================================================== */
 
         .sport-field label {
             display: block;
@@ -526,11 +607,399 @@
             font-size: 16px;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | EMPTY STATE
-        |--------------------------------------------------------------------------
-        */
+
+        /* =====================================================
+           REKAP FILTER
+        ===================================================== */
+
+        .recap-filter-panel {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 16px;
+            padding: 16px;
+
+            background: #1b2531;
+
+            border: 1px solid #34485d;
+            border-radius: 12px;
+        }
+
+        .recap-filter-info strong {
+            display: block;
+
+            color: #e4e9ed;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 14px;
+        }
+
+        .recap-filter-info span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #75838e;
+
+            font-size: 8px;
+        }
+
+        .recap-filter-form {
+            display: flex;
+            align-items: flex-end;
+
+            gap: 8px;
+        }
+
+        .recap-filter-field label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: #71808b;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+        }
+
+        .recap-filter-field select {
+            min-width: 130px;
+            height: 38px;
+
+            box-sizing: border-box;
+
+            padding: 0 10px;
+
+            color: #e2e7eb;
+            background: #141b21;
+
+            border: 1px solid #354554;
+            border-radius: 8px;
+
+            outline: none;
+
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-size: 9px;
+        }
+
+        .recap-filter-field select:focus {
+            border-color: #9dcaff;
+        }
+
+        .recap-filter-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            height: 38px;
+
+            padding: 0 14px;
+
+            color: #101415;
+            background: #9dcaff;
+
+            border: 0;
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .recap-filter-button .material-symbols-outlined {
+            font-size: 16px;
+        }
+
+
+        /* =====================================================
+           REKAP STATS
+        ===================================================== */
+
+        .recap-stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(6, minmax(0, 1fr));
+
+            gap: 8px;
+
+            margin-bottom: 15px;
+        }
+
+        .recap-stat {
+            padding: 13px;
+
+            background: #1b2531;
+
+            border: 1px solid #34485d;
+            border-radius: 10px;
+        }
+
+        .recap-stat span {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #72808b;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+        }
+
+        .recap-stat strong {
+            display: block;
+
+            color: #ffffff;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 22px;
+        }
+
+        .recap-stat.present strong {
+            color: #8ce8c3;
+        }
+
+        .recap-stat.late strong {
+            color: #ffb866;
+        }
+
+        .recap-stat.permission strong {
+            color: #eacb84;
+        }
+
+        .recap-stat.sick strong {
+            color: #9dcaff;
+        }
+
+        .recap-stat.absent strong {
+            color: #ffaaa5;
+        }
+
+
+        /* =====================================================
+           OVERALL ATTENDANCE
+        ===================================================== */
+
+        .overall-attendance {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 15px;
+            padding: 14px 15px;
+
+            background: rgba(0, 114, 188, .08);
+
+            border: 1px solid rgba(157, 202, 255, .18);
+            border-radius: 11px;
+        }
+
+        .overall-attendance strong {
+            display: block;
+
+            color: #e6edf3;
+
+            font-size: 10px;
+        }
+
+        .overall-attendance span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #758895;
+
+            font-size: 8px;
+        }
+
+        .overall-percentage {
+            flex-shrink: 0;
+
+            color: #9dcaff;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           REKAP TABLE
+        ===================================================== */
+
+        .recap-table-wrapper {
+            overflow-x: auto;
+
+            border-radius: 13px;
+        }
+
+        .recap-table {
+            min-width: 850px;
+
+            overflow: hidden;
+
+            background: #1b2531;
+
+            border: 1px solid #34485d;
+            border-radius: 13px;
+        }
+
+        .recap-table-head,
+        .recap-row {
+            display: grid;
+
+            grid-template-columns:
+                minmax(250px, 1.7fr)
+                repeat(5, minmax(70px, .45fr))
+                minmax(100px, .7fr);
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .recap-table-head {
+            padding: 11px 14px;
+
+            color: #687783;
+            background: #151b20;
+
+            border-bottom: 1px solid #303c48;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+        }
+
+        .recap-row {
+            padding: 13px 14px;
+
+            border-bottom: 1px solid #2d3944;
+        }
+
+        .recap-row:last-child {
+            border-bottom: 0;
+        }
+
+        .recap-student {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            min-width: 0;
+        }
+
+        .recap-avatar {
+            width: 37px;
+            height: 37px;
+
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #101415;
+            background: #9dcaff;
+
+            border-radius: 50%;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .recap-student-data {
+            min-width: 0;
+        }
+
+        .recap-student-data strong {
+            display: block;
+
+            overflow: hidden;
+
+            color: #e2e7eb;
+
+            font-size: 9px;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .recap-student-data span {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #71808b;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+        }
+
+        .recap-value {
+            color: #d3dce2;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .recap-value.present {
+            color: #8ce8c3;
+        }
+
+        .recap-value.late {
+            color: #ffb866;
+        }
+
+        .recap-value.permission {
+            color: #eacb84;
+        }
+
+        .recap-value.sick {
+            color: #9dcaff;
+        }
+
+        .recap-value.absent {
+            color: #ffaaa5;
+        }
+
+        .percentage-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-width: 58px;
+
+            padding: 6px 9px;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .10);
+
+            border: 1px solid rgba(157, 202, 255, .15);
+            border-radius: 20px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           EMPTY
+        ===================================================== */
 
         .empty-state {
             padding: 50px 20px;
@@ -561,20 +1030,32 @@
         }
 
         .empty-state p {
-            margin: 5px 0 0;
+            max-width: 500px;
+
+            margin: 5px auto 0;
 
             color: #788590;
 
             font-size: 9px;
+            line-height: 1.6;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | RESPONSIVE
-        |--------------------------------------------------------------------------
-        */
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 950px) {
+
+            .recap-stats {
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+        }
+
 
         @media (max-width: 850px) {
+
             .stats-grid {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
@@ -589,9 +1070,16 @@
 
                 box-sizing: border-box;
             }
+
+            .recap-filter-panel {
+                align-items: stretch;
+                flex-direction: column;
+            }
         }
 
+
         @media (max-width: 600px) {
+
             .sport-page {
                 width: calc(100% - 28px);
 
@@ -620,7 +1108,47 @@
                     repeat(2, minmax(0, 1fr));
             }
 
+            .sport-tabs {
+                display: flex;
+
+                width: 100%;
+
+                box-sizing: border-box;
+            }
+
+            .sport-tab {
+                flex: 1;
+            }
+
             .list-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .recap-filter-form {
+                display: grid;
+
+                width: 100%;
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .recap-filter-field select {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .recap-filter-button {
+                grid-column: 1 / -1;
+            }
+
+            .recap-stats {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .overall-attendance {
                 align-items: flex-start;
                 flex-direction: column;
             }
@@ -630,6 +1158,74 @@
 
 
 <body class="dashboard-page">
+
+
+@php
+
+    /*
+    |--------------------------------------------------------------------------
+    | DEFAULT VARIABLE
+    |--------------------------------------------------------------------------
+    */
+
+    $activeTab =
+        $activeTab
+        ?? 'data';
+
+
+    $selectedMonth =
+        $selectedMonth
+        ?? now('Asia/Jakarta')->month;
+
+
+    $selectedYear =
+        $selectedYear
+        ?? now('Asia/Jakarta')->year;
+
+
+    $availableYears =
+        $availableYears
+        ?? range(
+            now('Asia/Jakarta')->year + 1,
+            now('Asia/Jakarta')->year - 4
+        );
+
+
+    $studentRecaps =
+        $studentRecaps
+        ?? collect();
+
+
+    $recapStats =
+        $recapStats
+        ?? [
+            'sessions' => 0,
+            'present' => 0,
+            'late' => 0,
+            'permission' => 0,
+            'sick' => 0,
+            'absent' => 0,
+            'attended' => 0,
+            'percentage' => 0,
+        ];
+
+
+    $monthNames = [
+        1 => 'Januari',
+        2 => 'Februari',
+        3 => 'Maret',
+        4 => 'April',
+        5 => 'Mei',
+        6 => 'Juni',
+        7 => 'Juli',
+        8 => 'Agustus',
+        9 => 'September',
+        10 => 'Oktober',
+        11 => 'November',
+        12 => 'Desember',
+    ];
+
+@endphp
 
 
 <header class="kko-header">
@@ -733,6 +1329,11 @@
 
 <main class="sport-page">
 
+
+    <!-- =====================================================
+         BACK
+    ====================================================== -->
+
     <a
         href="{{ auth()->user()->role === 'guru'
             ? route('guru.dashboard')
@@ -749,6 +1350,10 @@
     </a>
 
 
+    <!-- =====================================================
+         SUCCESS
+    ====================================================== -->
+
     @if(session('success'))
 
         <div class="success-message">
@@ -763,6 +1368,10 @@
 
     @endif
 
+
+    <!-- =====================================================
+         HEADING
+    ====================================================== -->
 
     <section class="page-heading">
 
@@ -786,12 +1395,13 @@
 
             </h1>
 
+
             <p>
 
                 @if($selectedSport)
 
-                    Menampilkan siswa aktif pada cabang
-                    {{ $selectedSport }}.
+                    Kelola siswa dan rekap presensi latihan
+                    cabang {{ $selectedSport }}.
 
                 @else
 
@@ -818,9 +1428,9 @@
     </section>
 
 
-    <!-- =================================================
-         FILTER
-    ================================================== -->
+    <!-- =====================================================
+         FILTER CABANG
+    ====================================================== -->
 
     <div class="filter-bar">
 
@@ -845,20 +1455,42 @@
     </div>
 
 
-    <!-- =================================================
-         STATISTIK CABANG
-    ================================================== -->
+    <!-- =====================================================
+         CARD CABANG
+    ====================================================== -->
 
     <section class="stats-grid">
 
         @foreach($sports as $sport)
 
+            @php
+
+                $sportRouteParameters = [
+                    'sport' => $sport,
+                ];
+
+
+                if (
+                    $activeTab === 'rekap'
+                ) {
+
+                    $sportRouteParameters['tab'] =
+                        'rekap';
+
+                    $sportRouteParameters['month'] =
+                        $selectedMonth;
+
+                    $sportRouteParameters['year'] =
+                        $selectedYear;
+                }
+
+            @endphp
+
+
             <a
                 href="{{ route(
                     'students.sports.index',
-                    [
-                        'sport' => $sport,
-                    ]
+                    $sportRouteParameters
                 ) }}"
                 class="stat-card {{ $selectedSport === $sport ? 'active' : '' }}"
             >
@@ -891,130 +1523,759 @@
     </section>
 
 
-    <!-- =================================================
-         DAFTAR SISWA
-    ================================================== -->
+    <!-- =====================================================
+         TAB DATA / REKAP
+    ====================================================== -->
 
-    <section>
+    @if($selectedSport)
 
-        <div class="list-heading">
+        <nav class="sport-tabs">
 
-            <div>
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' =>
+                            $selectedSport,
 
-                <h2>
+                        'tab' =>
+                            'data',
+                    ]
+                ) }}"
+                class="sport-tab {{ $activeTab === 'data' ? 'active' : '' }}"
+            >
 
-                    @if($selectedSport)
+                <span class="material-symbols-outlined">
+                    groups
+                </span>
 
-                        Siswa {{ $selectedSport }}
+                Data Siswa
 
-                    @else
-
-                        Daftar Semua Siswa
-
-                    @endif
-
-                </h2>
+            </a>
 
 
-                <p>
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' =>
+                            $selectedSport,
 
-                    @if($selectedSport)
+                        'tab' =>
+                            'rekap',
 
-                        Menampilkan siswa cabang
-                        {{ $selectedSport }}.
+                        'month' =>
+                            $selectedMonth,
 
-                    @else
+                        'year' =>
+                            $selectedYear,
+                    ]
+                ) }}"
+                class="sport-tab {{ $activeTab === 'rekap' ? 'active' : '' }}"
+            >
 
-                        Pilih cabang olahraga kemudian simpan perubahan.
+                <span class="material-symbols-outlined">
+                    monitoring
+                </span>
 
-                    @endif
+                Rekap Presensi
 
-                </p>
+            </a>
+
+        </nav>
+
+    @endif
+
+
+    <!-- =====================================================
+         DATA SISWA
+    ====================================================== -->
+
+    @if($activeTab === 'data')
+
+        <section>
+
+            <div class="list-heading">
+
+                <div>
+
+                    <h2>
+
+                        @if($selectedSport)
+
+                            Siswa {{ $selectedSport }}
+
+                        @else
+
+                            Daftar Semua Siswa
+
+                        @endif
+
+                    </h2>
+
+
+                    <p>
+
+                        @if($selectedSport)
+
+                            Menampilkan siswa cabang
+                            {{ $selectedSport }}.
+
+                        @else
+
+                            Pilih cabang olahraga kemudian simpan perubahan.
+
+                        @endif
+
+                    </p>
+
+                </div>
+
+
+                <span class="student-count">
+
+                    {{ $students->count() }}
+                    siswa
+
+                </span>
 
             </div>
 
 
-            <span class="student-count">
+            @if($students->isNotEmpty())
 
-                {{ $students->count() }}
-                siswa
+                <div class="student-list">
 
-            </span>
+                    @foreach($students as $student)
 
-        </div>
+                        <form
+                            method="POST"
+                            action="{{ route(
+                                'students.sports.update',
+                                $student
+                            ) }}"
+                            class="student-card"
+                        >
 
-
-        @if($students->isNotEmpty())
-
-            <div class="student-list">
-
-                @foreach($students as $student)
-
-                    <form
-                        method="POST"
-                        action="{{ route(
-                            'students.sports.update',
-                            $student
-                        ) }}"
-                        class="student-card"
-                    >
-
-                        @csrf
-                        @method('PUT')
+                            @csrf
+                            @method('PUT')
 
 
-                        @if($selectedSport)
+                            @if($selectedSport)
 
-                            <input
-                                type="hidden"
-                                name="current_filter"
-                                value="{{ $selectedSport }}"
-                            >
+                                <input
+                                    type="hidden"
+                                    name="current_filter"
+                                    value="{{ $selectedSport }}"
+                                >
 
-                        @endif
+                            @endif
 
 
-                        <div class="student-profile">
+                            <div class="student-profile">
 
-                            <div class="student-avatar">
+                                <div class="student-avatar">
 
-                                {{ strtoupper(
-                                    substr(
-                                        $student->user?->name
+                                    {{ strtoupper(
+                                        substr(
+                                            $student->user?->name
                                             ?? 'S',
-                                        0,
-                                        1
-                                    )
-                                ) }}
+                                            0,
+                                            1
+                                        )
+                                    ) }}
+
+                                </div>
+
+
+                                <div class="student-data">
+
+                                    <strong>
+
+                                        {{ $student->user?->name
+                                            ?? 'Siswa KKO' }}
+
+                                    </strong>
+
+
+                                    <div class="student-meta">
+
+                                        <span>
+                                            NIS {{ $student->nis }}
+                                        </span>
+
+                                        <span>
+                                            •
+                                        </span>
+
+                                        <span>
+
+                                            {{ $student
+                                                ->class?->name
+                                                ?? 'Kelas belum ditentukan' }}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
 
                             </div>
 
 
-                            <div class="student-data">
+                            <div class="sport-field">
 
-                                <strong>
-
-                                    {{ $student->user?->name
-                                        ?? 'Siswa KKO' }}
-
-                                </strong>
+                                <label>
+                                    CABANG OLAHRAGA
+                                </label>
 
 
-                                <div class="student-meta">
+                                <select
+                                    name="sport"
+                                    required
+                                >
 
-                                    <span>
-                                        NIS {{ $student->nis }}
-                                    </span>
+                                    <option
+                                        value=""
+                                        disabled
+                                        {{ !$student->sport
+                                            ? 'selected'
+                                            : '' }}
+                                    >
+                                        Pilih Cabang Olahraga
+                                    </option>
 
-                                    <span>
-                                        •
-                                    </span>
 
-                                    <span>
+                                    @foreach($sports as $sport)
 
-                                        {{ $student
-                                            ->class?->name
-                                            ?? 'Kelas belum ditentukan' }}
+                                        <option
+                                            value="{{ $sport }}"
+                                            {{ $student->sport === $sport
+                                                ? 'selected'
+                                                : '' }}
+                                        >
+                                            {{ $sport }}
+                                        </option>
+
+                                    @endforeach
+
+                                </select>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="save-button"
+                            >
+
+                                <span class="material-symbols-outlined">
+                                    save
+                                </span>
+
+                                Simpan
+
+                            </button>
+
+                        </form>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <div class="empty-state">
+
+                    <span class="material-symbols-outlined">
+                        person_off
+                    </span>
+
+                    <strong>
+
+                        @if($selectedSport)
+
+                            Tidak Ada Siswa {{ $selectedSport }}
+
+                        @else
+
+                            Belum Ada Data Siswa
+
+                        @endif
+
+                    </strong>
+
+
+                    <p>
+
+                        @if($selectedSport)
+
+                            Belum ada siswa aktif yang terdaftar pada
+                            cabang {{ $selectedSport }}.
+
+                        @else
+
+                            Data siswa aktif belum tersedia.
+
+                        @endif
+
+                    </p>
+
+                </div>
+
+            @endif
+
+        </section>
+
+    @endif
+
+
+    <!-- =====================================================
+         REKAP PRESENSI
+    ====================================================== -->
+
+    @if(
+        $selectedSport
+        && $activeTab === 'rekap'
+    )
+
+        <section>
+
+            <!-- =============================================
+                 HEADING REKAP
+            ============================================== -->
+
+            <div class="list-heading">
+
+                <div>
+
+                    <h2>
+                        Rekap Presensi {{ $selectedSport }}
+                    </h2>
+
+                    <p>
+
+                        Periode
+                        {{ $monthNames[$selectedMonth] ?? '-' }}
+                        {{ $selectedYear }}.
+
+                    </p>
+
+                </div>
+
+
+                <span class="student-count">
+
+                    {{ $students->count() }}
+                    siswa
+
+                </span>
+
+            </div>
+
+
+            <!-- =============================================
+                 FILTER
+            ============================================== -->
+
+            <div class="recap-filter-panel">
+
+                <div class="recap-filter-info">
+
+                    <strong>
+                        Periode Rekap
+                    </strong>
+
+                    <span>
+                        Pilih bulan dan tahun presensi latihan.
+                    </span>
+
+                </div>
+
+
+                <form
+                    method="GET"
+                    action="{{ route(
+                        'students.sports.index'
+                    ) }}"
+                    class="recap-filter-form"
+                >
+
+                    <input
+                        type="hidden"
+                        name="sport"
+                        value="{{ $selectedSport }}"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="tab"
+                        value="rekap"
+                    >
+
+
+                    <div class="recap-filter-field">
+
+                        <label>
+                            BULAN
+                        </label>
+
+                        <select
+                            name="month"
+                        >
+
+                            @foreach(
+                                $monthNames
+                                as $monthNumber => $monthName
+                            )
+
+                                <option
+                                    value="{{ $monthNumber }}"
+                                    @selected(
+                                        $selectedMonth
+                                        === $monthNumber
+                                    )
+                                >
+
+                                    {{ $monthName }}
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="recap-filter-field">
+
+                        <label>
+                            TAHUN
+                        </label>
+
+                        <select
+                            name="year"
+                        >
+
+                            @foreach(
+                                $availableYears
+                                as $year
+                            )
+
+                                <option
+                                    value="{{ $year }}"
+                                    @selected(
+                                        $selectedYear
+                                        === $year
+                                    )
+                                >
+
+                                    {{ $year }}
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="recap-filter-button"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            filter_alt
+                        </span>
+
+                        Tampilkan
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =============================================
+                 REKAP STATS
+            ============================================== -->
+
+            <div class="recap-stats">
+
+                <div class="recap-stat">
+
+                    <span>
+                        TOTAL SESI
+                    </span>
+
+                    <strong>
+                        {{ $recapStats['sessions'] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="recap-stat present">
+
+                    <span>
+                        HADIR
+                    </span>
+
+                    <strong>
+                        {{ $recapStats['present'] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="recap-stat late">
+
+                    <span>
+                        TERLAMBAT
+                    </span>
+
+                    <strong>
+                        {{ $recapStats['late'] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="recap-stat permission">
+
+                    <span>
+                        IZIN
+                    </span>
+
+                    <strong>
+                        {{ $recapStats['permission'] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="recap-stat sick">
+
+                    <span>
+                        SAKIT
+                    </span>
+
+                    <strong>
+                        {{ $recapStats['sick'] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="recap-stat absent">
+
+                    <span>
+                        ALFA
+                    </span>
+
+                    <strong>
+                        {{ $recapStats['absent'] }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 PERSENTASE KESELURUHAN
+            ============================================== -->
+
+            <div class="overall-attendance">
+
+                <div>
+
+                    <strong>
+                        Persentase Kehadiran {{ $selectedSport }}
+                    </strong>
+
+                    <span>
+                        Hadir + Terlambat dibanding total kesempatan presensi.
+                    </span>
+
+                </div>
+
+
+                <div class="overall-percentage">
+
+                    {{ number_format(
+                        $recapStats['percentage'],
+                        1,
+                        ',',
+                        '.'
+                    ) }}%
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 TABLE
+            ============================================== -->
+
+            @if(
+                $recapStats['sessions'] > 0
+                && $studentRecaps->isNotEmpty()
+            )
+
+                <div class="recap-table-wrapper">
+
+                    <div class="recap-table">
+
+                        <div class="recap-table-head">
+
+                            <div>
+                                SISWA
+                            </div>
+
+                            <div>
+                                HADIR
+                            </div>
+
+                            <div>
+                                TERLAMBAT
+                            </div>
+
+                            <div>
+                                IZIN
+                            </div>
+
+                            <div>
+                                SAKIT
+                            </div>
+
+                            <div>
+                                ALFA
+                            </div>
+
+                            <div>
+                                KEHADIRAN
+                            </div>
+
+                        </div>
+
+
+                        @foreach(
+                            $studentRecaps
+                            as $recap
+                        )
+
+                            @php
+
+                                $recapStudent =
+                                    $recap[
+                                        'student'
+                                    ];
+
+                            @endphp
+
+
+                            <div class="recap-row">
+
+                                <!-- SISWA -->
+
+                                <div class="recap-student">
+
+                                    <div class="recap-avatar">
+
+                                        {{ strtoupper(
+                                            substr(
+                                                $recapStudent
+                                                    ->user?->name
+                                                ?? 'S',
+                                                0,
+                                                1
+                                            )
+                                        ) }}
+
+                                    </div>
+
+
+                                    <div class="recap-student-data">
+
+                                        <strong>
+
+                                            {{ $recapStudent
+                                                ->user?->name
+                                                ?? 'Siswa KKO' }}
+
+                                        </strong>
+
+                                        <span>
+
+                                            NIS
+                                            {{ $recapStudent->nis }}
+
+                                            ·
+
+                                            {{ $recapStudent
+                                                ->class?->name
+                                                ?? '-' }}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- HADIR -->
+
+                                <div class="recap-value present">
+                                    {{ $recap['present'] }}
+                                </div>
+
+
+                                <!-- TERLAMBAT -->
+
+                                <div class="recap-value late">
+                                    {{ $recap['late'] }}
+                                </div>
+
+
+                                <!-- IZIN -->
+
+                                <div class="recap-value permission">
+                                    {{ $recap['permission'] }}
+                                </div>
+
+
+                                <!-- SAKIT -->
+
+                                <div class="recap-value sick">
+                                    {{ $recap['sick'] }}
+                                </div>
+
+
+                                <!-- ALFA -->
+
+                                <div class="recap-value absent">
+                                    {{ $recap['absent'] }}
+                                </div>
+
+
+                                <!-- KEHADIRAN -->
+
+                                <div>
+
+                                    <span class="percentage-badge">
+
+                                        {{ number_format(
+                                            $recap['percentage'],
+                                            1,
+                                            ',',
+                                            '.'
+                                        ) }}%
 
                                     </span>
 
@@ -1022,112 +2283,42 @@
 
                             </div>
 
-                        </div>
+                        @endforeach
 
+                    </div>
 
-                        <div class="sport-field">
+                </div>
 
-                            <label>
-                                CABANG OLAHRAGA
-                            </label>
+            @else
 
+                <div class="empty-state">
 
-                            <select
-                                name="sport"
-                                required
-                            >
+                    <span class="material-symbols-outlined">
+                        event_busy
+                    </span>
 
-                                <option
-                                    value=""
-                                    disabled
-                                    {{ !$student->sport
-                                        ? 'selected'
-                                        : '' }}
-                                >
-                                    Pilih Cabang Olahraga
-                                </option>
+                    <strong>
+                        Belum Ada Rekap Presensi
+                    </strong>
 
+                    <p>
 
-                                @foreach($sports as $sport)
+                        Belum ada sesi latihan
+                        {{ $selectedSport }}
+                        yang dapat direkap pada periode
+                        {{ $monthNames[$selectedMonth] ?? '-' }}
+                        {{ $selectedYear }}.
 
-                                    <option
-                                        value="{{ $sport }}"
-                                        {{ $student->sport === $sport
-                                            ? 'selected'
-                                            : '' }}
-                                    >
-                                        {{ $sport }}
-                                    </option>
+                    </p>
 
-                                @endforeach
+                </div>
 
-                            </select>
+            @endif
 
-                        </div>
+        </section>
 
+    @endif
 
-                        <button
-                            type="submit"
-                            class="save-button"
-                        >
-
-                            <span class="material-symbols-outlined">
-                                save
-                            </span>
-
-                            Simpan
-
-                        </button>
-
-                    </form>
-
-                @endforeach
-
-            </div>
-
-        @else
-
-            <div class="empty-state">
-
-                <span class="material-symbols-outlined">
-                    person_off
-                </span>
-
-                <strong>
-
-                    @if($selectedSport)
-
-                        Tidak Ada Siswa {{ $selectedSport }}
-
-                    @else
-
-                        Belum Ada Data Siswa
-
-                    @endif
-
-                </strong>
-
-
-                <p>
-
-                    @if($selectedSport)
-
-                        Belum ada siswa aktif yang terdaftar pada
-                        cabang {{ $selectedSport }}.
-
-                    @else
-
-                        Data siswa aktif belum tersedia.
-
-                    @endif
-
-                </p>
-
-            </div>
-
-        @endif
-
-    </section>
 
 </main>
 
