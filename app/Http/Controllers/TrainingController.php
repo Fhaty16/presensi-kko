@@ -83,14 +83,18 @@ class TrainingController extends Controller
         $date =
             Carbon::parse(
                 $trainingSession->training_date
-            )->format('Y-m-d');
+            )->format(
+                'Y-m-d'
+            );
 
 
         $startTime =
             Carbon::parse(
                 $trainingSession->start_time,
                 'Asia/Jakarta'
-            )->format('H:i:s');
+            )->format(
+                'H:i:s'
+            );
 
 
         return Carbon::createFromFormat(
@@ -133,7 +137,9 @@ class TrainingController extends Controller
         $alphaAt =
             $startsAt
                 ->copy()
-                ->addMinutes(30);
+                ->addMinutes(
+                    30
+                );
 
 
         $now =
@@ -176,7 +182,8 @@ class TrainingController extends Controller
                 ->get();
 
 
-        $createdCount = 0;
+        $createdCount =
+            0;
 
 
         foreach (
@@ -189,13 +196,13 @@ class TrainingController extends Controller
             | FIRST OR CREATE
             |--------------------------------------------------------------------------
             |
-            | Jika siswa sudah memiliki:
+            | Jika siswa sudah memiliki presensi:
             |
-            | Hadir
-            | Terlambat
-            | Izin
-            | Sakit
-            | Alfa
+            | - Hadir
+            | - Terlambat
+            | - Izin
+            | - Sakit
+            | - Alfa
             |
             | record tersebut tidak akan ditimpa.
             |
@@ -483,7 +490,7 @@ class TrainingController extends Controller
         | SEMUA SISWA SESUAI CABOR SESI
         |--------------------------------------------------------------------------
         |
-        | Digunakan untuk menu Kelola Izin / Sakit.
+        | Digunakan pada menu Kelola Status Presensi.
         |
         */
 
@@ -590,7 +597,8 @@ class TrainingController extends Controller
 
         $attendanceStats['attended'] =
             $attendanceStats['present']
-            + $attendanceStats['late'];
+            +
+            $attendanceStats['late'];
 
 
         /*
@@ -727,11 +735,18 @@ class TrainingController extends Controller
 
         $scheduleChanged =
             $oldDate
-                !== $validated['training_date']
-            || $oldStart
-                !== $validated['start_time']
-            || $oldEnd
-                !== $validated['end_time'];
+                !==
+                $validated['training_date']
+
+            ||
+            $oldStart
+                !==
+                $validated['start_time']
+
+            ||
+            $oldEnd
+                !==
+                $validated['end_time'];
 
 
         DB::transaction(
@@ -846,8 +861,18 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | UPDATE STATUS IZIN / SAKIT
+    | UPDATE STATUS PRESENSI
     |--------------------------------------------------------------------------
+    |
+    | Status yang dapat ditetapkan secara manual:
+    |
+    | - permission = Izin
+    | - sick       = Sakit
+    | - present    = Hadir
+    | - absent     = Alfa
+    |
+    | Terlambat tetap berasal dari mekanisme scan QR.
+    |
     */
 
     public function updateStudentStatus(
@@ -866,8 +891,10 @@ class TrainingController extends Controller
 
         abort_unless(
             $student->status === 'active'
-            && $student->sport
-                === $trainingSession->sport,
+            &&
+            $student->sport
+                ===
+                $trainingSession->sport,
             422,
             'Siswa tidak terdaftar pada cabang olahraga sesi ini.'
         );
@@ -883,7 +910,7 @@ class TrainingController extends Controller
             $request->validate([
                 'status' => [
                     'required',
-                    'in:permission,sick',
+                    'in:permission,sick,present,absent',
                 ],
 
                 'notes' => [
@@ -901,23 +928,59 @@ class TrainingController extends Controller
         */
 
         $statusLabel =
-            $validated['status']
-                === 'permission'
-                    ? 'Izin'
-                    : 'Sakit';
+            match (
+                $validated['status']
+            ) {
+
+                'permission' =>
+                    'Izin',
+
+                'sick' =>
+                    'Sakit',
+
+                'present' =>
+                    'Hadir',
+
+                'absent' =>
+                    'Alfa',
+
+                default =>
+                    '-',
+            };
 
 
         /*
         |--------------------------------------------------------------------------
         | CATATAN DEFAULT
         |--------------------------------------------------------------------------
+        |
+        | Catatan Alfa manual dibuat berbeda dari AUTO_ABSENT_NOTE.
+        |
+        | Jadi ketika jadwal diubah, Alfa manual tidak dianggap sebagai
+        | Alfa otomatis.
+        |
         */
 
         $defaultNote =
-            $validated['status']
-                === 'permission'
-                    ? 'Izin mengikuti latihan.'
-                    : 'Sakit dan tidak dapat mengikuti latihan.';
+            match (
+                $validated['status']
+            ) {
+
+                'permission' =>
+                    'Izin mengikuti latihan.',
+
+                'sick' =>
+                    'Sakit dan tidak dapat mengikuti latihan.',
+
+                'present' =>
+                    'Hadir ditetapkan secara manual oleh Guru/Pelatih.',
+
+                'absent' =>
+                    'Alfa ditetapkan secara manual oleh Guru/Pelatih.',
+
+                default =>
+                    null,
+            };
 
 
         /*
@@ -925,14 +988,9 @@ class TrainingController extends Controller
         | SIMPAN / KOREKSI STATUS
         |--------------------------------------------------------------------------
         |
-        | Bisa digunakan untuk:
+        | checked_in_at = null
         |
-        | Alfa       → Izin
-        | Alfa       → Sakit
-        | Izin       → Sakit
-        | Sakit      → Izin
-        | Hadir      → Izin/Sakit
-        | Terlambat  → Izin/Sakit
+        | Karena status ini ditentukan secara manual dan bukan hasil scan QR.
         |
         */
 
@@ -962,10 +1020,27 @@ class TrainingController extends Controller
         );
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | NAMA SISWA
+        |--------------------------------------------------------------------------
+        */
+
         $student->loadMissing(
             'user'
         );
 
+
+        $studentName =
+            $student->user?->name
+            ?? 'Siswa';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | REDIRECT
+        |--------------------------------------------------------------------------
+        */
 
         return redirect()
             ->route(
@@ -974,8 +1049,7 @@ class TrainingController extends Controller
             )
             ->with(
                 'success',
-                ($student->user?->name
-                    ?? 'Siswa')
+                $studentName
                 . ' berhasil diubah menjadi '
                 . $statusLabel
                 . '.'
@@ -985,8 +1059,16 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | HAPUS STATUS IZIN / SAKIT
+    | HAPUS STATUS PRESENSI
     |--------------------------------------------------------------------------
+    |
+    | Status yang dapat dihapus dari menu manual:
+    |
+    | - Izin
+    | - Sakit
+    | - Hadir
+    | - Alfa
+    |
     */
 
     public function clearStudentStatus(
@@ -1004,8 +1086,10 @@ class TrainingController extends Controller
 
         abort_unless(
             $student->status === 'active'
-            && $student->sport
-                === $trainingSession->sport,
+            &&
+            $student->sport
+                ===
+                $trainingSession->sport,
             422,
             'Siswa tidak terdaftar pada cabang olahraga sesi ini.'
         );
@@ -1032,21 +1116,25 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | HANYA IZIN / SAKIT BOLEH DIHAPUS
+        | CEK STATUS YANG BOLEH DIHAPUS
         |--------------------------------------------------------------------------
         */
 
         if (
             !$attendance
-            || !in_array(
+            ||
+            !in_array(
                 $attendance->status,
                 [
                     'permission',
                     'sick',
+                    'present',
+                    'absent',
                 ],
                 true
             )
         ) {
+
             return redirect()
                 ->route(
                     'training.show',
@@ -1054,7 +1142,7 @@ class TrainingController extends Controller
                 )
                 ->with(
                     'success',
-                    'Tidak ada status Izin atau Sakit yang perlu dihapus.'
+                    'Tidak ada status presensi manual yang perlu dihapus.'
                 );
         }
 
@@ -1073,8 +1161,10 @@ class TrainingController extends Controller
         | CEK ALFA LAGI
         |--------------------------------------------------------------------------
         |
-        | Jika status dihapus setelah +30 menit,
-        | siswa akan langsung menjadi Alfa.
+        | Jika status dihapus setelah batas +30 menit, sistem akan mengecek
+        | kembali siswa yang belum memiliki presensi.
+        |
+        | Karena itu siswa dapat langsung kembali menjadi Alfa otomatis.
         |
         */
 
@@ -1090,7 +1180,7 @@ class TrainingController extends Controller
             )
             ->with(
                 'success',
-                'Status Izin/Sakit berhasil dihapus.'
+                'Status presensi siswa berhasil dihapus.'
             );
     }
 

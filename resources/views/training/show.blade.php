@@ -837,7 +837,7 @@
 
 
         /* =====================================================
-           KELOLA IZIN / SAKIT
+           KELOLA STATUS PRESENSI
         ===================================================== */
 
         .manual-status-section {
@@ -2076,7 +2076,7 @@
 
 
     <!-- =====================================================
-         KELOLA IZIN / SAKIT
+         KELOLA STATUS PRESENSI
     ===================================================== -->
 
     <section class="manual-status-section">
@@ -2086,12 +2086,11 @@
             <div>
 
                 <h2>
-                    Kelola Izin / Sakit
+                    Kelola Status Presensi
                 </h2>
 
                 <p>
-                    Koreksi status siswa yang tidak dapat mengikuti latihan.
-                    Status Alfa dapat diubah menjadi Izin atau Sakit.
+                    Koreksi status siswa menjadi Izin, Sakit, Hadir, atau Alfa.
                 </p>
 
             </div>
@@ -2254,6 +2253,26 @@
                                 Sakit
                             </option>
 
+                            <option
+                                value="present"
+                                @selected(
+                                    $studentAttendance?->status
+                                    === 'present'
+                                )
+                            >
+                                Hadir
+                            </option>
+
+                            <option
+                                value="absent"
+                                @selected(
+                                    $studentAttendance?->status
+                                    === 'absent'
+                                )
+                            >
+                                Alfa
+                            </option>
+
                         </select>
 
 
@@ -2268,6 +2287,8 @@
                                     [
                                         'permission',
                                         'sick',
+                                        'present',
+                                        'absent',
                                     ],
                                     true
                                 )
@@ -2293,6 +2314,8 @@
                             [
                                 'permission',
                                 'sick',
+                                'present',
+                                'absent',
                             ],
                             true
                         )
@@ -2311,7 +2334,7 @@
                                 ]
                             ) }}"
                             class="manual-clear-form"
-                            onsubmit="return confirm('Hapus status Izin/Sakit siswa ini?')"
+                            onsubmit="return confirm('Hapus status presensi siswa ini?')"
                         >
 
                             @csrf
