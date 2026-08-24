@@ -12,7 +12,10 @@
     <title>Dashboard Guru - KKO SMANDA</title>
 
     <!-- FONT -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -48,13 +51,19 @@
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
             font-style: normal;
+
             line-height: 1;
+
             letter-spacing: normal;
             text-transform: none;
+
             white-space: nowrap;
             word-wrap: normal;
+
             direction: ltr;
+
             font-feature-settings: 'liga';
+
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
@@ -438,18 +447,37 @@
         ===================================================== */
 
         a.management-card,
-        a.teacher-action-card {
+        a.teacher-action-card,
+        a.sport-card,
+        a.text-link {
             color: inherit;
             text-decoration: none;
         }
 
         a.management-card:visited,
-        a.teacher-action-card:visited {
+        a.teacher-action-card:visited,
+        a.sport-card:visited,
+        a.text-link:visited {
             color: inherit;
         }
 
-        a.management-card {
+        a.management-card,
+        a.sport-card,
+        a.text-link {
             cursor: pointer;
+        }
+
+        a.sport-card {
+            transition:
+                transform .18s ease,
+                border-color .18s ease;
+        }
+
+        a.sport-card:hover {
+            transform: translateY(-2px);
+
+            border-color:
+                rgba(157, 202, 255, .55);
         }
 
 
@@ -487,19 +515,24 @@
     |--------------------------------------------------------------------------
     */
 
-    $pendingLeaveCount = \App\Models\LeaveRequest::where(
-        'status',
-        'pending'
-    )->count();
+    $pendingLeaveCount =
+        \App\Models\LeaveRequest::where(
+            'status',
+            'pending'
+        )->count();
 
 
-    $pendingLeaveNotifications = \App\Models\LeaveRequest::with([
-        'student.user',
-    ])
-        ->where('status', 'pending')
-        ->latest()
-        ->take(5)
-        ->get();
+    $pendingLeaveNotifications =
+        \App\Models\LeaveRequest::with([
+            'student.user',
+        ])
+            ->where(
+                'status',
+                'pending'
+            )
+            ->latest()
+            ->take(5)
+            ->get();
 
 
     /*
@@ -512,14 +545,15 @@
         \App\Models\AttendanceSetting::first();
 
 
-    $cutoffDisplay = substr(
-        $attendanceSetting?->cutoff_time ?? '07:01:00',
-        0,
-        5
-    );
+    $cutoffDisplay =
+        substr(
+            $attendanceSetting?->cutoff_time
+                ?? '07:01:00',
+            0,
+            5
+        );
 
 @endphp
-
 
 
 <!-- =====================================================
@@ -560,21 +594,17 @@
         </div>
 
 
-
         <!-- HEADER ACTIONS -->
 
         <div class="kko-header-actions">
 
 
-            <!-- =================================================
-                 NOTIFICATION
-            ================================================== -->
+            <!-- NOTIFICATION -->
 
             <div
                 class="guru-notification-wrapper"
                 id="guruNotificationWrapper"
             >
-
 
                 <button
                     type="button"
@@ -605,14 +635,12 @@
                 </button>
 
 
-
                 <!-- DROPDOWN -->
 
                 <div
                     class="guru-notification-dropdown"
                     id="guruNotificationDropdown"
                 >
-
 
                     <div class="guru-notification-header">
 
@@ -633,7 +661,8 @@
 
                             <span class="guru-notification-header-count">
 
-                                {{ $pendingLeaveCount }} baru
+                                {{ $pendingLeaveCount }}
+                                baru
 
                             </span>
 
@@ -642,9 +671,7 @@
                     </div>
 
 
-
                     <div class="guru-notification-list">
-
 
                         @forelse(
                             $pendingLeaveNotifications
@@ -728,9 +755,7 @@
 
                             </a>
 
-
                         @empty
-
 
                             <div class="guru-notification-empty">
 
@@ -748,11 +773,9 @@
 
                             </div>
 
-
                         @endforelse
 
                     </div>
-
 
 
                     <a
@@ -768,16 +791,12 @@
 
                     </a>
 
-
                 </div>
 
             </div>
 
 
-
-            <!-- =================================================
-                 PROFILE
-            ================================================== -->
+            <!-- PROFILE -->
 
             <div class="header-profile">
 
@@ -809,10 +828,7 @@
             </div>
 
 
-
-            <!-- =================================================
-                 LOGOUT
-            ================================================== -->
+            <!-- LOGOUT -->
 
             <form
                 method="POST"
@@ -835,13 +851,11 @@
 
             </form>
 
-
         </div>
 
     </div>
 
 </header>
-
 
 
 <!-- =====================================================
@@ -856,7 +870,6 @@
     ================================================== -->
 
     <section class="dashboard-welcome">
-
 
         <div>
 
@@ -887,7 +900,7 @@
 
             <span>
 
-                {{ now()
+                {{ \Carbon\Carbon::now('Asia/Jakarta')
                     ->locale('id')
                     ->translatedFormat('l, d F Y') }}
 
@@ -895,9 +908,7 @@
 
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -907,9 +918,7 @@
     <section class="teacher-top-grid">
 
 
-        <!-- =================================================
-             KEHADIRAN SEKOLAH
-        ================================================== -->
+        <!-- KEHADIRAN SEKOLAH -->
 
         <article class="attendance-main-card">
 
@@ -917,7 +926,6 @@
 
 
             <div class="attendance-card-header">
-
 
                 <h2>
 
@@ -952,9 +960,7 @@
 
                 </div>
 
-
             </div>
-
 
 
             <div class="attendance-percentage">
@@ -973,11 +979,7 @@
             </div>
 
 
-
             <div class="attendance-breakdown">
-
-
-                <!-- HADIR -->
 
                 <div class="breakdown-item breakdown-hadir">
 
@@ -992,9 +994,6 @@
                 </div>
 
 
-
-                <!-- SAKIT -->
-
                 <div class="breakdown-item breakdown-sakit">
 
                     <span>
@@ -1007,9 +1006,6 @@
 
                 </div>
 
-
-
-                <!-- IZIN -->
 
                 <div class="breakdown-item breakdown-izin">
 
@@ -1024,9 +1020,6 @@
                 </div>
 
 
-
-                <!-- ALFA -->
-
                 <div class="breakdown-item breakdown-alfa">
 
                     <span>
@@ -1039,24 +1032,15 @@
 
                 </div>
 
-
             </div>
-
 
         </article>
 
 
-
-        <!-- =================================================
-             QUICK ACTION
-        ================================================== -->
+        <!-- QUICK ACTION -->
 
         <div class="teacher-actions">
 
-
-            <!-- =================================================
-                 INPUT MANUAL
-            ================================================== -->
 
             <a
                 href="{{ route('guru.attendance.manual') }}"
@@ -1087,11 +1071,6 @@
             </a>
 
 
-
-            <!-- =================================================
-                 BARCODE GLOBAL
-            ================================================== -->
-
             <a
                 href="{{ route('barcode.display') }}"
                 class="teacher-action-card teacher-action-primary"
@@ -1120,12 +1099,9 @@
 
             </a>
 
-
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -1134,9 +1110,7 @@
 
     <section class="dashboard-section">
 
-
         <div class="section-heading">
-
 
             <div>
 
@@ -1145,14 +1119,16 @@
                 </h2>
 
                 <p>
-                    Kelola data siswa berdasarkan cabang olahraga
+                    Klik cabang olahraga untuk melihat siswa yang terdaftar
                 </p>
 
             </div>
 
 
-            <button
-                type="button"
+            <!-- LIHAT SEMUA SISWA -->
+
+            <a
+                href="{{ route('students.sports.index') }}"
                 class="text-link"
             >
 
@@ -1162,11 +1138,9 @@
                     arrow_forward
                 </span>
 
-            </button>
-
+            </a>
 
         </div>
-
 
 
         <div class="sports-grid">
@@ -1176,8 +1150,13 @@
                  ATLETIK
             ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Atletik',
+                    ]
+                ) }}"
                 class="sport-card sport-blue"
             >
 
@@ -1190,19 +1169,23 @@
                 </strong>
 
                 <span>
-                    Data Siswa
+                    Lihat Siswa
                 </span>
 
-            </button>
-
+            </a>
 
 
             <!-- =================================================
-                 BASKET
+                 BOLA BASKET
             ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Bola Basket',
+                    ]
+                ) }}"
                 class="sport-card sport-silver"
             >
 
@@ -1215,19 +1198,23 @@
                 </strong>
 
                 <span>
-                    Data Siswa
+                    Lihat Siswa
                 </span>
 
-            </button>
-
+            </a>
 
 
             <!-- =================================================
                  SEPAK BOLA
             ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Sepak Bola',
+                    ]
+                ) }}"
                 class="sport-card sport-blue"
             >
 
@@ -1240,19 +1227,23 @@
                 </strong>
 
                 <span>
-                    Data Siswa
+                    Lihat Siswa
                 </span>
 
-            </button>
-
+            </a>
 
 
             <!-- =================================================
-                 VOLI
+                 BOLA VOLI
             ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Bola Voli',
+                    ]
+                ) }}"
                 class="sport-card sport-silver"
             >
 
@@ -1265,17 +1256,14 @@
                 </strong>
 
                 <span>
-                    Data Siswa
+                    Lihat Siswa
                 </span>
 
-            </button>
-
+            </a>
 
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -1283,7 +1271,6 @@
     ================================================== -->
 
     <section class="dashboard-section">
-
 
         <div class="section-heading">
 
@@ -1302,13 +1289,10 @@
         </div>
 
 
-
         <div class="management-grid">
 
 
-            <!-- =================================================
-                 KEHADIRAN LATIHAN
-            ================================================== -->
+            <!-- KEHADIRAN LATIHAN -->
 
             <a
                 href="{{ route('training.index') }}"
@@ -1331,7 +1315,7 @@
                     </strong>
 
                     <p>
-                        Catat kehadiran siswa saat latihan
+                        Kelola jadwal, barcode, dan presensi latihan
                     </p>
 
                 </div>
@@ -1344,10 +1328,7 @@
             </a>
 
 
-
-            <!-- =================================================
-                 BERITA
-            ================================================== -->
+            <!-- BERITA -->
 
             <button
                 type="button"
@@ -1383,10 +1364,7 @@
             </button>
 
 
-
-            <!-- =================================================
-                 LAPORAN
-            ================================================== -->
+            <!-- LAPORAN -->
 
             <a
                 href="{{ route('guru.attendance.recap') }}"
@@ -1421,15 +1399,11 @@
 
             </a>
 
-
         </div>
-
 
     </section>
 
-
 </main>
-
 
 
 <!-- =====================================================
@@ -1438,10 +1412,6 @@
 
 <nav class="mobile-bottom-nav">
 
-
-    <!-- =================================================
-         HOME
-    ================================================== -->
 
     <a
         href="{{ route('guru.dashboard') }}"
@@ -1459,28 +1429,18 @@
     </a>
 
 
-
-    <!-- =================================================
-         BERITA
-    ================================================== -->
-
-    <a href="#">
+    <a href="{{ route('students.sports.index') }}">
 
         <span class="material-symbols-outlined">
-            newspaper
+            groups
         </span>
 
         <span>
-            Berita
+            Siswa
         </span>
 
     </a>
 
-
-
-    <!-- =================================================
-         LATIHAN
-    ================================================== -->
 
     <a href="{{ route('training.index') }}">
 
@@ -1495,11 +1455,6 @@
     </a>
 
 
-
-    <!-- =================================================
-         PROFILE
-    ================================================== -->
-
     <a href="#">
 
         <span class="material-symbols-outlined">
@@ -1512,9 +1467,7 @@
 
     </a>
 
-
 </nav>
-
 
 
 <!-- =====================================================
@@ -1640,5 +1593,4 @@
 
 
 </body>
-
 </html>

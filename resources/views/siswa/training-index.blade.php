@@ -11,7 +11,10 @@
 
     <title>Jadwal Latihan KKO - KKO SMANDA</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -44,6 +47,31 @@
             font-family: 'Hanken Grotesk', sans-serif;
         }
 
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal;
+
+            line-height: 1;
+
+            letter-spacing: normal;
+            text-transform: none;
+
+            white-space: nowrap;
+
+            font-feature-settings: 'liga';
+
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAGE
+        |--------------------------------------------------------------------------
+        */
+
         .training-page {
             max-width: 1000px;
 
@@ -51,6 +79,13 @@
 
             padding: 34px 24px 90px;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BACK LINK
+        |--------------------------------------------------------------------------
+        */
 
         .back-link {
             display: inline-flex;
@@ -72,6 +107,45 @@
         .back-link .material-symbols-outlined {
             font-size: 18px;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | INFO MESSAGE
+        |--------------------------------------------------------------------------
+        */
+
+        .training-message {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 9px;
+
+            margin-bottom: 20px;
+            padding: 12px 14px;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .08);
+
+            border: 1px solid rgba(157, 202, 255, .20);
+            border-radius: 10px;
+
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        .training-message .material-symbols-outlined {
+            flex-shrink: 0;
+
+            font-size: 18px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HEADING
+        |--------------------------------------------------------------------------
+        */
 
         .page-heading {
             display: flex;
@@ -113,6 +187,38 @@
             font-size: 11px;
         }
 
+        .sport-badge {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 9px 12px;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .08);
+
+            border: 1px solid rgba(157, 202, 255, .18);
+            border-radius: 8px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .sport-badge .material-symbols-outlined {
+            font-size: 16px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SCHEDULE
+        |--------------------------------------------------------------------------
+        */
+
         .schedule-list {
             display: grid;
 
@@ -139,6 +245,21 @@
         .schedule-card.done-card {
             border-color: rgba(80, 200, 150, .28);
         }
+
+        .schedule-card.absent-card {
+            border-color: rgba(255, 100, 100, .28);
+        }
+
+        .schedule-card.closed-card {
+            border-color: rgba(120, 130, 140, .25);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOP
+        |--------------------------------------------------------------------------
+        */
 
         .schedule-top {
             display: flex;
@@ -170,6 +291,13 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS BADGE
+        |--------------------------------------------------------------------------
+        */
 
         .status-badge {
             flex-shrink: 0;
@@ -225,11 +353,39 @@
             border: 1px solid rgba(80, 200, 150, .22);
         }
 
+        .status-permission {
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .08);
+
+            border: 1px solid rgba(157, 202, 255, .18);
+        }
+
+        .status-sick {
+            color: #c8b8ff;
+            background: rgba(160, 130, 255, .07);
+
+            border: 1px solid rgba(180, 155, 255, .20);
+        }
+
+        .status-absent {
+            color: #ff9b9b;
+            background: rgba(255, 80, 80, .07);
+
+            border: 1px solid rgba(255, 100, 100, .20);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | INFO
+        |--------------------------------------------------------------------------
+        */
+
         .schedule-info {
             display: grid;
 
             grid-template-columns:
-                repeat(3, minmax(0, 1fr));
+                repeat(4, minmax(0, 1fr));
 
             gap: 8px;
 
@@ -266,6 +422,17 @@
             line-height: 1.4;
         }
 
+        .alpha-info strong {
+            color: #ffc1c1;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTES
+        |--------------------------------------------------------------------------
+        */
+
         .session-notes {
             display: flex;
             align-items: flex-start;
@@ -292,6 +459,13 @@
 
             font-size: 16px;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BOTTOM
+        |--------------------------------------------------------------------------
+        */
 
         .card-bottom {
             display: flex;
@@ -333,9 +507,20 @@
             font-weight: 800;
         }
 
+        .scan-button:hover {
+            filter: brightness(1.05);
+        }
+
         .scan-button .material-symbols-outlined {
             font-size: 17px;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ATTENDANCE
+        |--------------------------------------------------------------------------
+        */
 
         .attendance-box {
             display: flex;
@@ -355,6 +540,8 @@
         }
 
         .attendance-box .material-symbols-outlined {
+            flex-shrink: 0;
+
             font-size: 18px;
         }
 
@@ -368,6 +555,34 @@
 
             border-color: rgba(255, 180, 80, .18);
         }
+
+        .attendance-permission {
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .06);
+
+            border-color: rgba(157, 202, 255, .18);
+        }
+
+        .attendance-sick {
+            color: #c8b8ff;
+            background: rgba(160, 130, 255, .06);
+
+            border-color: rgba(180, 155, 255, .18);
+        }
+
+        .attendance-absent {
+            color: #ff9b9b;
+            background: rgba(255, 80, 80, .06);
+
+            border-color: rgba(255, 100, 100, .18);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EMPTY
+        |--------------------------------------------------------------------------
+        */
 
         .empty-state {
             padding: 50px 20px;
@@ -405,7 +620,24 @@
             font-size: 10px;
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSIVE
+        |--------------------------------------------------------------------------
+        */
+
+        @media (max-width: 850px) {
+
+            .schedule-info {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
         @media (max-width: 700px) {
+
             .training-page {
                 padding:
                     24px
@@ -419,6 +651,10 @@
 
             .page-heading h1 {
                 font-size: 27px;
+            }
+
+            .sport-badge {
+                margin-top: 14px;
             }
 
             .schedule-top {
@@ -443,11 +679,14 @@
 
                 box-sizing: border-box;
             }
+
         }
     </style>
 </head>
 
+
 <body>
+
 
 <header class="kko-header">
 
@@ -463,6 +702,7 @@
                 >
 
             </div>
+
 
             <div class="kko-brand-text">
 
@@ -494,6 +734,7 @@
                     ) }}
 
                 </div>
+
 
                 <div class="header-user-info">
 
@@ -540,6 +781,7 @@
 
 <main class="training-page">
 
+
     <a
         href="{{ route('siswa.dashboard') }}"
         class="back-link"
@@ -552,6 +794,23 @@
         Kembali ke Dashboard
 
     </a>
+
+
+    @if(session('training_info'))
+
+        <div class="training-message">
+
+            <span class="material-symbols-outlined">
+                info
+            </span>
+
+            <div>
+                {{ session('training_info') }}
+            </div>
+
+        </div>
+
+    @endif
 
 
     <section class="page-heading">
@@ -568,16 +827,36 @@
 
             <p>
                 Lihat jadwal latihan dan lakukan presensi
-                ketika sesi sedang berlangsung.
+                sesuai waktu yang telah ditentukan.
             </p>
 
         </div>
+
+
+        @if($student->sport)
+
+            <div class="sport-badge">
+
+                <span class="material-symbols-outlined">
+                    exercise
+                </span>
+
+                {{ strtoupper($student->sport) }}
+
+            </div>
+
+        @endif
 
     </section>
 
 
     @php
-        $now = \Carbon\Carbon::now('Asia/Jakarta');
+
+        $now =
+            \Carbon\Carbon::now(
+                'Asia/Jakarta'
+            );
+
     @endphp
 
 
@@ -586,95 +865,408 @@
         @forelse ($sessions as $session)
 
             @php
-                $date = $session->training_date->format('Y-m-d');
 
-                $startTime = \Carbon\Carbon::parse(
-                    $session->start_time,
-                    'Asia/Jakarta'
-                )->format('H:i:s');
+                /*
+                |--------------------------------------------------------------------------
+                | WAKTU SESI
+                |--------------------------------------------------------------------------
+                */
 
-                $endTime = \Carbon\Carbon::parse(
-                    $session->end_time,
-                    'Asia/Jakarta'
-                )->format('H:i:s');
+                $date =
+                    \Carbon\Carbon::parse(
+                        $session->training_date
+                    )->format(
+                        'Y-m-d'
+                    );
 
-                $startsAt = \Carbon\Carbon::createFromFormat(
-                    'Y-m-d H:i:s',
-                    $date . ' ' . $startTime,
-                    'Asia/Jakarta'
-                );
 
-                $endsAt = \Carbon\Carbon::createFromFormat(
-                    'Y-m-d H:i:s',
-                    $date . ' ' . $endTime,
-                    'Asia/Jakarta'
-                );
+                $startTime =
+                    \Carbon\Carbon::parse(
+                        $session->start_time,
+                        'Asia/Jakarta'
+                    )->format(
+                        'H:i:s'
+                    );
 
-                $lateLimit = $startsAt
-                    ->copy()
-                    ->addMinutes(10);
 
-                $attendance = $session
-                    ->attendances
-                    ->first();
+                $endTime =
+                    \Carbon\Carbon::parse(
+                        $session->end_time,
+                        'Asia/Jakarta'
+                    )->format(
+                        'H:i:s'
+                    );
+
+
+                $startsAt =
+                    \Carbon\Carbon::createFromFormat(
+                        'Y-m-d H:i:s',
+                        $date
+                        . ' '
+                        . $startTime,
+                        'Asia/Jakarta'
+                    );
+
+
+                $endsAt =
+                    \Carbon\Carbon::createFromFormat(
+                        'Y-m-d H:i:s',
+                        $date
+                        . ' '
+                        . $endTime,
+                        'Asia/Jakarta'
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | BATAS HADIR = +10 MENIT
+                |--------------------------------------------------------------------------
+                */
+
+                $lateLimit =
+                    $startsAt
+                        ->copy()
+                        ->addMinutes(10);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | BATAS ALFA = +30 MENIT
+                |--------------------------------------------------------------------------
+                */
+
+                $alphaAt =
+                    $startsAt
+                        ->copy()
+                        ->addMinutes(30);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | BATAS AKHIR SCANNER
+                |--------------------------------------------------------------------------
+                |
+                | Backend juga menggunakan batas yang lebih dahulu:
+                |
+                | jam selesai
+                | atau
+                | +30 menit
+                |
+                */
+
+                $closesAt =
+                    $endsAt->lt($alphaAt)
+                        ? $endsAt->copy()
+                        : $alphaAt->copy();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | PRESENSI SISWA
+                |--------------------------------------------------------------------------
+                */
+
+                $attendance =
+                    $session
+                        ->attendances
+                        ->first();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | DEFAULT
+                |--------------------------------------------------------------------------
+                */
 
                 $canScan = false;
+
                 $cardClass = '';
+
                 $statusClass = '';
+
                 $statusText = '';
+
                 $statusDescription = '';
+
+                $attendanceClass = '';
+
+                $attendanceIcon = 'check_circle';
+
+                $attendanceLabel = null;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | SUDAH PUNYA DATA PRESENSI
+                |--------------------------------------------------------------------------
+                */
 
                 if ($attendance) {
 
-                    $cardClass = 'done-card';
-                    $statusClass = 'status-done';
-                    $statusText = 'SUDAH PRESENSI';
+                    $attendanceLabel =
+                        match ($attendance->status) {
 
-                    $statusDescription =
-                        'Presensi untuk sesi ini sudah tercatat.';
+                            'present' =>
+                                'Hadir',
 
-                } elseif ($now->lt($startsAt)) {
+                            'late' =>
+                                'Terlambat',
 
-                    $statusClass = 'status-upcoming';
-                    $statusText = 'BELUM DIMULAI';
+                            'permission' =>
+                                'Izin',
 
-                    $statusDescription =
-                        'Presensi dibuka saat jadwal latihan dimulai.';
+                            'sick' =>
+                                'Sakit',
 
-                } elseif ($now->lte($endsAt)) {
+                            'absent' =>
+                                'Alfa',
 
-                    $cardClass = 'active-card';
-                    $canScan = true;
+                            default =>
+                                ucfirst(
+                                    $attendance->status
+                                ),
+                        };
 
-                    if ($now->lte($lateLimit)) {
 
-                        $statusClass = 'status-active';
-                        $statusText = 'PRESENSI AKTIF';
+                    switch ($attendance->status) {
 
-                        $statusDescription =
-                            'Scan sekarang untuk tercatat Hadir.';
+                        case 'present':
 
-                    } else {
+                            $cardClass =
+                                'done-card';
 
-                        $statusClass = 'status-late';
-                        $statusText = 'PRESENSI TERLAMBAT';
+                            $statusClass =
+                                'status-done';
 
-                        $statusDescription =
-                            'Presensi masih dibuka, tetapi akan tercatat Terlambat.';
+                            $statusText =
+                                'HADIR';
+
+                            $attendanceClass =
+                                '';
+
+                            $attendanceIcon =
+                                'check_circle';
+
+                            break;
+
+
+                        case 'late':
+
+                            $cardClass =
+                                'done-card';
+
+                            $statusClass =
+                                'status-late';
+
+                            $statusText =
+                                'TERLAMBAT';
+
+                            $attendanceClass =
+                                'attendance-late';
+
+                            $attendanceIcon =
+                                'schedule';
+
+                            break;
+
+
+                        case 'permission':
+
+                            $cardClass =
+                                'done-card';
+
+                            $statusClass =
+                                'status-permission';
+
+                            $statusText =
+                                'IZIN';
+
+                            $attendanceClass =
+                                'attendance-permission';
+
+                            $attendanceIcon =
+                                'assignment_turned_in';
+
+                            break;
+
+
+                        case 'sick':
+
+                            $cardClass =
+                                'done-card';
+
+                            $statusClass =
+                                'status-sick';
+
+                            $statusText =
+                                'SAKIT';
+
+                            $attendanceClass =
+                                'attendance-sick';
+
+                            $attendanceIcon =
+                                'medical_information';
+
+                            break;
+
+
+                        case 'absent':
+
+                            $cardClass =
+                                'absent-card';
+
+                            $statusClass =
+                                'status-absent';
+
+                            $statusText =
+                                'ALFA';
+
+                            $attendanceClass =
+                                'attendance-absent';
+
+                            $attendanceIcon =
+                                'cancel';
+
+                            break;
+
+
+                        default:
+
+                            $cardClass =
+                                'done-card';
+
+                            $statusClass =
+                                'status-done';
+
+                            $statusText =
+                                strtoupper(
+                                    $attendanceLabel
+                                );
+
                     }
+
+
+                    $statusDescription =
+                        'Status presensi sesi ini sudah tercatat.';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | BELUM DIMULAI
+                |--------------------------------------------------------------------------
+                */
+
+                } elseif (
+                    $now->lt(
+                        $startsAt
+                    )
+                ) {
+
+                    $statusClass =
+                        'status-upcoming';
+
+                    $statusText =
+                        'BELUM DIMULAI';
+
+                    $statusDescription =
+                        'Presensi akan dibuka saat jadwal latihan dimulai.';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | HADIR
+                |--------------------------------------------------------------------------
+                |
+                | Mulai hingga tepat +10 menit.
+                |
+                */
+
+                } elseif (
+                    $now->lte(
+                        $lateLimit
+                    )
+                    && $now->lte(
+                        $closesAt
+                    )
+                ) {
+
+                    $cardClass =
+                        'active-card';
+
+                    $statusClass =
+                        'status-active';
+
+                    $statusText =
+                        'PRESENSI AKTIF';
+
+                    $statusDescription =
+                        'Scan sekarang untuk tercatat Hadir.';
+
+                    $canScan =
+                        true;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | TERLAMBAT
+                |--------------------------------------------------------------------------
+                |
+                | Setelah +10 menit sampai batas presensi.
+                |
+                */
+
+                } elseif (
+                    $now->lte(
+                        $closesAt
+                    )
+                ) {
+
+                    $cardClass =
+                        'active-card';
+
+                    $statusClass =
+                        'status-late';
+
+                    $statusText =
+                        'PRESENSI TERLAMBAT';
+
+                    $statusDescription =
+                        'Presensi masih dibuka, tetapi scan akan tercatat Terlambat.';
+
+                    $canScan =
+                        true;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | PRESENSI DITUTUP
+                |--------------------------------------------------------------------------
+                */
 
                 } else {
 
-                    $statusClass = 'status-ended';
-                    $statusText = 'SELESAI';
+                    $cardClass =
+                        'closed-card';
+
+                    $statusClass =
+                        'status-ended';
+
+                    $statusText =
+                        'PRESENSI DITUTUP';
 
                     $statusDescription =
-                        'Waktu presensi untuk sesi ini sudah ditutup.';
+                        'Batas presensi telah berakhir. Jika tidak memiliki keterangan, sistem akan mencatat Alfa otomatis.';
+
+                    $canScan =
+                        false;
                 }
+
             @endphp
 
 
             <article class="schedule-card {{ $cardClass }}">
+
 
                 <div class="schedule-top">
 
@@ -684,13 +1276,16 @@
                             {{ $session->sport }}
                         </h2>
 
+
                         <span class="schedule-date">
 
-                            {{ $session
-                                ->training_date
-                                ->copy()
+                            {{ \Carbon\Carbon::parse(
+                                $session->training_date
+                            )
                                 ->locale('id')
-                                ->translatedFormat('l, d F Y') }}
+                                ->translatedFormat(
+                                    'l, d F Y'
+                                ) }}
 
                         </span>
 
@@ -705,6 +1300,9 @@
 
 
                 <div class="schedule-info">
+
+
+                    <!-- JAM LATIHAN -->
 
                     <div class="info-item">
 
@@ -722,6 +1320,8 @@
                     </div>
 
 
+                    <!-- BATAS HADIR -->
+
                     <div class="info-item">
 
                         <span>
@@ -736,6 +1336,24 @@
                     </div>
 
 
+                    <!-- BATAS ALFA -->
+
+                    <div class="info-item alpha-info">
+
+                        <span>
+                            BATAS ALFA
+                        </span>
+
+                        <strong>
+                            {{ $alphaAt->format('H:i') }}
+                            WIB
+                        </strong>
+
+                    </div>
+
+
+                    <!-- LOKASI -->
+
                     <div class="info-item">
 
                         <span>
@@ -743,7 +1361,7 @@
                         </span>
 
                         <strong>
-                            {{ $session->location ?? '-' }}
+                            {{ $session->location ?: '-' }}
                         </strong>
 
                     </div>
@@ -770,32 +1388,36 @@
 
                 @if ($attendance)
 
-                    <div
-                        class="attendance-box
-                        {{ $attendance->status === 'late'
-                            ? 'attendance-late'
-                            : '' }}"
-                    >
+                    <div class="attendance-box {{ $attendanceClass }}">
 
                         <span class="material-symbols-outlined">
-                            check_circle
+                            {{ $attendanceIcon }}
                         </span>
+
 
                         <div>
 
                             Status:
+
                             <strong>
-                                {{ $attendance->status_label }}
+                                {{ $attendanceLabel }}
                             </strong>
+
 
                             @if ($attendance->checked_in_at)
 
                                 · Scan
+
                                 {{ $attendance
                                     ->checked_in_at
                                     ->timezone('Asia/Jakarta')
                                     ->format('H:i:s') }}
+
                                 WIB
+
+                            @elseif($attendance->status === 'absent')
+
+                                · Tidak melakukan presensi sampai batas waktu.
 
                             @endif
 
@@ -818,7 +1440,8 @@
                                 href="{{ route(
                                     'siswa.training.scan',
                                     [
-                                        'session' => $session->id,
+                                        'session' =>
+                                            $session->id,
                                     ]
                                 ) }}"
                                 class="scan-button"
@@ -853,7 +1476,18 @@
                 </strong>
 
                 <p>
-                    Jadwal latihan KKO akan muncul di halaman ini.
+
+                    @if(!$student->sport)
+
+                        Cabang olahraga kamu belum ditentukan.
+
+                    @else
+
+                        Belum ada jadwal latihan untuk cabang
+                        {{ $student->sport }}.
+
+                    @endif
+
                 </p>
 
             </div>
@@ -863,6 +1497,7 @@
     </section>
 
 </main>
+
 
 </body>
 

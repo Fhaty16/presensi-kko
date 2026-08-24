@@ -396,6 +396,15 @@
             font-size: 12px;
         }
 
+        .barcode-rule.alpha-rule {
+            color: #ffaaa5;
+            border-color: rgba(255, 120, 120, .20);
+        }
+
+        .barcode-rule.alpha-rule .material-symbols-outlined {
+            color: #ffaaa5;
+        }
+
         .barcode-button {
             flex-shrink: 0;
 
@@ -420,6 +429,15 @@
 
         .barcode-button .material-symbols-outlined {
             font-size: 17px;
+        }
+
+        .barcode-button-disabled {
+            cursor: not-allowed;
+
+            color: #77848f;
+            background: #1d2832;
+
+            border: 1px solid #34485d;
         }
 
         .attendance-heading {
@@ -796,42 +814,146 @@
 
     /*
     |--------------------------------------------------------------------------
-    | JAM LATIHAN
+    | WAKTU SESI
     |--------------------------------------------------------------------------
     */
 
-    $startTime =
+    $date =
+        \Carbon\Carbon::parse(
+            $trainingSession->training_date
+        )->format('Y-m-d');
+
+
+    $startsAt =
         $trainingSession->start_time
-            ? \Carbon\Carbon::parse(
-                $trainingSession->start_time
-            )->format('H:i')
+            ? \Carbon\Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date . ' ' . $trainingSession->start_time,
+                'Asia/Jakarta'
+            )
             : null;
 
 
-    $endTime =
+    $endsAt =
         $trainingSession->end_time
-            ? \Carbon\Carbon::parse(
-                $trainingSession->end_time
-            )->format('H:i')
+            ? \Carbon\Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date . ' ' . $trainingSession->end_time,
+                'Asia/Jakarta'
+            )
             : null;
 
 
     /*
     |--------------------------------------------------------------------------
-    | BATAS HADIR
+    | BATAS HADIR = +10 MENIT
     |--------------------------------------------------------------------------
     */
 
-    $lateLimit =
-        $trainingSession->start_time
-            ? \Carbon\Carbon::parse(
-                $trainingSession->start_time
-            )
+    $lateLimitAt =
+        $startsAt
+            ? $startsAt
+                ->copy()
                 ->addMinutes(10)
-                ->format('H:i')
             : null;
 
-@endphp
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATAS ALFA = +30 MENIT
+    |--------------------------------------------------------------------------
+    */
+
+    $alphaAt =
+        $startsAt
+            ? $startsAt
+                ->copy()
+                ->addMinutes(30)
+            : null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATAS PRESENSI
+    |--------------------------------------------------------------------------
+    |
+    | Presensi ditutup pada waktu yang lebih dahulu antara:
+    |
+    | 1. Jam selesai latihan
+    | 2. 30 menit setelah latihan dimulai
+    |
+    */
+
+    if (
+        $endsAt
+        && $alphaAt
+    ) {
+
+        $closesAt =
+            $endsAt->lt($alphaAt)
+                ? $endsAt->copy()
+                : $alphaAt->copy();
+
+    } else {
+
+        $closesAt = null;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMAT TAMPILAN
+    |--------------------------------------------------------------------------
+    */
+
+    $startTime =
+        $startsAt
+            ? $startsAt->format('H:i')
+            : null;
+
+
+    $endTime =
+        $endsAt
+            ? $endsAt->format('H:i')
+            : null;
+
+
+    $lateLimit =
+        $lateLimitAt
+            ? $lateLimitAt->format('H:i')
+            : null;
+
+
+    $alphaLimit =
+        $alphaAt
+            ? $alphaAt->format('H:i')
+            : null;
+
+
+    $closeTime =
+        $closesAt
+            ? $closesAt->format('H:i')
+            : null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS PRESENSI SAAT INI
+    |--------------------------------------------------------------------------
+    */
+
+    $now =
+        \Carbon\Carbon::now(
+            'Asia/Jakarta'
+        );
+
+
+    $attendanceClosed =
+        $closesAt
+            ? $now->gt($closesAt)
+            : false;
+
+@endphp>
 
 
 <header class="kko-header">
@@ -1008,6 +1130,7 @@
 
             </div>
 
+
             <div>
 
                 <small>
@@ -1167,7 +1290,8 @@
                 </strong>
 
                 <p>
-                    Tampilkan QR khusus sesi ini agar siswa dapat melakukan presensi menggunakan akun masing-masing.
+                    Tampilkan QR khusus sesi ini agar siswa dapat melakukan
+                    presensi menggunakan akun masing-masing.
                 </p>
 
 
@@ -1188,7 +1312,7 @@
                     @endif
 
 
-                    @if($lateLimit && $endTime)
+                    @if($lateLimit && $closeTime)
 
                         <span class="barcode-rule">
 
@@ -1203,7 +1327,7 @@
                     @endif
 
 
-                    @if($endTime)
+                    @if($closeTime)
 
                         <span class="barcode-rule">
 
@@ -1211,7 +1335,22 @@
                                 event_busy
                             </span>
 
-                            Ditutup {{ $endTime }} WIB
+                            Ditutup {{ $closeTime }} WIB
+
+                        </span>
+
+                    @endif
+
+
+                    @if($alphaLimit)
+
+                        <span class="barcode-rule alpha-rule">
+
+                            <span class="material-symbols-outlined">
+                                person_off
+                            </span>
+
+                            Alfa setelah {{ $alphaLimit }} WIB
 
                         </span>
 
@@ -1224,21 +1363,40 @@
         </div>
 
 
-        <a
-            href="{{ route(
-                'training.barcode.display',
-                $trainingSession
-            ) }}"
-            class="barcode-button"
-        >
+        @if(!$attendanceClosed)
 
-            <span class="material-symbols-outlined">
-                qr_code_2
+            <a
+                href="{{ route(
+                    'training.barcode.display',
+                    $trainingSession
+                ) }}"
+                class="barcode-button"
+            >
+
+                <span class="material-symbols-outlined">
+                    qr_code_2
+                </span>
+
+                Buka Barcode Latihan
+
+            </a>
+
+        @else
+
+            <span
+                class="barcode-button barcode-button-disabled"
+                title="Presensi sudah ditutup"
+            >
+
+                <span class="material-symbols-outlined">
+                    lock
+                </span>
+
+                Presensi Ditutup
+
             </span>
 
-            Buka Barcode Latihan
-
-        </a>
+        @endif
 
     </section>
 
@@ -1516,7 +1674,9 @@
                 </strong>
 
                 <p>
-                    Buka Barcode Latihan di atas. Setelah siswa melakukan scan, nama, status, kelas, dan waktu presensinya akan muncul otomatis di halaman ini.
+                    Buka Barcode Latihan di atas. Setelah siswa melakukan
+                    scan, nama, status, kelas, dan waktu presensinya akan
+                    muncul otomatis di halaman ini.
                 </p>
 
             </div>
