@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\LeaveRequest;
+use App\Models\TrainingAttendance;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -20,44 +21,85 @@ class LeaveRequestController extends Controller
 
     public function index(): View
     {
-        $pendingRequests = LeaveRequest::with([
-                'student.user',
-                'student.class',
-            ])
-            ->where('status', 'pending')
-            ->latest()
-            ->get();
+        /*
+        |--------------------------------------------------------------------------
+        | PENGAJUAN MENUNGGU
+        |--------------------------------------------------------------------------
+        */
+
+        $pendingRequests =
+            LeaveRequest::query()
+                ->with([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ])
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->latest()
+                ->get();
 
 
-        $recentRequests = LeaveRequest::with([
-                'student.user',
-                'student.class',
-            ])
-            ->whereIn('status', [
-                'approved',
-                'rejected',
-            ])
-            ->latest('reviewed_at')
-            ->take(10)
-            ->get();
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $recentRequests =
+            LeaveRequest::query()
+                ->with([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ])
+                ->whereIn(
+                    'status',
+                    [
+                        'approved',
+                        'rejected',
+                    ]
+                )
+                ->latest(
+                    'reviewed_at'
+                )
+                ->take(10)
+                ->get();
 
 
-        $pendingCount = LeaveRequest::where(
-            'status',
-            'pending'
-        )->count();
+        /*
+        |--------------------------------------------------------------------------
+        | STATISTIK
+        |--------------------------------------------------------------------------
+        */
+
+        $pendingCount =
+            LeaveRequest::query()
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->count();
 
 
-        $approvedCount = LeaveRequest::where(
-            'status',
-            'approved'
-        )->count();
+        $approvedCount =
+            LeaveRequest::query()
+                ->where(
+                    'status',
+                    'approved'
+                )
+                ->count();
 
 
-        $rejectedCount = LeaveRequest::where(
-            'status',
-            'rejected'
-        )->count();
+        $rejectedCount =
+            LeaveRequest::query()
+                ->where(
+                    'status',
+                    'rejected'
+                )
+                ->count();
 
 
         return view(
@@ -67,7 +109,7 @@ class LeaveRequestController extends Controller
                 'recentRequests',
                 'pendingCount',
                 'approvedCount',
-                'rejectedCount',
+                'rejectedCount'
             )
         );
     }
@@ -83,112 +125,287 @@ class LeaveRequestController extends Controller
         LeaveRequest $leaveRequest
     ): RedirectResponse {
 
-        if ($leaveRequest->status !== 'pending') {
+        /*
+        |--------------------------------------------------------------------------
+        | CEK STATUS
+        |--------------------------------------------------------------------------
+        */
 
-            return back()->with(
-                'error',
-                'Pengajuan ini sudah pernah diproses.'
-            );
+        if (
+            $leaveRequest->status
+            !== 'pending'
+        ) {
+
+            return back()
+                ->with(
+                    'error',
+                    'Pengajuan ini sudah pernah diproses.'
+                );
         }
 
 
-        DB::transaction(function () use ($leaveRequest) {
+        /*
+        |--------------------------------------------------------------------------
+        | LOAD RELATIONSHIP
+        |--------------------------------------------------------------------------
+        */
 
-            /*
-            |--------------------------------------------------------------------------
-            | UBAH STATUS PENGAJUAN
-            |--------------------------------------------------------------------------
-            */
-
-            $leaveRequest->update([
-
-                'status' => 'approved',
-
-                'reviewed_at' => now(),
-
-            ]);
+        $leaveRequest->loadMissing([
+            'student',
+            'trainingSession',
+        ]);
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | STATUS PRESENSI
-            |--------------------------------------------------------------------------
-            |
-            | permission -> Izin
-            | sick       -> Sakit
-            |
-            */
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI PENGAJUAN LATIHAN
+        |--------------------------------------------------------------------------
+        */
 
-            $attendanceStatus =
-                $leaveRequest->type === 'sick'
-                    ? 'sick'
-                    : 'permission';
+        if (
+            $leaveRequest->attendance_scope
+                === 'training'
+            &&
+            !$leaveRequest->trainingSession
+        ) {
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | RENTANG TANGGAL
-            |--------------------------------------------------------------------------
-            */
-
-            $startDate =
-                Carbon::parse(
-                    $leaveRequest->start_date
-                )->startOfDay();
+            return back()
+                ->with(
+                    'error',
+                    'Sesi latihan pada pengajuan ini tidak ditemukan.'
+                );
+        }
 
 
-            $endDate =
-                Carbon::parse(
-                    $leaveRequest->end_date
-                )->startOfDay();
-
-
-            $currentDate =
-                $startDate->copy();
-
-
-            while (
-                $currentDate->lte($endDate)
+        DB::transaction(
+            function () use (
+                $leaveRequest
             ) {
 
                 /*
                 |--------------------------------------------------------------------------
-                | HANYA SENIN - JUMAT
+                | STATUS PRESENSI
+                |--------------------------------------------------------------------------
+                |
+                | permission = Izin
+                | sick       = Sakit
+                |
+                */
+
+                $attendanceStatus =
+                    $leaveRequest->type
+                        === 'sick'
+                            ? 'sick'
+                            : 'permission';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | PRESENSI LATIHAN KKO
                 |--------------------------------------------------------------------------
                 */
 
-                if ($currentDate->isWeekday()) {
+                if (
+                    $leaveRequest
+                        ->attendance_scope
+                    === 'training'
+                ) {
 
-                    $existingAttendance =
-                        Attendance::where(
+                    $this
+                        ->approveTrainingRequest(
+                            $leaveRequest,
+                            $attendanceStatus
+                        );
+
+                } else {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PRESENSI SEKOLAH
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $this
+                        ->approveSchoolRequest(
+                            $leaveRequest,
+                            $attendanceStatus
+                        );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | UBAH STATUS PENGAJUAN
+                |--------------------------------------------------------------------------
+                |
+                | Dilakukan setelah proses presensi berhasil.
+                | Jika terjadi error, transaction akan rollback semuanya.
+                |
+                */
+
+                $leaveRequest->update([
+
+                    'status' =>
+                        'approved',
+
+                    'reviewed_at' =>
+                        now(),
+
+                ]);
+            }
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MESSAGE
+        |--------------------------------------------------------------------------
+        */
+
+        $destination =
+            $leaveRequest->attendance_scope
+                === 'training'
+                    ? 'latihan KKO'
+                    : 'presensi sekolah';
+
+
+        return back()
+            ->with(
+                'success',
+                'Pengajuan '
+                . $destination
+                . ' berhasil disetujui.'
+            );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SETUJUI PENGAJUAN SEKOLAH
+    |--------------------------------------------------------------------------
+    */
+
+    private function approveSchoolRequest(
+        LeaveRequest $leaveRequest,
+        string $attendanceStatus
+    ): void {
+
+        /*
+        |--------------------------------------------------------------------------
+        | RENTANG TANGGAL
+        |--------------------------------------------------------------------------
+        */
+
+        $startDate =
+            Carbon::parse(
+                $leaveRequest->start_date
+            )
+                ->startOfDay();
+
+
+        $endDate =
+            Carbon::parse(
+                $leaveRequest->end_date
+            )
+                ->startOfDay();
+
+
+        $currentDate =
+            $startDate->copy();
+
+
+        while (
+            $currentDate->lte(
+                $endDate
+            )
+        ) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | HANYA SENIN - JUMAT
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $currentDate->isWeekday()
+            ) {
+
+                $existingAttendance =
+                    Attendance::query()
+                        ->where(
                             'student_id',
                             $leaveRequest->student_id
                         )
                         ->whereDate(
                             'attendance_date',
-                            $currentDate->toDateString()
+                            $currentDate
+                                ->toDateString()
                         )
                         ->first();
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BELUM ADA PRESENSI
-                    |--------------------------------------------------------------------------
-                    */
+                /*
+                |--------------------------------------------------------------------------
+                | BELUM ADA PRESENSI
+                |--------------------------------------------------------------------------
+                */
 
-                    if (!$existingAttendance) {
+                if (
+                    !$existingAttendance
+                ) {
 
-                        Attendance::create([
+                    Attendance::create([
 
-                            'student_id' =>
-                                $leaveRequest->student_id,
+                        'student_id' =>
+                            $leaveRequest
+                                ->student_id,
+
+                        'barcode_id' =>
+                            null,
+
+                        'attendance_date' =>
+                            $currentDate
+                                ->toDateString(),
+
+                        'check_in_time' =>
+                            null,
+
+                        'status' =>
+                            $attendanceStatus,
+
+                        'notes' =>
+                            $this
+                                ->buildSchoolAttendanceNote(
+                                    $leaveRequest
+                                ),
+
+                        'wa_sent' =>
+                            false,
+
+                    ]);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | SUDAH ALFA
+                |--------------------------------------------------------------------------
+                |
+                | Jika sistem Alfa otomatis sudah membuat absent,
+                | pengajuan yang disetujui mengoreksinya menjadi
+                | Izin / Sakit.
+                |
+                */
+
+                } elseif (
+                    $existingAttendance->status
+                    === 'absent'
+                ) {
+
+                    $existingAttendance
+                        ->update([
 
                             'barcode_id' =>
                                 null,
-
-                            'attendance_date' =>
-                                $currentDate->toDateString(),
 
                             'check_in_time' =>
                                 null,
@@ -197,78 +414,169 @@ class LeaveRequestController extends Controller
                                 $attendanceStatus,
 
                             'notes' =>
-                                $this->buildAttendanceNote(
-                                    $leaveRequest
-                                ),
-
-                            'wa_sent' =>
-                                false,
+                                $this
+                                    ->buildSchoolAttendanceNote(
+                                        $leaveRequest
+                                    ),
 
                         ]);
-
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SUDAH ALFA
-                    |--------------------------------------------------------------------------
-                    |
-                    | Jika Auto Alfa sudah membuat status absent,
-                    | maka setelah izin disetujui status Alfa
-                    | diubah menjadi Izin / Sakit.
-                    |
-                    */
-
-                    elseif (
-                        $existingAttendance->status
-                        === 'absent'
-                    ) {
-
-                        $existingAttendance->update([
-
-                            'barcode_id' =>
-                                null,
-
-                            'check_in_time' =>
-                                null,
-
-                            'status' =>
-                                $attendanceStatus,
-
-                            'notes' =>
-                                $this->buildAttendanceNote(
-                                    $leaveRequest
-                                ),
-
-                        ]);
-
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | HADIR / TERLAMBAT TIDAK DITIMPA
-                    |--------------------------------------------------------------------------
-                    |
-                    | Jika siswa sudah scan kehadiran,
-                    | data hadir tetap dipertahankan.
-                    |
-                    */
-
                 }
 
 
-                $currentDate->addDay();
+                /*
+                |--------------------------------------------------------------------------
+                | STATUS LAIN TIDAK DITIMPA
+                |--------------------------------------------------------------------------
+                |
+                | present
+                | late
+                | permission
+                | sick
+                |
+                | tetap dipertahankan.
+                |
+                */
             }
 
-        });
+
+            $currentDate->addDay();
+        }
+    }
 
 
-        return back()->with(
-            'success',
-            'Pengajuan berhasil disetujui.'
-        );
+    /*
+    |--------------------------------------------------------------------------
+    | SETUJUI PENGAJUAN LATIHAN KKO
+    |--------------------------------------------------------------------------
+    */
+
+    private function approveTrainingRequest(
+        LeaveRequest $leaveRequest,
+        string $attendanceStatus
+    ): void {
+
+        $trainingSession =
+            $leaveRequest
+                ->trainingSession;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CARI PRESENSI LATIHAN SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        $existingAttendance =
+            TrainingAttendance::query()
+                ->where(
+                    'training_session_id',
+                    $trainingSession->id
+                )
+                ->where(
+                    'student_id',
+                    $leaveRequest->student_id
+                )
+                ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BELUM ADA PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$existingAttendance
+        ) {
+
+            TrainingAttendance::create([
+
+                'training_session_id' =>
+                    $trainingSession->id,
+
+                'student_id' =>
+                    $leaveRequest
+                        ->student_id,
+
+                'status' =>
+                    $attendanceStatus,
+
+                'checked_in_at' =>
+                    null,
+
+                'notes' =>
+                    $this
+                        ->buildTrainingAttendanceNote(
+                            $leaveRequest
+                        ),
+
+            ]);
+
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUDAH ALFA
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | siswa tidak scan
+        | ↓
+        | +30 menit
+        | ↓
+        | sistem membuat Alfa
+        | ↓
+        | Guru baru menyetujui surat izin
+        | ↓
+        | Alfa berubah menjadi Izin / Sakit
+        |
+        */
+
+        if (
+            $existingAttendance->status
+            === 'absent'
+        ) {
+
+            $existingAttendance
+                ->update([
+
+                    'status' =>
+                        $attendanceStatus,
+
+                    'checked_in_at' =>
+                        null,
+
+                    'notes' =>
+                        $this
+                            ->buildTrainingAttendanceNote(
+                                $leaveRequest
+                            ),
+
+                ]);
+
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS YANG SUDAH ADA TIDAK DITIMPA
+        |--------------------------------------------------------------------------
+        |
+        | present
+        | late
+        | permission
+        | sick
+        |
+        | Misalnya siswa ternyata sudah melakukan scan,
+        | data kehadiran tersebut tetap dipertahankan.
+        |
+        */
     }
 
 
@@ -282,50 +590,107 @@ class LeaveRequestController extends Controller
         LeaveRequest $leaveRequest
     ): RedirectResponse {
 
-        if ($leaveRequest->status !== 'pending') {
+        /*
+        |--------------------------------------------------------------------------
+        | CEK STATUS
+        |--------------------------------------------------------------------------
+        */
 
-            return back()->with(
-                'error',
-                'Pengajuan ini sudah pernah diproses.'
-            );
+        if (
+            $leaveRequest->status
+            !== 'pending'
+        ) {
+
+            return back()
+                ->with(
+                    'error',
+                    'Pengajuan ini sudah pernah diproses.'
+                );
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | TOLAK
+        |--------------------------------------------------------------------------
+        |
+        | Tidak membuat Attendance maupun TrainingAttendance.
+        |
+        */
+
         $leaveRequest->update([
 
-            'status' => 'rejected',
+            'status' =>
+                'rejected',
 
-            'reviewed_at' => now(),
+            'reviewed_at' =>
+                now(),
 
         ]);
 
 
-        return back()->with(
-            'success',
-            'Pengajuan berhasil ditolak.'
-        );
+        $destination =
+            $leaveRequest->attendance_scope
+                === 'training'
+                    ? 'latihan KKO'
+                    : 'presensi sekolah';
+
+
+        return back()
+            ->with(
+                'success',
+                'Pengajuan '
+                . $destination
+                . ' berhasil ditolak.'
+            );
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | CATATAN PRESENSI
+    | CATATAN PRESENSI SEKOLAH
     |--------------------------------------------------------------------------
     */
 
-    private function buildAttendanceNote(
+    private function buildSchoolAttendanceNote(
         LeaveRequest $leaveRequest
     ): string {
 
         $type =
-            $leaveRequest->type === 'sick'
-                ? 'Sakit'
-                : 'Izin';
+            $leaveRequest->type
+                === 'sick'
+                    ? 'Sakit'
+                    : 'Izin';
 
 
         return
             $type
             . ' berdasarkan pengajuan siswa yang telah disetujui. '
+            . 'Alasan: '
+            . $leaveRequest->reason;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CATATAN PRESENSI LATIHAN
+    |--------------------------------------------------------------------------
+    */
+
+    private function buildTrainingAttendanceNote(
+        LeaveRequest $leaveRequest
+    ): string {
+
+        $type =
+            $leaveRequest->type
+                === 'sick'
+                    ? 'Sakit'
+                    : 'Izin';
+
+
+        return
+            $type
+            . ' latihan berdasarkan pengajuan siswa yang telah disetujui. '
             . 'Alasan: '
             . $leaveRequest->reason;
     }

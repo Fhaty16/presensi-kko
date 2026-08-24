@@ -7,15 +7,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LeaveRequest extends Model
 {
+    /*
+    |--------------------------------------------------------------------------
+    | FILLABLE
+    |--------------------------------------------------------------------------
+    */
+
     protected $fillable = [
         'student_id',
+
+        'attendance_scope',
+        'training_session_id',
+
         'type',
         'start_date',
         'end_date',
         'reason',
         'attachment',
+
         'status',
+
+        'reviewed_by',
         'reviewed_at',
+
+        'approved_by',
+        'approved_at',
     ];
 
 
@@ -30,14 +46,16 @@ class LeaveRequest extends Model
         return [
             'start_date' => 'date',
             'end_date' => 'date',
+
             'reviewed_at' => 'datetime',
+            'approved_at' => 'datetime',
         ];
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | RELATIONSHIP SISWA
+    | RELATIONSHIP STUDENT
     |--------------------------------------------------------------------------
     */
 
@@ -49,22 +67,30 @@ class LeaveRequest extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | LABEL JENIS PENGAJUAN
+    | RELATIONSHIP TRAINING SESSION
     |--------------------------------------------------------------------------
-    |
-    | permission = Izin
-    | sick       = Sakit
-    |
+    */
+
+    public function trainingSession(): BelongsTo
+    {
+        return $this->belongsTo(
+            TrainingSession::class,
+            'training_session_id'
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TYPE LABEL
+    |--------------------------------------------------------------------------
     */
 
     public function getTypeLabelAttribute(): string
     {
         return match ($this->type) {
-
             'permission' => 'Izin',
-
             'sick' => 'Sakit',
-
             default => '-',
         };
     }
@@ -72,25 +98,16 @@ class LeaveRequest extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | LABEL STATUS
+    | STATUS LABEL
     |--------------------------------------------------------------------------
-    |
-    | pending  = Menunggu
-    | approved = Disetujui
-    | rejected = Ditolak
-    |
     */
 
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-
             'pending' => 'Menunggu',
-
             'approved' => 'Disetujui',
-
             'rejected' => 'Ditolak',
-
             default => '-',
         };
     }
@@ -98,21 +115,34 @@ class LeaveRequest extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | CSS CLASS STATUS
+    | ATTENDANCE SCOPE LABEL
     |--------------------------------------------------------------------------
     */
 
-    public function getStatusClassAttribute(): string
+    public function getAttendanceScopeLabelAttribute(): string
     {
-        return match ($this->status) {
-
-            'pending' => 'status-pending',
-
-            'approved' => 'status-approved',
-
-            'rejected' => 'status-rejected',
-
-            default => '',
+        return match ($this->attendance_scope) {
+            'training' => 'Latihan KKO',
+            'school' => 'Presensi Sekolah',
+            default => 'Presensi Sekolah',
         };
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HELPER
+    |--------------------------------------------------------------------------
+    */
+
+    public function isTrainingRequest(): bool
+    {
+        return $this->attendance_scope === 'training';
+    }
+
+
+    public function isSchoolRequest(): bool
+    {
+        return $this->attendance_scope !== 'training';
     }
 }

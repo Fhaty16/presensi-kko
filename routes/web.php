@@ -350,7 +350,7 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | IZIN / SAKIT
+        | IZIN / SAKIT SEKOLAH
         |--------------------------------------------------------------------------
         */
 
@@ -444,7 +444,9 @@ Route::middleware('auth')
         | BUAT SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Route ini HARUS berada sebelum /latihan/{trainingSession}
+        | Route ini harus berada sebelum:
+        |
+        | /latihan/{trainingSession}
         |
         */
 
@@ -478,15 +480,6 @@ Route::middleware('auth')
         |--------------------------------------------------------------------------
         | EDIT SESI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Menampilkan halaman edit:
-        |
-        | tanggal
-        | jam mulai
-        | jam selesai
-        | lokasi
-        | catatan
-        |
         */
 
         Route::get(
@@ -565,6 +558,54 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
+        | UPDATE STATUS IZIN / SAKIT LATIHAN
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan Guru / Pelatih untuk mengubah status siswa
+        | pada sesi tertentu menjadi:
+        |
+        | - permission = Izin
+        | - sick       = Sakit
+        |
+        | Contoh URL:
+        |
+        | /latihan/15/siswa/4/status
+        |
+        */
+
+        Route::put(
+            '/latihan/{trainingSession}/siswa/{student}/status',
+            [
+                TrainingController::class,
+                'updateStudentStatus',
+            ]
+        )
+        ->name('training.student.status');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HAPUS STATUS IZIN / SAKIT LATIHAN
+        |--------------------------------------------------------------------------
+        |
+        | Jika status Izin / Sakit dihapus setelah batas Alfa,
+        | controller akan mengecek ulang dan siswa dapat langsung
+        | menjadi Alfa.
+        |
+        */
+
+        Route::delete(
+            '/latihan/{trainingSession}/siswa/{student}/status',
+            [
+                TrainingController::class,
+                'clearStudentStatus',
+            ]
+        )
+        ->name('training.student.status.clear');
+
+
+        /*
+        |--------------------------------------------------------------------------
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
         |
@@ -575,6 +616,7 @@ Route::middleware('auth')
         | /latihan/{trainingSession}/edit
         | /latihan/{trainingSession}/barcode
         | /latihan/{trainingSession}/barcode/current
+        | /latihan/{trainingSession}/siswa/{student}/status
         |
         */
 

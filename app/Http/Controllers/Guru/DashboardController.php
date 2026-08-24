@@ -4,43 +4,230 @@ namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\AttendanceSetting;
+use App\Models\LeaveRequest;
 use App\Models\Student;
+use Carbon\Carbon;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD GURU
+    |--------------------------------------------------------------------------
+    */
+
+    public function index(): View
     {
-        $today = now()->toDateString();
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL HARI INI
+        |--------------------------------------------------------------------------
+        */
 
-        $totalSiswa = Student::where('status', 'active')->count();
+        $today =
+            Carbon::now(
+                'Asia/Jakarta'
+            )->toDateString();
 
-        $hadir = Attendance::whereDate('attendance_date', $today)
-            ->whereIn('status', ['present', 'late'])
-            ->count();
 
-        $sakit = Attendance::whereDate('attendance_date', $today)
-            ->where('status', 'sick')
-            ->count();
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL SISWA AKTIF
+        |--------------------------------------------------------------------------
+        */
 
-        $izin = Attendance::whereDate('attendance_date', $today)
-            ->where('status', 'permission')
-            ->count();
+        $totalSiswa =
+            Student::query()
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->count();
 
-        $alfa = Attendance::whereDate('attendance_date', $today)
-            ->where('status', 'absent')
-            ->count();
 
-        $persentaseHadir = $totalSiswa > 0
-            ? round(($hadir / $totalSiswa) * 100)
-            : 0;
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI HARI INI
+        |--------------------------------------------------------------------------
+        */
 
-        return view('guru.dashboard', compact(
-            'totalSiswa',
-            'hadir',
-            'sakit',
-            'izin',
-            'alfa',
-            'persentaseHadir'
-        ));
+        $todayAttendances =
+            Attendance::query()
+                ->whereDate(
+                    'attendance_date',
+                    $today
+                )
+                ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HADIR + TERLAMBAT
+        |--------------------------------------------------------------------------
+        */
+
+        $hadir =
+            $todayAttendances
+                ->whereIn(
+                    'status',
+                    [
+                        'present',
+                        'late',
+                    ]
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SAKIT
+        |--------------------------------------------------------------------------
+        */
+
+        $sakit =
+            $todayAttendances
+                ->where(
+                    'status',
+                    'sick'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | IZIN
+        |--------------------------------------------------------------------------
+        */
+
+        $izin =
+            $todayAttendances
+                ->where(
+                    'status',
+                    'permission'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        $alfa =
+            $todayAttendances
+                ->where(
+                    'status',
+                    'absent'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERSENTASE HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        $persentaseHadir =
+            $totalSiswa > 0
+                ? round(
+                    (
+                        $hadir
+                        / $totalSiswa
+                    ) * 100
+                )
+                : 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM BATAS PRESENSI SEKOLAH
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceSetting =
+            AttendanceSetting::query()
+                ->first();
+
+
+        $cutoffDisplay =
+            substr(
+                (string) (
+                    $attendanceSetting?->cutoff_time
+                    ?? '07:01:00'
+                ),
+                0,
+                5
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JUMLAH PENGAJUAN YANG MASIH MENUNGGU
+        |--------------------------------------------------------------------------
+        |
+        | Semua pengajuan:
+        |
+        | - Presensi Sekolah
+        | - Latihan KKO
+        |
+        | dihitung selama statusnya masih pending.
+        |
+        */
+
+        $pendingLeaveCount =
+            LeaveRequest::query()
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFIKASI TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $pendingLeaveNotifications =
+            LeaveRequest::query()
+                ->with([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ])
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->latest()
+                ->limit(6)
+                ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
+
+        return view(
+            'guru.dashboard',
+            compact(
+                'totalSiswa',
+                'hadir',
+                'sakit',
+                'izin',
+                'alfa',
+                'persentaseHadir',
+                'cutoffDisplay',
+                'pendingLeaveCount',
+                'pendingLeaveNotifications'
+            )
+        );
     }
 }

@@ -17,10 +17,6 @@ class TrainingController extends Controller
     |--------------------------------------------------------------------------
     | CATATAN ALFA OTOMATIS
     |--------------------------------------------------------------------------
-    |
-    | Digunakan juga untuk membedakan Alfa otomatis
-    | dengan Alfa yang mungkin dimasukkan secara manual.
-    |
     */
 
     private const AUTO_ABSENT_NOTE =
@@ -83,6 +79,7 @@ class TrainingController extends Controller
             return null;
         }
 
+
         $date =
             Carbon::parse(
                 $trainingSession->training_date
@@ -113,12 +110,6 @@ class TrainingController extends Controller
     private function markAutomaticAbsencesIfDue(
         TrainingSession $trainingSession
     ): int {
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI DATA SESI
-        |--------------------------------------------------------------------------
-        */
-
         if (
             !$trainingSession->sport
             || !$trainingSession->training_date
@@ -127,12 +118,6 @@ class TrainingController extends Controller
             return 0;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | HITUNG BATAS ALFA
-        |--------------------------------------------------------------------------
-        */
 
         $startsAt =
             $this->getSessionStartsAt(
@@ -159,12 +144,8 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | BELUM LEWAT 30 MENIT
+        | BELUM LEWAT BATAS ALFA
         |--------------------------------------------------------------------------
-        |
-        | Tepat di +30 menit masih belum Alfa.
-        | Alfa dimulai setelah +30 menit.
-        |
         */
 
         if (
@@ -178,7 +159,7 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL SISWA AKTIF SESUAI CABOR
+        | SISWA AKTIF SESUAI CABOR
         |--------------------------------------------------------------------------
         */
 
@@ -198,12 +179,6 @@ class TrainingController extends Controller
         $createdCount = 0;
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | PROSES SETIAP SISWA
-        |--------------------------------------------------------------------------
-        */
-
         foreach (
             $students
             as $student
@@ -211,18 +186,18 @@ class TrainingController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | JANGAN TIMPA STATUS YANG SUDAH ADA
+            | FIRST OR CREATE
             |--------------------------------------------------------------------------
             |
-            | Jika siswa sudah:
+            | Jika siswa sudah memiliki:
             |
-            | - Hadir
-            | - Terlambat
-            | - Izin
-            | - Sakit
-            | - Alfa
+            | Hadir
+            | Terlambat
+            | Izin
+            | Sakit
+            | Alfa
             |
-            | maka tidak dibuat record baru.
+            | record tersebut tidak akan ditimpa.
             |
             */
 
@@ -264,12 +239,6 @@ class TrainingController extends Controller
     |--------------------------------------------------------------------------
     | HAPUS HANYA ALFA OTOMATIS
     |--------------------------------------------------------------------------
-    |
-    | Digunakan saat jadwal diubah.
-    |
-    | Hadir, Terlambat, Izin, Sakit, dan Alfa manual
-    | tidak akan dihapus.
-    |
     */
 
     private function deleteAutomaticAbsences(
@@ -291,7 +260,7 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | DAFTAR SESI LATIHAN
+    | DAFTAR SESI
     |--------------------------------------------------------------------------
     */
 
@@ -350,7 +319,7 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | SIMPAN SESI LATIHAN
+    | SIMPAN SESI
     |--------------------------------------------------------------------------
     */
 
@@ -359,12 +328,6 @@ class TrainingController extends Controller
     ): RedirectResponse {
         $this->authorizeRole();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI
-        |--------------------------------------------------------------------------
-        */
 
         $validated =
             $request->validate([
@@ -404,12 +367,6 @@ class TrainingController extends Controller
             ]);
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | BUAT SESI
-        |--------------------------------------------------------------------------
-        */
-
         $trainingSession =
             TrainingSession::create([
                 'training_date' =>
@@ -439,12 +396,8 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | CEK ALFA LANGSUNG
+        | JIKA JADWAL SUDAH LEWAT +30 MENIT
         |--------------------------------------------------------------------------
-        |
-        | Kalau jadwal yang dibuat ternyata sudah lewat
-        | 30 menit dari waktu mulai, Alfa langsung dibuat.
-        |
         */
 
         $automaticAbsentCount =
@@ -452,12 +405,6 @@ class TrainingController extends Controller
                 $trainingSession
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | PESAN BERHASIL
-        |--------------------------------------------------------------------------
-        */
 
         $message =
             'Sesi latihan berhasil dibuat.';
@@ -487,7 +434,7 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | DETAIL SESI LATIHAN
+    | DETAIL SESI
     |--------------------------------------------------------------------------
     */
 
@@ -497,19 +444,13 @@ class TrainingController extends Controller
         $this->authorizeRole();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | ALIAS VIEW
-        |--------------------------------------------------------------------------
-        */
-
         $session =
             $trainingSession;
 
 
         /*
         |--------------------------------------------------------------------------
-        | LOAD DATA
+        | LOAD PRESENSI
         |--------------------------------------------------------------------------
         */
 
@@ -539,7 +480,55 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | STATISTIK PRESENSI
+        | SEMUA SISWA SESUAI CABOR SESI
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan untuk menu Kelola Izin / Sakit.
+        |
+        */
+
+        $sportStudents =
+            Student::query()
+                ->with([
+                    'user',
+                    'class',
+                ])
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->where(
+                    'sport',
+                    $trainingSession->sport
+                )
+                ->get()
+                ->sortBy(
+                    fn ($student) =>
+                        mb_strtolower(
+                            $student->user?->name
+                            ?? ''
+                        )
+                )
+                ->values();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI BERDASARKAN STUDENT ID
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceByStudent =
+            $session
+                ->attendances
+                ->keyBy(
+                    'student_id'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATISTIK
         |--------------------------------------------------------------------------
         */
 
@@ -595,7 +584,7 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | DATANG = HADIR + TERLAMBAT
+        | DATANG
         |--------------------------------------------------------------------------
         */
 
@@ -606,7 +595,7 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | TOTAL RECORD
+        | TOTAL
         |--------------------------------------------------------------------------
         */
 
@@ -616,18 +605,14 @@ class TrainingController extends Controller
                 ->count();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | VIEW
-        |--------------------------------------------------------------------------
-        */
-
         return view(
             'training.show',
             compact(
                 'session',
                 'trainingSession',
-                'attendanceStats'
+                'attendanceStats',
+                'sportStudents',
+                'attendanceByStudent'
             )
         );
     }
@@ -635,7 +620,7 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | FORM EDIT SESI
+    | FORM EDIT
     |--------------------------------------------------------------------------
     */
 
@@ -661,7 +646,7 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | UPDATE SESI LATIHAN
+    | UPDATE SESI
     |--------------------------------------------------------------------------
     */
 
@@ -671,12 +656,6 @@ class TrainingController extends Controller
     ): RedirectResponse {
         $this->authorizeRole();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI
-        |--------------------------------------------------------------------------
-        */
 
         $validated =
             $request->validate([
@@ -712,7 +691,7 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | DATA JADWAL LAMA
+        | DATA LAMA
         |--------------------------------------------------------------------------
         */
 
@@ -742,7 +721,7 @@ class TrainingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | CEK APAKAH WAKTU JADWAL BERUBAH
+        | APAKAH JADWAL BERUBAH?
         |--------------------------------------------------------------------------
         */
 
@@ -755,12 +734,6 @@ class TrainingController extends Controller
                 !== $validated['end_time'];
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | UPDATE DALAM TRANSACTION
-        |--------------------------------------------------------------------------
-        */
-
         DB::transaction(
             function () use (
                 $trainingSession,
@@ -770,16 +743,8 @@ class TrainingController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | JIKA JADWAL BERUBAH, HAPUS ALFA OTOMATIS LAMA
+                | RESET ALFA OTOMATIS LAMA
                 |--------------------------------------------------------------------------
-                |
-                | Contoh:
-                |
-                | Awalnya 22:00 → sudah Alfa
-                | kemudian diubah menjadi 23:00
-                |
-                | Alfa otomatis lama harus dihapus.
-                |
                 */
 
                 if (
@@ -820,7 +785,7 @@ class TrainingController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | MATIKAN BARCODE LAMA
+                | MATIKAN QR LAMA
                 |--------------------------------------------------------------------------
                 */
 
@@ -838,12 +803,6 @@ class TrainingController extends Controller
         );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | REFRESH DATA
-        |--------------------------------------------------------------------------
-        */
-
         $trainingSession->refresh();
 
 
@@ -851,10 +810,6 @@ class TrainingController extends Controller
         |--------------------------------------------------------------------------
         | HITUNG ULANG ALFA
         |--------------------------------------------------------------------------
-        |
-        | Jika jadwal baru ternyata sudah lewat +30 menit,
-        | Alfa langsung dibuat kembali.
-        |
         */
 
         $automaticAbsentCount =
@@ -862,12 +817,6 @@ class TrainingController extends Controller
                 $trainingSession
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | PESAN
-        |--------------------------------------------------------------------------
-        */
 
         $message =
             'Jadwal latihan berhasil diperbarui.';
@@ -897,7 +846,258 @@ class TrainingController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | HAPUS SESI LATIHAN
+    | UPDATE STATUS IZIN / SAKIT
+    |--------------------------------------------------------------------------
+    */
+
+    public function updateStudentStatus(
+        Request $request,
+        TrainingSession $trainingSession,
+        Student $student
+    ): RedirectResponse {
+        $this->authorizeRole();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI SISWA SESUAI CABOR
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $student->status === 'active'
+            && $student->sport
+                === $trainingSession->sport,
+            422,
+            'Siswa tidak terdaftar pada cabang olahraga sesi ini.'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI INPUT
+        |--------------------------------------------------------------------------
+        */
+
+        $validated =
+            $request->validate([
+                'status' => [
+                    'required',
+                    'in:permission,sick',
+                ],
+
+                'notes' => [
+                    'nullable',
+                    'string',
+                    'max:500',
+                ],
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LABEL STATUS
+        |--------------------------------------------------------------------------
+        */
+
+        $statusLabel =
+            $validated['status']
+                === 'permission'
+                    ? 'Izin'
+                    : 'Sakit';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CATATAN DEFAULT
+        |--------------------------------------------------------------------------
+        */
+
+        $defaultNote =
+            $validated['status']
+                === 'permission'
+                    ? 'Izin mengikuti latihan.'
+                    : 'Sakit dan tidak dapat mengikuti latihan.';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN / KOREKSI STATUS
+        |--------------------------------------------------------------------------
+        |
+        | Bisa digunakan untuk:
+        |
+        | Alfa       → Izin
+        | Alfa       → Sakit
+        | Izin       → Sakit
+        | Sakit      → Izin
+        | Hadir      → Izin/Sakit
+        | Terlambat  → Izin/Sakit
+        |
+        */
+
+        TrainingAttendance::updateOrCreate(
+            [
+                'training_session_id' =>
+                    $trainingSession->id,
+
+                'student_id' =>
+                    $student->id,
+            ],
+            [
+                'status' =>
+                    $validated['status'],
+
+                'checked_in_at' =>
+                    null,
+
+                'notes' =>
+                    filled(
+                        $validated['notes']
+                        ?? null
+                    )
+                        ? $validated['notes']
+                        : $defaultNote,
+            ]
+        );
+
+
+        $student->loadMissing(
+            'user'
+        );
+
+
+        return redirect()
+            ->route(
+                'training.show',
+                $trainingSession
+            )
+            ->with(
+                'success',
+                ($student->user?->name
+                    ?? 'Siswa')
+                . ' berhasil diubah menjadi '
+                . $statusLabel
+                . '.'
+            );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS STATUS IZIN / SAKIT
+    |--------------------------------------------------------------------------
+    */
+
+    public function clearStudentStatus(
+        TrainingSession $trainingSession,
+        Student $student
+    ): RedirectResponse {
+        $this->authorizeRole();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $student->status === 'active'
+            && $student->sport
+                === $trainingSession->sport,
+            422,
+            'Siswa tidak terdaftar pada cabang olahraga sesi ini.'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CARI PRESENSI SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        $attendance =
+            TrainingAttendance::query()
+                ->where(
+                    'training_session_id',
+                    $trainingSession->id
+                )
+                ->where(
+                    'student_id',
+                    $student->id
+                )
+                ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HANYA IZIN / SAKIT BOLEH DIHAPUS
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$attendance
+            || !in_array(
+                $attendance->status,
+                [
+                    'permission',
+                    'sick',
+                ],
+                true
+            )
+        ) {
+            return redirect()
+                ->route(
+                    'training.show',
+                    $trainingSession
+                )
+                ->with(
+                    'success',
+                    'Tidak ada status Izin atau Sakit yang perlu dihapus.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HAPUS STATUS
+        |--------------------------------------------------------------------------
+        */
+
+        $attendance->delete();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CEK ALFA LAGI
+        |--------------------------------------------------------------------------
+        |
+        | Jika status dihapus setelah +30 menit,
+        | siswa akan langsung menjadi Alfa.
+        |
+        */
+
+        $this->markAutomaticAbsencesIfDue(
+            $trainingSession
+        );
+
+
+        return redirect()
+            ->route(
+                'training.show',
+                $trainingSession
+            )
+            ->with(
+                'success',
+                'Status Izin/Sakit berhasil dihapus.'
+            );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS SESI
     |--------------------------------------------------------------------------
     */
 

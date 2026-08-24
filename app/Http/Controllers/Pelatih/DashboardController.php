@@ -4,60 +4,330 @@ namespace App\Http\Controllers\Pelatih;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\AttendanceSetting;
+use App\Models\LeaveRequest;
 use App\Models\Student;
+use Carbon\Carbon;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD PELATIH
+    |--------------------------------------------------------------------------
+    */
+
+    public function index(): View
     {
-        $today = now()->toDateString();
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL HARI INI
+        |--------------------------------------------------------------------------
+        */
 
-        // Total siswa aktif
-        $totalSiswa = Student::where('status', 'active')->count();
+        $today =
+            Carbon::now(
+                'Asia/Jakarta'
+            )->toDateString();
 
-        // Jumlah siswa yang sudah memiliki data presensi hari ini
-        $sudahPresensi = Attendance::whereDate('attendance_date', $today)
-            ->distinct()
-            ->count('student_id');
 
-        // Hadir + terlambat tetap dianggap hadir
-        $hadirHariIni = Attendance::whereDate('attendance_date', $today)
-            ->whereIn('status', ['present', 'late'])
-            ->distinct()
-            ->count('student_id');
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL SISWA AKTIF
+        |--------------------------------------------------------------------------
+        */
 
-        // Izin + sakit
-        $izinSakitHariIni = Attendance::whereDate('attendance_date', $today)
-            ->whereIn('status', ['permission', 'sick'])
-            ->distinct()
-            ->count('student_id');
+        $totalSiswa =
+            Student::query()
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->count();
 
-        // Siswa aktif yang belum memiliki data presensi
-        $belumPresensi = max($totalSiswa - $sudahPresensi, 0);
 
-        // Presensi terbaru hari ini
-        $presensiTerbaru = Attendance::with([
-                'student.user',
-                'student.class'
-            ])
-            ->whereDate('attendance_date', $today)
-            ->orderByDesc('check_in_time')
-            ->limit(6)
-            ->get();
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI SEKOLAH HARI INI
+        |--------------------------------------------------------------------------
+        */
 
-        // Rekap jumlah siswa per kelas
-        $rekapKelas = Student::with('class')
-            ->where('status', 'active')
-            ->get()
-            ->groupBy('class_id');
+        $todayAttendances =
+            Attendance::query()
+                ->whereDate(
+                    'attendance_date',
+                    $today
+                )
+                ->get();
 
-        return view('pelatih.dashboard', compact(
-            'totalSiswa',
-            'hadirHariIni',
-            'izinSakitHariIni',
-            'belumPresensi',
-            'presensiTerbaru',
-            'rekapKelas'
-        ));
+
+        /*
+        |--------------------------------------------------------------------------
+        | HADIR
+        |--------------------------------------------------------------------------
+        |
+        | Hadir + Terlambat dianggap hadir.
+        |
+        */
+
+        $hadir =
+            $todayAttendances
+                ->whereIn(
+                    'status',
+                    [
+                        'present',
+                        'late',
+                    ]
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SAKIT
+        |--------------------------------------------------------------------------
+        */
+
+        $sakit =
+            $todayAttendances
+                ->where(
+                    'status',
+                    'sick'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | IZIN
+        |--------------------------------------------------------------------------
+        */
+
+        $izin =
+            $todayAttendances
+                ->where(
+                    'status',
+                    'permission'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        $alfa =
+            $todayAttendances
+                ->where(
+                    'status',
+                    'absent'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUDAH PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        $sudahPresensi =
+            $todayAttendances
+                ->pluck(
+                    'student_id'
+                )
+                ->unique()
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BELUM PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        $belumPresensi =
+            max(
+                $totalSiswa
+                - $sudahPresensi,
+                0
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | IZIN + SAKIT
+        |--------------------------------------------------------------------------
+        */
+
+        $izinSakitHariIni =
+            $izin
+            + $sakit;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERSENTASE HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        $persentaseHadir =
+            $totalSiswa > 0
+                ? round(
+                    (
+                        $hadir
+                        / $totalSiswa
+                    ) * 100
+                )
+                : 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM BATAS PRESENSI SEKOLAH
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceSetting =
+            AttendanceSetting::query()
+                ->first();
+
+
+        $cutoffDisplay =
+            substr(
+                (string) (
+                    $attendanceSetting?->cutoff_time
+                    ?? '07:01:00'
+                ),
+                0,
+                5
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $presensiTerbaru =
+            Attendance::query()
+                ->with([
+                    'student.user',
+                    'student.class',
+                ])
+                ->whereDate(
+                    'attendance_date',
+                    $today
+                )
+                ->orderByDesc(
+                    'check_in_time'
+                )
+                ->limit(6)
+                ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | REKAP KELAS
+        |--------------------------------------------------------------------------
+        */
+
+        $rekapKelas =
+            Student::query()
+                ->with(
+                    'class'
+                )
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->get()
+                ->groupBy(
+                    'class_id'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFIKASI PENGAJUAN LATIHAN KKO
+        |--------------------------------------------------------------------------
+        |
+        | Hanya:
+        |
+        | - attendance_scope = training
+        | - status = pending
+        |
+        | Pengajuan sekolah TIDAK ditampilkan kepada Pelatih.
+        |
+        */
+
+        $pendingTrainingRequests =
+            LeaveRequest::query()
+                ->with([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ])
+                ->where(
+                    'attendance_scope',
+                    'training'
+                )
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->latest()
+                ->limit(6)
+                ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JUMLAH NOTIFIKASI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        $pendingTrainingCount =
+            LeaveRequest::query()
+                ->where(
+                    'attendance_scope',
+                    'training'
+                )
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
+
+        return view(
+            'pelatih.dashboard',
+            compact(
+                'totalSiswa',
+                'hadir',
+                'sakit',
+                'izin',
+                'alfa',
+                'sudahPresensi',
+                'belumPresensi',
+                'izinSakitHariIni',
+                'persentaseHadir',
+                'cutoffDisplay',
+                'presensiTerbaru',
+                'rekapKelas',
+                'pendingTrainingRequests',
+                'pendingTrainingCount'
+            )
+        );
     }
 }

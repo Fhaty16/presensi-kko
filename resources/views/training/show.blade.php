@@ -42,8 +42,10 @@
     <style>
         body {
             margin: 0;
+
             background: #101415;
             color: #ffffff;
+
             font-family: 'Hanken Grotesk', sans-serif;
         }
 
@@ -51,31 +53,51 @@
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
             font-style: normal;
+
             line-height: 1;
+
             letter-spacing: normal;
             text-transform: none;
+
             white-space: nowrap;
             word-wrap: normal;
+
             direction: ltr;
+
             font-feature-settings: 'liga';
+
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
 
+
+        /* =====================================================
+           CONTAINER
+        ===================================================== */
+
         .training-show-container {
             width: min(1120px, calc(100% - 40px));
+
             margin: 0 auto;
+
             padding: 34px 0 100px;
         }
+
+
+        /* =====================================================
+           BACK
+        ===================================================== */
 
         .training-back {
             display: inline-flex;
             align-items: center;
+
             gap: 7px;
 
             margin-bottom: 24px;
 
             color: #9dcaff;
+
             text-decoration: none;
 
             font-family: 'JetBrains Mono', monospace;
@@ -87,9 +109,15 @@
             font-size: 17px;
         }
 
+
+        /* =====================================================
+           MESSAGE
+        ===================================================== */
+
         .success-message {
             display: flex;
             align-items: center;
+
             gap: 8px;
 
             margin-bottom: 18px;
@@ -108,10 +136,35 @@
             font-size: 18px;
         }
 
+        .error-message {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+
+            color: #ffaaa5;
+            background: rgba(255, 100, 100, .06);
+
+            border: 1px solid rgba(255, 120, 120, .18);
+            border-radius: 10px;
+
+            font-size: 9px;
+            line-height: 1.6;
+        }
+
+        .error-message ul {
+            margin: 0;
+            padding-left: 17px;
+        }
+
+
+        /* =====================================================
+           HEADING
+        ===================================================== */
+
         .training-heading {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
+
             gap: 20px;
 
             margin-bottom: 22px;
@@ -127,6 +180,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
             font-weight: 800;
+
             letter-spacing: 1.4px;
         }
 
@@ -140,13 +194,16 @@
 
         .training-heading p {
             margin: 7px 0 0;
+
             color: #7e8a94;
+
             font-size: 10px;
         }
 
         .training-status-badge {
             display: inline-flex;
             align-items: center;
+
             gap: 7px;
 
             padding: 9px 12px;
@@ -166,6 +223,11 @@
             font-size: 17px;
         }
 
+
+        /* =====================================================
+           SESSION
+        ===================================================== */
+
         .session-card {
             margin-bottom: 17px;
             padding: 20px;
@@ -179,6 +241,7 @@
         .session-card-header {
             display: flex;
             align-items: center;
+
             gap: 11px;
 
             margin-bottom: 17px;
@@ -247,6 +310,7 @@
         .session-info-label {
             display: flex;
             align-items: center;
+
             gap: 5px;
 
             margin-bottom: 7px;
@@ -260,11 +324,13 @@
 
         .session-info-label .material-symbols-outlined {
             color: #9dcaff;
+
             font-size: 14px;
         }
 
         .session-info strong {
             color: #dce2e7;
+
             font-size: 10px;
             line-height: 1.5;
         }
@@ -295,10 +361,16 @@
             font-weight: 800;
         }
 
+
+        /* =====================================================
+           BARCODE
+        ===================================================== */
+
         .barcode-panel {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 20px;
 
             margin-bottom: 27px;
@@ -317,6 +389,7 @@
         .barcode-panel-left {
             display: flex;
             align-items: flex-start;
+
             gap: 13px;
         }
 
@@ -355,7 +428,9 @@
 
         .barcode-panel-content strong {
             display: block;
+
             color: #edf0f2;
+
             font-size: 13px;
         }
 
@@ -371,12 +446,14 @@
         .barcode-rules {
             display: flex;
             flex-wrap: wrap;
+
             gap: 7px;
         }
 
         .barcode-rule {
             display: inline-flex;
             align-items: center;
+
             gap: 4px;
 
             padding: 5px 7px;
@@ -393,11 +470,13 @@
 
         .barcode-rule .material-symbols-outlined {
             color: #9dcaff;
+
             font-size: 12px;
         }
 
         .barcode-rule.alpha-rule {
             color: #ffaaa5;
+
             border-color: rgba(255, 120, 120, .20);
         }
 
@@ -411,9 +490,11 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+
             gap: 7px;
 
             min-height: 40px;
+
             padding: 0 14px;
 
             color: #101415;
@@ -440,10 +521,16 @@
             border: 1px solid #34485d;
         }
 
+
+        /* =====================================================
+           REKAP
+        ===================================================== */
+
         .attendance-heading {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
+
             gap: 15px;
 
             margin-bottom: 14px;
@@ -536,6 +623,11 @@
             border-color: rgba(157, 202, 255, .23);
         }
 
+
+        /* =====================================================
+           ATTENDANCE LIST
+        ===================================================== */
+
         .attendance-list {
             overflow: hidden;
 
@@ -580,6 +672,7 @@
                 minmax(180px, 1fr);
 
             align-items: center;
+
             gap: 12px;
 
             padding: 13px 14px;
@@ -613,6 +706,7 @@
 
         .class-text {
             color: #9da7af;
+
             font-size: 9px;
         }
 
@@ -653,6 +747,11 @@
             background: rgba(255, 120, 120, .09);
         }
 
+        .status-none {
+            color: #89959f;
+            background: rgba(120, 130, 140, .08);
+        }
+
         .scan-time strong {
             display: block;
 
@@ -678,6 +777,11 @@
             font-size: 8px;
             line-height: 1.5;
         }
+
+
+        /* =====================================================
+           EMPTY
+        ===================================================== */
 
         .attendance-empty {
             padding: 50px 20px;
@@ -731,7 +835,212 @@
             line-height: 1.6;
         }
 
+
+        /* =====================================================
+           KELOLA IZIN / SAKIT
+        ===================================================== */
+
+        .manual-status-section {
+            margin-top: 30px;
+        }
+
+        .manual-status-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 14px;
+        }
+
+        .manual-status-heading h2 {
+            margin: 0;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 21px;
+        }
+
+        .manual-status-heading p {
+            margin: 5px 0 0;
+
+            color: #77848f;
+
+            font-size: 9px;
+        }
+
+        .manual-status-count {
+            color: #8697a4;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+        }
+
+        .manual-status-list {
+            overflow: hidden;
+
+            background: #1b2531;
+
+            border: 1px solid #34485d;
+            border-radius: 13px;
+        }
+
+        .manual-status-row {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 13px 14px;
+
+            border-bottom: 1px solid #2d3944;
+        }
+
+        .manual-status-row:last-child {
+            border-bottom: 0;
+        }
+
+        .manual-student {
+            width: 230px;
+
+            flex-shrink: 0;
+        }
+
+        .manual-student strong {
+            display: block;
+
+            color: #e0e3e5;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .manual-student span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #747f89;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+        }
+
+        .manual-current-status {
+            width: 100px;
+
+            flex-shrink: 0;
+        }
+
+        .manual-status-form {
+            flex: 1;
+
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .manual-status-form select,
+        .manual-status-form input {
+            height: 37px;
+
+            box-sizing: border-box;
+
+            color: #dce2e7;
+            background: #151b20;
+
+            border: 1px solid #34485d;
+            border-radius: 8px;
+
+            outline: none;
+
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-size: 9px;
+        }
+
+        .manual-status-form select {
+            width: 125px;
+
+            padding: 0 10px;
+        }
+
+        .manual-status-form input {
+            flex: 1;
+
+            min-width: 150px;
+
+            padding: 0 11px;
+        }
+
+        .manual-status-form select:focus,
+        .manual-status-form input:focus {
+            border-color: rgba(157, 202, 255, .55);
+        }
+
+        .manual-save-button {
+            min-height: 37px;
+
+            padding: 0 14px;
+
+            color: #101415;
+            background: #9dcaff;
+
+            border: 0;
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .manual-save-button:hover {
+            filter: brightness(1.05);
+        }
+
+        .manual-clear-form {
+            flex-shrink: 0;
+        }
+
+        .manual-clear-button {
+            min-height: 37px;
+
+            padding: 0 12px;
+
+            color: #ffaaa5;
+            background: rgba(255, 100, 100, .06);
+
+            border: 1px solid rgba(255, 120, 120, .18);
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .manual-clear-button:hover {
+            background: rgba(255, 100, 100, .10);
+        }
+
+        .manual-empty {
+            padding: 35px 20px;
+
+            color: #77848f;
+
+            text-align: center;
+
+            font-size: 10px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
         @media (max-width: 1000px) {
+
             .session-info-grid {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
@@ -752,9 +1061,36 @@
             }
         }
 
+        @media (max-width: 850px) {
+
+            .manual-status-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .manual-student,
+            .manual-current-status {
+                width: auto;
+            }
+
+            .manual-status-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .manual-status-form select,
+            .manual-status-form input,
+            .manual-save-button,
+            .manual-clear-button {
+                width: 100%;
+            }
+        }
+
         @media (max-width: 700px) {
+
             .training-show-container {
                 width: calc(100% - 28px);
+
                 padding: 24px 0 100px;
             }
 
@@ -782,10 +1118,12 @@
 
             .barcode-button {
                 width: 100%;
+
                 box-sizing: border-box;
             }
 
-            .attendance-heading {
+            .attendance-heading,
+            .manual-status-heading {
                 align-items: flex-start;
                 flex-direction: column;
             }
@@ -846,7 +1184,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | BATAS HADIR = +10 MENIT
+    | BATAS HADIR +10 MENIT
     |--------------------------------------------------------------------------
     */
 
@@ -860,7 +1198,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | BATAS ALFA = +30 MENIT
+    | BATAS ALFA +30 MENIT
     |--------------------------------------------------------------------------
     */
 
@@ -876,12 +1214,6 @@
     |--------------------------------------------------------------------------
     | BATAS PRESENSI
     |--------------------------------------------------------------------------
-    |
-    | Presensi ditutup pada waktu yang lebih dahulu antara:
-    |
-    | 1. Jam selesai latihan
-    | 2. 30 menit setelah latihan dimulai
-    |
     */
 
     if (
@@ -902,7 +1234,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | FORMAT TAMPILAN
+    | FORMAT
     |--------------------------------------------------------------------------
     */
 
@@ -938,7 +1270,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | STATUS PRESENSI SAAT INI
+    | STATUS PRESENSI
     |--------------------------------------------------------------------------
     */
 
@@ -953,7 +1285,7 @@
             ? $now->gt($closesAt)
             : false;
 
-@endphp>
+@endphp
 
 
 <header class="kko-header">
@@ -1057,6 +1389,7 @@
 
 <main class="training-show-container">
 
+
     <a
         href="{{ route('training.index') }}"
         class="training-back"
@@ -1080,6 +1413,27 @@
             </span>
 
             {{ session('success') }}
+
+        </div>
+
+    @endif
+
+
+    @if($errors->any())
+
+        <div class="error-message">
+
+            <ul>
+
+                @foreach($errors->all() as $error)
+
+                    <li>
+                        {{ $error }}
+                    </li>
+
+                @endforeach
+
+            </ul>
 
         </div>
 
@@ -1191,11 +1545,13 @@
 
                         {{ $startTime }}
                         -
-                        {{ $endTime }} WIB
+                        {{ $endTime }}
+                        WIB
 
                     @elseif($startTime)
 
-                        {{ $startTime }} WIB
+                        {{ $startTime }}
+                        WIB
 
                     @else
 
@@ -1221,8 +1577,10 @@
                 </div>
 
                 <strong>
+
                     {{ $trainingSession->location
                         ?? 'Belum ditentukan' }}
+
                 </strong>
 
             </div>
@@ -1241,7 +1599,10 @@
                 </div>
 
                 <strong>
-                    {{ $trainingSession->creator?->name ?? '-' }}
+
+                    {{ $trainingSession->creator?->name
+                        ?? '-' }}
+
                 </strong>
 
             </div>
@@ -1401,6 +1762,10 @@
     </section>
 
 
+    <!-- =====================================================
+         REKAP KEHADIRAN
+    ===================================================== -->
+
     <section>
 
         <div class="attendance-heading">
@@ -1546,28 +1911,52 @@
 
                     @php
 
-                        $statusLabel = match(
-                            $attendance->status
-                        ) {
-                            'present' => 'Hadir',
-                            'late' => 'Terlambat',
-                            'permission' => 'Izin',
-                            'sick' => 'Sakit',
-                            'absent' => 'Alfa',
-                            default => '-',
-                        };
+                        $statusLabel =
+                            match(
+                                $attendance->status
+                            ) {
+                                'present' =>
+                                    'Hadir',
+
+                                'late' =>
+                                    'Terlambat',
+
+                                'permission' =>
+                                    'Izin',
+
+                                'sick' =>
+                                    'Sakit',
+
+                                'absent' =>
+                                    'Alfa',
+
+                                default =>
+                                    '-',
+                            };
 
 
-                        $statusClass = match(
-                            $attendance->status
-                        ) {
-                            'present' => 'status-present',
-                            'late' => 'status-late',
-                            'permission' => 'status-permission',
-                            'sick' => 'status-sick',
-                            'absent' => 'status-absent',
-                            default => '',
-                        };
+                        $statusClass =
+                            match(
+                                $attendance->status
+                            ) {
+                                'present' =>
+                                    'status-present',
+
+                                'late' =>
+                                    'status-late',
+
+                                'permission' =>
+                                    'status-permission',
+
+                                'sick' =>
+                                    'status-sick',
+
+                                'absent' =>
+                                    'status-absent',
+
+                                default =>
+                                    '',
+                            };
 
                     @endphp
 
@@ -1684,6 +2073,279 @@
         @endif
 
     </section>
+
+
+    <!-- =====================================================
+         KELOLA IZIN / SAKIT
+    ===================================================== -->
+
+    <section class="manual-status-section">
+
+        <div class="manual-status-heading">
+
+            <div>
+
+                <h2>
+                    Kelola Izin / Sakit
+                </h2>
+
+                <p>
+                    Koreksi status siswa yang tidak dapat mengikuti latihan.
+                    Status Alfa dapat diubah menjadi Izin atau Sakit.
+                </p>
+
+            </div>
+
+
+            <div class="manual-status-count">
+
+                {{ $sportStudents->count() }}
+                siswa {{ $trainingSession->sport }}
+
+            </div>
+
+        </div>
+
+
+        <div class="manual-status-list">
+
+            @forelse($sportStudents as $student)
+
+                @php
+
+                    $studentAttendance =
+                        $attendanceByStudent
+                            ->get(
+                                $student->id
+                            );
+
+
+                    $currentLabel =
+                        match(
+                            $studentAttendance?->status
+                        ) {
+                            'present' =>
+                                'Hadir',
+
+                            'late' =>
+                                'Terlambat',
+
+                            'permission' =>
+                                'Izin',
+
+                            'sick' =>
+                                'Sakit',
+
+                            'absent' =>
+                                'Alfa',
+
+                            default =>
+                                'Belum',
+                        };
+
+
+                    $currentClass =
+                        match(
+                            $studentAttendance?->status
+                        ) {
+                            'present' =>
+                                'status-present',
+
+                            'late' =>
+                                'status-late',
+
+                            'permission' =>
+                                'status-permission',
+
+                            'sick' =>
+                                'status-sick',
+
+                            'absent' =>
+                                'status-absent',
+
+                            default =>
+                                'status-none',
+                        };
+
+                @endphp
+
+
+                <div class="manual-status-row">
+
+                    <div class="manual-student">
+
+                        <strong>
+
+                            {{ $student->user?->name
+                                ?? 'Siswa KKO' }}
+
+                        </strong>
+
+                        <span>
+
+                            NIS {{ $student->nis }}
+
+                            ·
+
+                            {{ $student->class?->name
+                                ?? '-' }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="manual-current-status">
+
+                        <span
+                            class="status-badge {{ $currentClass }}"
+                        >
+                            {{ $currentLabel }}
+                        </span>
+
+                    </div>
+
+
+                    <form
+                        method="POST"
+                        action="{{ route(
+                            'training.student.status',
+                            [
+                                'trainingSession' =>
+                                    $trainingSession->id,
+
+                                'student' =>
+                                    $student->id,
+                            ]
+                        ) }}"
+                        class="manual-status-form"
+                    >
+
+                        @csrf
+                        @method('PUT')
+
+
+                        <select
+                            name="status"
+                            required
+                        >
+
+                            <option value="">
+                                Pilih Status
+                            </option>
+
+                            <option
+                                value="permission"
+                                @selected(
+                                    $studentAttendance?->status
+                                    === 'permission'
+                                )
+                            >
+                                Izin
+                            </option>
+
+                            <option
+                                value="sick"
+                                @selected(
+                                    $studentAttendance?->status
+                                    === 'sick'
+                                )
+                            >
+                                Sakit
+                            </option>
+
+                        </select>
+
+
+                        <input
+                            type="text"
+                            name="notes"
+                            maxlength="500"
+                            placeholder="Catatan, contoh: kegiatan sekolah..."
+                            value="{{
+                                in_array(
+                                    $studentAttendance?->status,
+                                    [
+                                        'permission',
+                                        'sick',
+                                    ],
+                                    true
+                                )
+                                    ? $studentAttendance?->notes
+                                    : ''
+                            }}"
+                        >
+
+
+                        <button
+                            type="submit"
+                            class="manual-save-button"
+                        >
+                            Simpan
+                        </button>
+
+                    </form>
+
+
+                    @if(
+                        in_array(
+                            $studentAttendance?->status,
+                            [
+                                'permission',
+                                'sick',
+                            ],
+                            true
+                        )
+                    )
+
+                        <form
+                            method="POST"
+                            action="{{ route(
+                                'training.student.status.clear',
+                                [
+                                    'trainingSession' =>
+                                        $trainingSession->id,
+
+                                    'student' =>
+                                        $student->id,
+                                ]
+                            ) }}"
+                            class="manual-clear-form"
+                            onsubmit="return confirm('Hapus status Izin/Sakit siswa ini?')"
+                        >
+
+                            @csrf
+                            @method('DELETE')
+
+
+                            <button
+                                type="submit"
+                                class="manual-clear-button"
+                            >
+                                Hapus
+                            </button>
+
+                        </form>
+
+                    @endif
+
+                </div>
+
+            @empty
+
+                <div class="manual-empty">
+
+                    Belum ada siswa aktif pada cabang olahraga
+                    {{ $trainingSession->sport }}.
+
+                </div>
+
+            @endforelse
+
+        </div>
+
+    </section>
+
 
 </main>
 

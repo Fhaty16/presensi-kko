@@ -9,9 +9,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Verifikasi Izin / Sakit - KKO SMANDA</title>
+    <title>
+        Verifikasi Izin / Sakit - KKO SMANDA
+    </title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -25,7 +30,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         rel="stylesheet"
     >
 
@@ -34,22 +39,64 @@
         href="{{ asset('css/kko.css') }}"
     >
 
-
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+
+            color: #ffffff;
+            background: #101415;
+
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal;
+
+            line-height: 1;
+
+            letter-spacing: normal;
+            text-transform: none;
+
+            white-space: nowrap;
+
+            font-feature-settings: 'liga';
+
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+
 
         /* =====================================================
            PAGE
         ===================================================== */
 
         .leave-admin-container {
-            max-width: 1280px;
+            width: min(
+                1280px,
+                calc(100% - 40px)
+            );
+
             margin: 0 auto;
-            padding: 38px 24px 80px;
+
+            padding: 38px 0 90px;
         }
 
         .leave-admin-back {
             display: inline-flex;
             align-items: center;
+
             gap: 7px;
 
             margin-bottom: 25px;
@@ -59,17 +106,18 @@
             text-decoration: none;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
 
-            transition: .18s ease;
+            transition: color .18s ease;
         }
 
         .leave-admin-back:hover {
             color: #ffffff;
         }
 
-        .leave-admin-back .material-symbols-outlined {
+        .leave-admin-back
+        .material-symbols-outlined {
             font-size: 18px;
         }
 
@@ -82,6 +130,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+
             gap: 20px;
 
             margin-bottom: 26px;
@@ -95,28 +144,28 @@
             color: #9dcaff;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 800;
 
-            letter-spacing: 1px;
+            letter-spacing: 1.4px;
         }
 
         .leave-admin-heading h1 {
             margin: 0;
 
-            color: #e0e3e5;
+            color: #e7eaed;
 
             font-family: 'Anybody', sans-serif;
-            font-size: 32px;
+            font-size: 31px;
             font-weight: 800;
         }
 
         .leave-admin-heading p {
             margin: 7px 0 0;
 
-            color: #8a919c;
+            color: #808d97;
 
-            font-size: 12px;
+            font-size: 10px;
         }
 
 
@@ -127,45 +176,52 @@
         .leave-admin-alert {
             display: flex;
             align-items: flex-start;
+
             gap: 10px;
 
             margin-bottom: 20px;
             padding: 14px 16px;
 
-            border-radius: 12px;
+            border-radius: 11px;
+        }
+
+        .leave-admin-alert
+        .material-symbols-outlined {
+            flex-shrink: 0;
+
+            font-size: 19px;
         }
 
         .leave-admin-alert strong {
             display: block;
 
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .leave-admin-alert p {
             margin: 3px 0 0;
 
-            font-size: 10px;
+            font-size: 9px;
+            line-height: 1.55;
         }
 
         .leave-admin-alert.success {
+            color: #8ce8c3;
             background: rgba(54, 211, 153, .08);
 
             border: 1px solid rgba(54, 211, 153, .25);
-
-            color: #8ce8c3;
         }
 
         .leave-admin-alert.error {
+            color: #ffaaa5;
             background: rgba(231, 70, 70, .09);
 
             border: 1px solid rgba(231, 70, 70, .25);
-
-            color: #ffaaa5;
         }
 
 
         /* =====================================================
-           STATISTIC
+           STATISTICS
         ===================================================== */
 
         .leave-admin-stats {
@@ -176,7 +232,7 @@
 
             gap: 14px;
 
-            margin-bottom: 28px;
+            margin-bottom: 30px;
         }
 
         .leave-admin-stat {
@@ -185,106 +241,74 @@
 
             gap: 14px;
 
-            padding: 18px;
+            min-height: 88px;
+
+            padding: 17px 18px;
 
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 15px;
+            border-radius: 14px;
         }
-
-
-        /* ICON BOX */
 
         .leave-admin-stat-icon {
             width: 48px;
             height: 48px;
 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
             flex: 0 0 48px;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 13px;
+            border-radius: 12px;
         }
 
-
-        /* SYMBOL */
-
-        .leave-admin-stat-symbol {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            width: 100%;
-            height: 100%;
-
-            font-family: Arial, sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-
-            line-height: 1;
+        .leave-admin-stat-icon
+        .material-symbols-outlined {
+            font-size: 23px;
         }
-
-
-        /* MENUNGGU */
 
         .leave-admin-stat.pending
         .leave-admin-stat-icon {
-            background: rgba(245, 158, 11, .13);
-
-            border: 1px solid rgba(245, 158, 11, .08);
-
             color: #f6c453;
+            background: rgba(245, 158, 11, .12);
+
+            border: 1px solid rgba(245, 158, 11, .10);
         }
-
-
-        /* DISETUJUI */
 
         .leave-admin-stat.approved
         .leave-admin-stat-icon {
-            background: rgba(54, 211, 153, .11);
-
-            border: 1px solid rgba(54, 211, 153, .08);
-
             color: #8ce8c3;
+            background: rgba(54, 211, 153, .10);
+
+            border: 1px solid rgba(54, 211, 153, .10);
         }
-
-
-        /* DITOLAK */
 
         .leave-admin-stat.rejected
         .leave-admin-stat-icon {
-            background: rgba(231, 70, 70, .11);
-
-            border: 1px solid rgba(231, 70, 70, .08);
-
             color: #ffaaa5;
+            background: rgba(231, 70, 70, .10);
+
+            border: 1px solid rgba(231, 70, 70, .10);
         }
-
-
-        /* LABEL */
 
         .leave-admin-stat-label {
             display: block;
 
-            color: #8a919c;
+            color: #84919b;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            font-weight: 500;
+            font-size: 7px;
+            font-weight: 700;
 
-            letter-spacing: .4px;
+            letter-spacing: .8px;
         }
-
-
-        /* NUMBER */
 
         .leave-admin-stat strong {
             display: block;
 
-            margin-top: 3px;
+            margin-top: 4px;
 
             color: #ffffff;
 
@@ -301,9 +325,9 @@
         .leave-toolbar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
 
-            gap: 14px;
+            gap: 16px;
 
             margin-bottom: 16px;
         }
@@ -311,63 +335,64 @@
         .leave-toolbar-title h2 {
             margin: 0;
 
-            color: #e0e3e5;
+            color: #e6eaed;
 
             font-family: 'Anybody', sans-serif;
-            font-size: 21px;
+            font-size: 20px;
         }
 
         .leave-toolbar-title p {
-            margin: 4px 0 0;
+            margin: 5px 0 0;
 
-            color: #8a919c;
+            color: #7e8b95;
 
-            font-size: 10px;
+            font-size: 9px;
         }
 
         .leave-toolbar-controls {
             display: flex;
+            align-items: center;
 
             gap: 8px;
         }
 
         .leave-search {
-            width: 240px;
+            width: 220px;
             height: 40px;
 
-            padding: 0 13px;
+            padding: 0 12px;
 
-            color: #e0e3e5;
+            color: #e2e7ea;
+            background: #151b20;
 
-            background: #1a1e21;
-
-            border: 1px solid #404751;
+            border: 1px solid #35424f;
             border-radius: 9px;
 
             outline: none;
 
-            font-size: 11px;
+            font-size: 9px;
         }
 
         .leave-search:focus {
-            border-color: #9dcaff;
+            border-color: #6b9ac3;
         }
 
         .leave-filter {
             height: 40px;
 
-            padding: 0 12px;
+            padding: 0 11px;
 
-            color: #e0e3e5;
+            color: #dce2e6;
+            background: #151b20;
 
-            background: #1a1e21;
-
-            border: 1px solid #404751;
+            border: 1px solid #35424f;
             border-radius: 9px;
 
             outline: none;
 
-            font-size: 10px;
+            cursor: pointer;
+
+            font-size: 8px;
         }
 
 
@@ -388,17 +413,27 @@
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 15px;
+            border-radius: 14px;
+
+            transition:
+                border-color .18s ease,
+                transform .18s ease;
+        }
+
+        .leave-request-card:hover {
+            border-color: #49657c;
+
+            transform: translateY(-1px);
         }
 
         .leave-request-main {
             display: grid;
 
             grid-template-columns:
-                minmax(210px, 1.2fr)
-                minmax(110px, .55fr)
-                minmax(180px, .85fr)
-                minmax(230px, 1.15fr)
+                minmax(220px, 1.15fr)
+                minmax(120px, .5fr)
+                minmax(180px, .8fr)
+                minmax(220px, 1fr)
                 auto;
 
             align-items: center;
@@ -423,21 +458,20 @@
         }
 
         .leave-avatar {
-            width: 42px;
-            height: 42px;
-
-            flex: 0 0 42px;
+            width: 43px;
+            height: 43px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
+            flex: 0 0 43px;
+
+            color: #9dcaff;
             background: rgba(0, 114, 188, .16);
 
             border: 1px solid rgba(157, 202, 255, .18);
             border-radius: 11px;
-
-            color: #9dcaff;
 
             font-family: 'Anybody', sans-serif;
             font-size: 15px;
@@ -449,9 +483,9 @@
 
             overflow: hidden;
 
-            color: #e0e3e5;
+            color: #e7eaed;
 
-            font-size: 11px;
+            font-size: 10px;
 
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -462,72 +496,130 @@
 
             margin-top: 4px;
 
-            color: #8a919c;
+            color: #7e8b95;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
+            font-size: 7px;
         }
 
 
         /* =====================================================
-           TYPE
+           BADGES
         ===================================================== */
 
-        .leave-type {
+        .leave-badges {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            gap: 7px;
+        }
+
+        .leave-type,
+        .leave-scope {
+            width: fit-content;
+
             display: inline-flex;
             align-items: center;
 
-            gap: 6px;
+            gap: 5px;
 
-            width: fit-content;
-
-            padding: 7px 9px;
+            padding: 6px 9px;
 
             border-radius: 20px;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            font-weight: 700;
+            font-size: 7px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .leave-type
+        .material-symbols-outlined,
+        .leave-scope
+        .material-symbols-outlined {
+            font-size: 13px;
         }
 
         .leave-type.sick {
+            color: #9dcaff;
             background: rgba(157, 202, 255, .10);
 
-            color: #9dcaff;
+            border: 1px solid rgba(157, 202, 255, .10);
         }
 
         .leave-type.permission {
+            color: #f6c453;
             background: rgba(245, 158, 11, .11);
 
-            color: #f6c453;
+            border: 1px solid rgba(245, 158, 11, .10);
         }
 
-        .leave-type .material-symbols-outlined {
-            font-size: 15px;
+        .leave-scope.school {
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .10);
+
+            border: 1px solid rgba(157, 202, 255, .12);
+        }
+
+        .leave-scope.training {
+            color: #c4aaff;
+            background: rgba(162, 120, 255, .10);
+
+            border: 1px solid rgba(176, 145, 255, .13);
         }
 
 
         /* =====================================================
-           DATE
+           DATE / SESSION
         ===================================================== */
 
         .leave-date small,
         .leave-reason small {
             display: block;
 
-            margin-bottom: 4px;
+            margin-bottom: 5px;
 
-            color: #717984;
+            color: #6f7d88;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
-            font-weight: 700;
+            font-size: 7px;
+            font-weight: 800;
+
+            letter-spacing: .5px;
         }
 
         .leave-date strong {
-            color: #dfe4ea;
+            display: block;
 
-            font-size: 10px;
+            color: #dce3e8;
+
+            font-size: 9px;
+            line-height: 1.55;
+        }
+
+        .leave-session-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: 5px;
+
+            color: #8197a8;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            line-height: 1.5;
+        }
+
+        .leave-session-meta
+        .material-symbols-outlined {
+            color: #9dcaff;
+
+            font-size: 12px;
         }
 
 
@@ -542,12 +634,12 @@
 
             margin: 0;
 
-            color: #b2bac5;
+            color: #aeb8c0;
 
-            font-size: 10px;
-            line-height: 1.45;
+            font-size: 9px;
+            line-height: 1.55;
 
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
         }
 
@@ -577,45 +669,52 @@
 
             gap: 5px;
 
-            padding: 0 12px;
+            padding: 0 11px;
 
             border-radius: 8px;
 
             cursor: pointer;
 
             font-family: 'Anybody', sans-serif;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
 
-            transition: .18s ease;
+            transition:
+                background .18s ease,
+                border-color .18s ease,
+                transform .18s ease;
+        }
+
+        .leave-reject-btn:hover,
+        .leave-approve-btn:hover {
+            transform: translateY(-1px);
         }
 
         .leave-reject-btn {
+            color: #ffaaa5;
             background: rgba(231, 70, 70, .07);
 
             border: 1px solid rgba(231, 70, 70, .35);
-
-            color: #ffaaa5;
         }
 
         .leave-reject-btn:hover {
-            background: rgba(231, 70, 70, .16);
+            background: rgba(231, 70, 70, .15);
         }
 
         .leave-approve-btn {
-            background: #0072bc;
+            color: #071119;
+            background: #9dcaff;
 
-            border: 1px solid #1685d2;
-
-            color: #ffffff;
+            border: 1px solid #9dcaff;
         }
 
         .leave-approve-btn:hover {
-            background: #1685d2;
+            background: #b1d5ff;
         }
 
-        .leave-actions .material-symbols-outlined {
-            font-size: 16px;
+        .leave-actions
+        .material-symbols-outlined {
+            font-size: 15px;
         }
 
 
@@ -634,8 +733,7 @@
 
             background: rgba(12, 18, 23, .30);
 
-            border-top:
-                1px solid rgba(64, 71, 81, .50);
+            border-top: 1px solid rgba(64, 71, 81, .50);
         }
 
         .leave-sent-time {
@@ -644,14 +742,15 @@
 
             gap: 6px;
 
-            color: #747d88;
+            color: #747f88;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
+            font-size: 7px;
         }
 
-        .leave-sent-time .material-symbols-outlined {
-            font-size: 14px;
+        .leave-sent-time
+        .material-symbols-outlined {
+            font-size: 13px;
         }
 
         .leave-attachment {
@@ -665,7 +764,7 @@
             text-decoration: none;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
+            font-size: 7px;
             font-weight: 700;
         }
 
@@ -674,10 +773,10 @@
         }
 
         .leave-no-attachment {
-            color: #747d88;
+            color: #707b84;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
+            font-size: 7px;
         }
 
 
@@ -693,13 +792,14 @@
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 15px;
+            border-radius: 14px;
         }
 
-        .leave-empty .material-symbols-outlined {
+        .leave-empty
+        .material-symbols-outlined {
             color: #9dcaff;
 
-            font-size: 38px;
+            font-size: 36px;
         }
 
         .leave-empty strong {
@@ -707,17 +807,17 @@
 
             margin-top: 8px;
 
-            color: #e0e3e5;
+            color: #e3e7ea;
 
-            font-size: 13px;
+            font-size: 11px;
         }
 
         .leave-empty p {
-            margin: 4px 0 0;
+            margin: 5px 0 0;
 
-            color: #8a919c;
+            color: #7e8993;
 
-            font-size: 10px;
+            font-size: 9px;
         }
 
 
@@ -732,19 +832,22 @@
         .leave-history-list {
             overflow: hidden;
 
+            margin-top: 14px;
+
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 15px;
+            border-radius: 14px;
         }
 
         .leave-history-item {
             display: grid;
 
             grid-template-columns:
-                minmax(180px, 1fr)
-                110px
-                160px
+                minmax(190px, 1fr)
+                125px
+                90px
+                minmax(160px, .7fr)
                 100px;
 
             align-items: center;
@@ -753,8 +856,7 @@
 
             padding: 14px 18px;
 
-            border-bottom:
-                1px solid rgba(64, 71, 81, .5);
+            border-bottom: 1px solid rgba(64, 71, 81, .5);
         }
 
         .leave-history-item:last-child {
@@ -764,9 +866,9 @@
         .leave-history-name strong {
             display: block;
 
-            color: #e0e3e5;
+            color: #e1e6e9;
 
-            font-size: 10px;
+            font-size: 9px;
         }
 
         .leave-history-name span {
@@ -774,16 +876,18 @@
 
             margin-top: 3px;
 
-            color: #777f89;
+            color: #75808a;
 
-            font-size: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
         }
 
         .leave-history-type,
         .leave-history-date {
-            color: #aab1ba;
+            color: #a8b2ba;
 
-            font-size: 9px;
+            font-size: 8px;
+            line-height: 1.5;
         }
 
         .leave-history-status {
@@ -794,20 +898,18 @@
             border-radius: 20px;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
-            font-weight: 700;
+            font-size: 7px;
+            font-weight: 800;
         }
 
         .leave-history-status.approved {
-            background: rgba(54, 211, 153, .10);
-
             color: #8ce8c3;
+            background: rgba(54, 211, 153, .10);
         }
 
         .leave-history-status.rejected {
-            background: rgba(231, 70, 70, .10);
-
             color: #ffaaa5;
+            background: rgba(231, 70, 70, .10);
         }
 
 
@@ -815,11 +917,13 @@
            RESPONSIVE
         ===================================================== */
 
-        @media (max-width: 1050px) {
+        @media (max-width: 1080px) {
 
             .leave-request-main {
                 grid-template-columns:
-                    1fr 120px 180px;
+                    minmax(220px, 1fr)
+                    minmax(120px, .55fr)
+                    minmax(180px, .8fr);
             }
 
             .leave-reason {
@@ -830,13 +934,23 @@
                 grid-column: 3 / 4;
             }
 
+            .leave-history-item {
+                grid-template-columns:
+                    1fr
+                    120px
+                    90px
+                    150px
+                    90px;
+            }
         }
 
 
-        @media (max-width: 720px) {
+        @media (max-width: 760px) {
 
             .leave-admin-container {
-                padding: 25px 14px 90px;
+                width: calc(100% - 28px);
+
+                padding: 25px 0 100px;
             }
 
             .leave-admin-heading {
@@ -868,6 +982,8 @@
 
             .leave-request-main {
                 grid-template-columns: 1fr;
+
+                gap: 14px;
             }
 
             .leave-reason,
@@ -880,7 +996,7 @@
             }
 
             .leave-actions form {
-                width: 50%;
+                flex: 1;
             }
 
             .leave-reject-btn,
@@ -895,14 +1011,14 @@
 
             .leave-history-item {
                 grid-template-columns: 1fr;
+
+                gap: 9px;
             }
 
             .leave-history-status {
                 justify-self: start;
             }
-
         }
-
     </style>
 
 </head>
@@ -947,7 +1063,6 @@
         </div>
 
 
-
         <div class="kko-header-actions">
 
 
@@ -955,7 +1070,13 @@
 
                 <div class="header-avatar">
 
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    {{ strtoupper(
+                        substr(
+                            auth()->user()->name,
+                            0,
+                            1
+                        )
+                    ) }}
 
                 </div>
 
@@ -973,7 +1094,6 @@
                 </div>
 
             </div>
-
 
 
             <form
@@ -997,13 +1117,11 @@
 
             </form>
 
-
         </div>
 
     </div>
 
 </header>
-
 
 
 <!-- =====================================================
@@ -1012,8 +1130,6 @@
 
 <main class="leave-admin-container">
 
-
-    <!-- BACK -->
 
     <a
         href="{{ route('guru.dashboard') }}"
@@ -1027,7 +1143,6 @@
         Kembali ke Dashboard
 
     </a>
-
 
 
     <!-- =================================================
@@ -1047,13 +1162,12 @@
             </h1>
 
             <p>
-                Periksa dan verifikasi pengajuan ketidakhadiran siswa KKO.
+                Verifikasi pengajuan Presensi Sekolah maupun Latihan KKO.
             </p>
 
         </div>
 
     </section>
-
 
 
     <!-- =================================================
@@ -1110,29 +1224,22 @@
     @endif
 
 
-
     <!-- =================================================
-         STATISTIC
+         STATISTICS
     ================================================== -->
 
     <section class="leave-admin-stats">
 
 
-        <!-- MENUNGGU -->
-
         <article class="leave-admin-stat pending">
 
             <div class="leave-admin-stat-icon">
 
-                <span
-                    class="leave-admin-stat-symbol"
-                    aria-hidden="true"
-                >
-                    ⏳
+                <span class="material-symbols-outlined">
+                    pending_actions
                 </span>
 
             </div>
-
 
             <div>
 
@@ -1149,22 +1256,15 @@
         </article>
 
 
-
-        <!-- DISETUJUI -->
-
         <article class="leave-admin-stat approved">
 
             <div class="leave-admin-stat-icon">
 
-                <span
-                    class="leave-admin-stat-symbol"
-                    aria-hidden="true"
-                >
-                    ✓
+                <span class="material-symbols-outlined">
+                    task_alt
                 </span>
 
             </div>
-
 
             <div>
 
@@ -1181,22 +1281,15 @@
         </article>
 
 
-
-        <!-- DITOLAK -->
-
         <article class="leave-admin-stat rejected">
 
             <div class="leave-admin-stat-icon">
 
-                <span
-                    class="leave-admin-stat-symbol"
-                    aria-hidden="true"
-                >
-                    ✕
+                <span class="material-symbols-outlined">
+                    cancel
                 </span>
 
             </div>
-
 
             <div>
 
@@ -1212,9 +1305,7 @@
 
         </article>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -1222,7 +1313,6 @@
     ================================================== -->
 
     <section class="leave-toolbar">
-
 
         <div class="leave-toolbar-title">
 
@@ -1237,7 +1327,6 @@
         </div>
 
 
-
         <div class="leave-toolbar-controls">
 
             <input
@@ -1246,6 +1335,26 @@
                 class="leave-search"
                 placeholder="Cari nama atau NIS..."
             >
+
+
+            <select
+                id="leaveScopeFilter"
+                class="leave-filter"
+            >
+
+                <option value="all">
+                    Semua Tujuan
+                </option>
+
+                <option value="school">
+                    Presensi Sekolah
+                </option>
+
+                <option value="training">
+                    Latihan KKO
+                </option>
+
+            </select>
 
 
             <select
@@ -1269,13 +1378,11 @@
 
         </div>
 
-
     </section>
 
 
-
     <!-- =================================================
-         PENDING LIST
+         PENDING REQUESTS
     ================================================== -->
 
     <section
@@ -1286,32 +1393,57 @@
 
         @forelse($pendingRequests as $leaveRequest)
 
+            @php
+
+                $isTraining =
+                    $leaveRequest->attendance_scope
+                    === 'training';
+
+
+                $trainingSession =
+                    $leaveRequest->trainingSession;
+
+
+                $studentName =
+                    $leaveRequest
+                        ->student?->user?->name
+                    ?? 'Siswa';
+
+
+                $studentInitial =
+                    strtoupper(
+                        substr(
+                            $studentName,
+                            0,
+                            1
+                        )
+                    );
+
+            @endphp
+
 
             <article
                 id="request-{{ $leaveRequest->id }}"
                 class="leave-request-card"
-                data-name="{{ strtolower($leaveRequest->student?->user?->name ?? '') }}"
+                data-name="{{ strtolower($studentName) }}"
                 data-nis="{{ strtolower($leaveRequest->student?->nis ?? '') }}"
                 data-type="{{ $leaveRequest->type }}"
+                data-scope="{{ $leaveRequest->attendance_scope ?? 'school' }}"
             >
 
 
                 <div class="leave-request-main">
 
 
-                    <!-- SISWA -->
+                    <!-- =================================================
+                         STUDENT
+                    ================================================== -->
 
                     <div class="leave-student">
 
                         <div class="leave-avatar">
 
-                            {{ strtoupper(
-                                substr(
-                                    $leaveRequest->student?->user?->name ?? 'S',
-                                    0,
-                                    1
-                                )
-                            ) }}
+                            {{ $studentInitial }}
 
                         </div>
 
@@ -1319,16 +1451,25 @@
                         <div>
 
                             <strong>
-                                {{ $leaveRequest->student?->user?->name ?? '-' }}
+                                {{ $studentName }}
                             </strong>
 
                             <span>
 
-                                NIS {{ $leaveRequest->student?->nis ?? '-' }}
+                                NIS
+                                {{ $leaveRequest->student?->nis ?? '-' }}
 
                                 •
 
                                 {{ $leaveRequest->student?->class?->name ?? 'KKO' }}
+
+                                @if($leaveRequest->student?->sport)
+
+                                    •
+
+                                    {{ $leaveRequest->student->sport }}
+
+                                @endif
 
                             </span>
 
@@ -1337,10 +1478,39 @@
                     </div>
 
 
+                    <!-- =================================================
+                         BADGES
+                    ================================================== -->
 
-                    <!-- TYPE -->
+                    <div class="leave-badges">
 
-                    <div>
+
+                        <span
+                            class="leave-scope {{
+                                $isTraining
+                                    ? 'training'
+                                    : 'school'
+                            }}"
+                        >
+
+                            <span class="material-symbols-outlined">
+
+                                {{
+                                    $isTraining
+                                        ? 'fitness_center'
+                                        : 'school'
+                                }}
+
+                            </span>
+
+                            {{
+                                $isTraining
+                                    ? 'LATIHAN KKO'
+                                    : 'SEKOLAH'
+                            }}
+
+                        </span>
+
 
                         <span
                             class="leave-type {{ $leaveRequest->type }}"
@@ -1348,9 +1518,11 @@
 
                             <span class="material-symbols-outlined">
 
-                                {{ $leaveRequest->type === 'sick'
-                                    ? 'medical_services'
-                                    : 'assignment' }}
+                                {{
+                                    $leaveRequest->type === 'sick'
+                                        ? 'medical_services'
+                                        : 'assignment'
+                                }}
 
                             </span>
 
@@ -1361,37 +1533,157 @@
                     </div>
 
 
-
-                    <!-- DATE -->
+                    <!-- =================================================
+                         DATE / TRAINING SESSION
+                    ================================================== -->
 
                     <div class="leave-date">
 
-                        <small>
-                            TANGGAL
-                        </small>
 
-                        <strong>
+                        @if($isTraining)
 
-                            {{ $leaveRequest->start_date->format('d M Y') }}
+                            <small>
+                                SESI LATIHAN
+                            </small>
 
-                            @if(
-                                $leaveRequest->start_date->toDateString()
-                                !==
-                                $leaveRequest->end_date->toDateString()
-                            )
 
-                                -
-                                {{ $leaveRequest->end_date->format('d M Y') }}
+                            @if($trainingSession)
+
+                                <strong>
+
+                                    {{ $trainingSession
+                                        ->training_date
+                                        ->copy()
+                                        ->locale('id')
+                                        ->translatedFormat(
+                                            'd F Y'
+                                        ) }}
+
+                                </strong>
+
+
+                                <div class="leave-session-meta">
+
+                                    <span class="material-symbols-outlined">
+                                        exercise
+                                    </span>
+
+                                    <span>
+                                        {{ $trainingSession->sport }}
+                                    </span>
+
+
+                                    @if($trainingSession->start_time)
+
+                                        <span>•</span>
+
+                                        <span>
+
+                                            {{ \Carbon\Carbon::parse(
+                                                $trainingSession->start_time
+                                            )->format('H:i') }}
+
+                                            @if($trainingSession->end_time)
+
+                                                -
+
+                                                {{ \Carbon\Carbon::parse(
+                                                    $trainingSession->end_time
+                                                )->format('H:i') }}
+
+                                            @endif
+
+                                            WIB
+
+                                        </span>
+
+                                    @endif
+
+                                </div>
+
+
+                                @if($trainingSession->location)
+
+                                    <div class="leave-session-meta">
+
+                                        <span class="material-symbols-outlined">
+                                            location_on
+                                        </span>
+
+                                        <span>
+                                            {{ $trainingSession->location }}
+                                        </span>
+
+                                    </div>
+
+                                @endif
+
+                            @else
+
+                                <strong>
+                                    Sesi latihan tidak ditemukan
+                                </strong>
 
                             @endif
 
-                        </strong>
+
+                        @else
+
+                            <small>
+                                TANGGAL SEKOLAH
+                            </small>
+
+
+                            <strong>
+
+                                @if($leaveRequest->start_date)
+
+                                    {{ $leaveRequest
+                                        ->start_date
+                                        ->locale('id')
+                                        ->translatedFormat(
+                                            'd F Y'
+                                        ) }}
+
+                                    @if(
+                                        $leaveRequest->end_date
+                                        &&
+                                        $leaveRequest
+                                            ->start_date
+                                            ->toDateString()
+                                        !==
+                                        $leaveRequest
+                                            ->end_date
+                                            ->toDateString()
+                                    )
+
+                                        -
+
+                                        {{ $leaveRequest
+                                            ->end_date
+                                            ->locale('id')
+                                            ->translatedFormat(
+                                                'd F Y'
+                                            ) }}
+
+                                    @endif
+
+                                @else
+
+                                    -
+
+                                @endif
+
+                            </strong>
+
+                        @endif
 
                     </div>
 
 
-
-                    <!-- REASON -->
+                    <!-- =================================================
+                         REASON
+                    ================================================== -->
 
                     <div class="leave-reason">
 
@@ -1406,17 +1698,19 @@
                     </div>
 
 
-
-                    <!-- ACTION -->
+                    <!-- =================================================
+                         ACTION
+                    ================================================== -->
 
                     <div class="leave-actions">
 
 
-                        <!-- TOLAK -->
-
                         <form
                             method="POST"
-                            action="{{ route('guru.leave.reject', $leaveRequest) }}"
+                            action="{{ route(
+                                'guru.leave.reject',
+                                $leaveRequest
+                            ) }}"
                             onsubmit="return confirm('Yakin ingin MENOLAK pengajuan ini?');"
                         >
 
@@ -1438,12 +1732,12 @@
                         </form>
 
 
-
-                        <!-- SETUJUI -->
-
                         <form
                             method="POST"
-                            action="{{ route('guru.leave.approve', $leaveRequest) }}"
+                            action="{{ route(
+                                'guru.leave.approve',
+                                $leaveRequest
+                            ) }}"
                             onsubmit="return confirm('Yakin ingin MENYETUJUI pengajuan ini?');"
                         >
 
@@ -1464,16 +1758,13 @@
 
                         </form>
 
-
                     </div>
-
 
                 </div>
 
 
-
                 <!-- =================================================
-                     BOTTOM INFO
+                     BOTTOM
                 ================================================== -->
 
                 <div class="leave-request-bottom">
@@ -1486,17 +1777,25 @@
                         </span>
 
                         Dikirim
-                        {{ $leaveRequest->created_at->format('d M Y, H:i') }}
+
+                        {{ $leaveRequest
+                            ->created_at
+                            ->copy()
+                            ->timezone('Asia/Jakarta')
+                            ->format('d M Y, H:i') }}
+
                         WIB
 
                     </span>
 
 
-
                     @if($leaveRequest->attachment)
 
                         <a
-                            href="{{ asset('storage/' . $leaveRequest->attachment) }}"
+                            href="{{ asset(
+                                'storage/'
+                                . $leaveRequest->attachment
+                            ) }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="leave-attachment"
@@ -1518,15 +1817,12 @@
 
                     @endif
 
-
                 </div>
-
 
             </article>
 
 
         @empty
-
 
             <div class="leave-empty">
 
@@ -1544,12 +1840,9 @@
 
             </div>
 
-
         @endforelse
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -1572,18 +1865,28 @@
         </div>
 
 
-
-        <div
-            class="leave-history-list"
-            style="margin-top: 14px;"
-        >
+        <div class="leave-history-list">
 
 
             @forelse($recentRequests as $leaveRequest)
 
+                @php
+
+                    $isTraining =
+                        $leaveRequest->attendance_scope
+                        === 'training';
+
+
+                    $trainingSession =
+                        $leaveRequest->trainingSession;
+
+                @endphp
+
 
                 <div class="leave-history-item">
 
+
+                    <!-- STUDENT -->
 
                     <div class="leave-history-name">
 
@@ -1592,12 +1895,49 @@
                         </strong>
 
                         <span>
-                            NIS {{ $leaveRequest->student?->nis ?? '-' }}
+
+                            NIS
+                            {{ $leaveRequest->student?->nis ?? '-' }}
+
                         </span>
 
                     </div>
 
 
+                    <!-- SCOPE -->
+
+                    <div>
+
+                        <span
+                            class="leave-scope {{
+                                $isTraining
+                                    ? 'training'
+                                    : 'school'
+                            }}"
+                        >
+
+                            <span class="material-symbols-outlined">
+
+                                {{
+                                    $isTraining
+                                        ? 'fitness_center'
+                                        : 'school'
+                                }}
+
+                            </span>
+
+                            {{
+                                $isTraining
+                                    ? 'LATIHAN'
+                                    : 'SEKOLAH'
+                            }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- TYPE -->
 
                     <div class="leave-history-type">
 
@@ -1606,29 +1946,55 @@
                     </div>
 
 
+                    <!-- DATE -->
 
                     <div class="leave-history-date">
 
-                        {{ $leaveRequest->start_date->format('d M Y') }}
+                        @if(
+                            $isTraining
+                            &&
+                            $trainingSession
+                        )
+
+                            {{ $trainingSession
+                                ->training_date
+                                ->format('d M Y') }}
+
+                            <br>
+
+                            {{ $trainingSession->sport }}
+
+                        @elseif($leaveRequest->start_date)
+
+                            {{ $leaveRequest
+                                ->start_date
+                                ->format('d M Y') }}
+
+                        @else
+
+                            -
+
+                        @endif
 
                     </div>
 
 
+                    <!-- STATUS -->
 
                     <div
-                        class="leave-history-status {{ $leaveRequest->status }}"
+                        class="leave-history-status {{
+                            $leaveRequest->status
+                        }}"
                     >
 
                         {{ $leaveRequest->status_label }}
 
                     </div>
 
-
                 </div>
 
 
             @empty
-
 
                 <div class="leave-empty">
 
@@ -1646,31 +2012,34 @@
 
                 </div>
 
-
             @endforelse
-
 
         </div>
 
-
     </section>
-
 
 </main>
 
 
-
 <!-- =====================================================
-     SEARCH / FILTER
+     SEARCH & FILTER
 ===================================================== -->
 
 <script>
-
     const searchInput =
-        document.getElementById('leaveSearch');
+        document.getElementById(
+            'leaveSearch'
+        );
+
+    const scopeFilter =
+        document.getElementById(
+            'leaveScopeFilter'
+        );
 
     const typeFilter =
-        document.getElementById('leaveTypeFilter');
+        document.getElementById(
+            'leaveTypeFilter'
+        );
 
     const requestCards =
         document.querySelectorAll(
@@ -1687,43 +2056,71 @@
                     .trim()
                 : '';
 
+
+        const scope =
+            scopeFilter
+                ? scopeFilter.value
+                : 'all';
+
+
         const type =
             typeFilter
                 ? typeFilter.value
                 : 'all';
 
 
-        requestCards.forEach(function (card) {
+        requestCards.forEach(
+            function (card) {
 
-            const name =
-                card.dataset.name || '';
+                const name =
+                    card.dataset.name
+                    || '';
 
-            const nis =
-                card.dataset.nis || '';
+                const nis =
+                    card.dataset.nis
+                    || '';
 
-            const cardType =
-                card.dataset.type || '';
+                const cardType =
+                    card.dataset.type
+                    || '';
 
-
-            const matchesSearch =
-                name.includes(keyword)
-                ||
-                nis.includes(keyword);
-
-
-            const matchesType =
-                type === 'all'
-                ||
-                type === cardType;
+                const cardScope =
+                    card.dataset.scope
+                    || 'school';
 
 
-            card.style.display =
-                matchesSearch && matchesType
-                    ? ''
-                    : 'none';
+                const matchesSearch =
+                    name.includes(
+                        keyword
+                    )
+                    ||
+                    nis.includes(
+                        keyword
+                    );
 
-        });
 
+                const matchesScope =
+                    scope === 'all'
+                    ||
+                    scope === cardScope;
+
+
+                const matchesType =
+                    type === 'all'
+                    ||
+                    type === cardType;
+
+
+                card.style.display =
+                    matchesSearch
+                    &&
+                    matchesScope
+                    &&
+                    matchesType
+                        ? ''
+                        : 'none';
+            }
+        );
     }
 
 
@@ -1733,7 +2130,15 @@
             'input',
             filterRequests
         );
+    }
 
+
+    if (scopeFilter) {
+
+        scopeFilter.addEventListener(
+            'change',
+            filterRequests
+        );
     }
 
 
@@ -1743,12 +2148,9 @@
             'change',
             filterRequests
         );
-
     }
-
 </script>
 
 
 </body>
-
 </html>

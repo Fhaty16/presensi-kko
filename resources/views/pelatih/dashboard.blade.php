@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,9 +10,15 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Dashboard Pelatih - KKO SMANDA</title>
+    <title>
+        Dashboard Pelatih - KKO SMANDA
+    </title>
 
-    <!-- FONT -->
+
+    <!-- =====================================================
+         FONT
+    ====================================================== -->
+
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com"
@@ -28,19 +35,29 @@
         rel="stylesheet"
     >
 
-    <!-- MATERIAL ICON -->
+
+    <!-- =====================================================
+         MATERIAL SYMBOLS
+    ====================================================== -->
+
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         rel="stylesheet"
     >
 
-    <!-- CSS UTAMA -->
+
+    <!-- =====================================================
+         CSS UTAMA
+    ====================================================== -->
+
     <link
         rel="stylesheet"
         href="{{ asset('css/kko.css') }}"
     >
 
+
     <style>
+
         /*
         |--------------------------------------------------------------------------
         | MATERIAL SYMBOLS
@@ -80,6 +97,7 @@
         a.sport-card,
         a.text-link {
             color: inherit;
+
             text-decoration: none;
         }
 
@@ -145,7 +163,8 @@
             border-color: rgba(157, 202, 255, .35);
         }
 
-        .student-sport-management .management-icon {
+        .student-sport-management
+        .management-icon {
             color: #9dcaff;
 
             background: rgba(0, 114, 188, .12);
@@ -174,7 +193,507 @@
 
         /*
         |--------------------------------------------------------------------------
-        | MOBILE
+        | HEADER NOTIFICATION
+        |--------------------------------------------------------------------------
+        */
+
+        .pelatih-notification-wrapper {
+            position: relative;
+
+            display: flex;
+        }
+
+        .pelatih-notification-button {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: inherit;
+
+            text-decoration: none;
+        }
+
+        .pelatih-notification-badge {
+            position: absolute;
+
+            top: -5px;
+            right: -6px;
+
+            min-width: 18px;
+            height: 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 5px;
+
+            color: #11171d;
+            background: #ffc968;
+
+            border: 2px solid #101415;
+            border-radius: 99px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 900;
+
+            line-height: 1;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TRAINING LEAVE NOTIFICATION SECTION
+        |--------------------------------------------------------------------------
+        */
+
+        .training-notification-section {
+            scroll-margin-top: 95px;
+        }
+
+        .training-notification-card {
+            position: relative;
+
+            overflow: hidden;
+
+            background: #1b2531;
+
+            border: 1px solid #34485d;
+            border-radius: 15px;
+        }
+
+        .training-notification-card::before {
+            content: '';
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 2px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(157, 202, 255, .7),
+                    transparent
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION HEADER
+        |--------------------------------------------------------------------------
+        */
+
+        .training-notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            padding: 20px;
+
+            border-bottom: 1px solid #303c48;
+        }
+
+        .training-notification-heading {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .training-notification-heading-icon {
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .12);
+
+            border: 1px solid rgba(157, 202, 255, .17);
+            border-radius: 10px;
+        }
+
+        .training-notification-heading-icon
+        .material-symbols-outlined {
+            font-size: 23px;
+        }
+
+        .training-notification-heading h3 {
+            margin: 0;
+
+            color: #e7ebee;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .training-notification-heading p {
+            margin: 4px 0 0;
+
+            color: #75838e;
+
+            font-size: 8px;
+            line-height: 1.5;
+        }
+
+        .training-notification-total {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 7px 10px;
+
+            color: #ffc968;
+            background: rgba(255, 190, 80, .08);
+
+            border: 1px solid rgba(255, 190, 80, .15);
+            border-radius: 30px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .training-notification-total
+        .material-symbols-outlined {
+            font-size: 14px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION INFO
+        |--------------------------------------------------------------------------
+        */
+
+        .training-notification-info {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 8px;
+
+            margin: 15px 20px 0;
+            padding: 11px 12px;
+
+            color: #8799a8;
+            background: rgba(157, 202, 255, .035);
+
+            border: 1px solid rgba(157, 202, 255, .08);
+            border-radius: 9px;
+
+            font-size: 8px;
+            line-height: 1.6;
+        }
+
+        .training-notification-info
+        .material-symbols-outlined {
+            flex-shrink: 0;
+
+            color: #9dcaff;
+
+            font-size: 17px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION LIST
+        |--------------------------------------------------------------------------
+        */
+
+        .training-notification-list {
+            display: flex;
+            flex-direction: column;
+
+            padding: 5px 20px 20px;
+        }
+
+        .training-request-item {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto;
+
+            align-items: center;
+
+            gap: 18px;
+
+            padding: 15px 0;
+
+            border-bottom: 1px solid #2c3945;
+        }
+
+        .training-request-item:last-child {
+            padding-bottom: 0;
+
+            border-bottom: 0;
+        }
+
+        .training-request-main {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 12px;
+
+            min-width: 0;
+        }
+
+        .training-request-avatar {
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .11);
+
+            border: 1px solid rgba(157, 202, 255, .13);
+            border-radius: 10px;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .training-request-content {
+            min-width: 0;
+        }
+
+        .training-request-top {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            gap: 7px;
+        }
+
+        .training-request-name {
+            color: #e7ebed;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .training-request-type {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 4px;
+
+            padding: 4px 7px;
+
+            border-radius: 20px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 6px;
+            font-weight: 800;
+        }
+
+        .training-request-type.permission {
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .11);
+
+            border: 1px solid rgba(157, 202, 255, .12);
+        }
+
+        .training-request-type.sick {
+            color: #ffb0aa;
+            background: rgba(255, 110, 100, .08);
+
+            border: 1px solid rgba(255, 120, 110, .12);
+        }
+
+        .training-request-type
+        .material-symbols-outlined {
+            font-size: 11px;
+        }
+
+        .training-request-student-meta {
+            margin-top: 4px;
+
+            color: #71808b;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+        }
+
+        .training-request-session {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            gap: 5px;
+
+            margin-top: 7px;
+
+            color: #92a4b2;
+
+            font-size: 8px;
+        }
+
+        .training-request-session strong {
+            color: #b9c8d3;
+
+            font-weight: 700;
+        }
+
+        .training-request-session
+        .material-symbols-outlined {
+            color: #9dcaff;
+
+            font-size: 14px;
+        }
+
+        .training-request-reason {
+            margin-top: 6px;
+
+            color: #7f8d98;
+
+            font-size: 8px;
+            line-height: 1.5;
+
+            overflow-wrap: anywhere;
+        }
+
+        .training-request-attachment {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 4px;
+
+            margin-top: 7px;
+
+            color: #91bfe7;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 6px;
+        }
+
+        .training-request-attachment
+        .material-symbols-outlined {
+            font-size: 12px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PENDING STATUS
+        |--------------------------------------------------------------------------
+        */
+
+        .training-request-status {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 7px 10px;
+
+            color: #ffc968;
+            background: rgba(255, 190, 80, .08);
+
+            border: 1px solid rgba(255, 190, 80, .15);
+            border-radius: 30px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .training-request-status
+        .material-symbols-outlined {
+            font-size: 13px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EMPTY NOTIFICATION
+        |--------------------------------------------------------------------------
+        */
+
+        .training-notification-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 170px;
+
+            padding: 30px 20px;
+
+            text-align: center;
+        }
+
+        .training-notification-empty-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 10px;
+
+            color: #70808c;
+            background: #151d24;
+
+            border: 1px solid #303f4b;
+            border-radius: 12px;
+        }
+
+        .training-notification-empty-icon
+        .material-symbols-outlined {
+            font-size: 25px;
+        }
+
+        .training-notification-empty strong {
+            color: #b8c1c8;
+
+            font-size: 10px;
+        }
+
+        .training-notification-empty p {
+            max-width: 350px;
+
+            margin: 6px 0 0;
+
+            color: #6d7b85;
+
+            font-size: 8px;
+            line-height: 1.6;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSIVE
         |--------------------------------------------------------------------------
         */
 
@@ -188,108 +707,47 @@
                 grid-column: auto;
             }
 
+            .training-notification-header {
+                align-items: flex-start;
+                flex-direction: column;
+
+                padding: 16px;
+            }
+
+            .training-notification-info {
+                margin:
+                    13px
+                    16px
+                    0;
+            }
+
+            .training-notification-list {
+                padding:
+                    3px
+                    16px
+                    16px;
+            }
+
+            .training-request-item {
+                grid-template-columns: 1fr;
+
+                gap: 10px;
+            }
+
+            .training-request-status {
+                width: fit-content;
+
+                margin-left: 55px;
+            }
+
         }
+
     </style>
 
 </head>
 
 
 <body class="dashboard-page">
-
-
-@php
-
-    /*
-    |--------------------------------------------------------------------------
-    | DATA KEHADIRAN HARI INI
-    |--------------------------------------------------------------------------
-    */
-
-    $today =
-        \Carbon\Carbon::now('Asia/Jakarta')
-            ->toDateString();
-
-
-    $totalSiswa =
-        \App\Models\Student::where(
-            'status',
-            'active'
-        )->count();
-
-
-    $todayAttendances =
-        \App\Models\Attendance::whereDate(
-            'attendance_date',
-            $today
-        )->get();
-
-
-    $hadir =
-        $todayAttendances
-            ->whereIn(
-                'status',
-                [
-                    'present',
-                    'late',
-                ]
-            )
-            ->count();
-
-
-    $sakit =
-        $todayAttendances
-            ->where(
-                'status',
-                'sick'
-            )
-            ->count();
-
-
-    $izin =
-        $todayAttendances
-            ->where(
-                'status',
-                'permission'
-            )
-            ->count();
-
-
-    $alfa =
-        $todayAttendances
-            ->where(
-                'status',
-                'absent'
-            )
-            ->count();
-
-
-    $persentaseHadir =
-        $totalSiswa > 0
-            ? round(
-                ($hadir / $totalSiswa) * 100
-            )
-            : 0;
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | JAM BATAS
-    |--------------------------------------------------------------------------
-    */
-
-    $attendanceSetting =
-        \App\Models\AttendanceSetting::first();
-
-
-    $cutoffDisplay =
-        substr(
-            $attendanceSetting?->cutoff_time
-                ?? '07:01:00',
-            0,
-            5
-        );
-
-@endphp
 
 
 <!-- =====================================================
@@ -335,19 +793,40 @@
         <div class="kko-header-actions">
 
 
-            <!-- NOTIFICATION -->
+            <!-- =================================================
+                 NOTIFICATION
+            ================================================== -->
 
-            <button
-                type="button"
-                class="header-icon-button"
-                title="Notifikasi"
-            >
+            <div class="pelatih-notification-wrapper">
 
-                <span class="material-symbols-outlined">
-                    notifications
-                </span>
+                <a
+                    href="#training-leave-notifications"
+                    class="header-icon-button pelatih-notification-button"
+                    title="Pengajuan izin latihan"
+                >
 
-            </button>
+                    <span class="material-symbols-outlined">
+                        notifications
+                    </span>
+
+
+                    @if($pendingTrainingCount > 0)
+
+                        <span class="pelatih-notification-badge">
+
+                            {{
+                                $pendingTrainingCount > 99
+                                    ? '99+'
+                                    : $pendingTrainingCount
+                            }}
+
+                        </span>
+
+                    @endif
+
+                </a>
+
+            </div>
 
 
             <!-- PROFILE -->
@@ -665,6 +1144,373 @@
 
 
     <!-- =================================================
+         NOTIFIKASI PENGAJUAN LATIHAN
+    ================================================== -->
+
+    <section
+        class="dashboard-section training-notification-section"
+        id="training-leave-notifications"
+    >
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Pengajuan Izin / Sakit Latihan
+                </h2>
+
+                <p>
+                    Pantau pengajuan ketidakhadiran latihan dari siswa KKO
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="training-notification-card">
+
+
+            <!-- HEADER -->
+
+            <div class="training-notification-header">
+
+                <div class="training-notification-heading">
+
+                    <div class="training-notification-heading-icon">
+
+                        <span class="material-symbols-outlined">
+                            notifications_active
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            Notifikasi Pengajuan Latihan
+                        </h3>
+
+                        <p>
+                            Pengajuan yang masih menunggu verifikasi Guru.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="training-notification-total">
+
+                    <span class="material-symbols-outlined">
+                        pending_actions
+                    </span>
+
+                    {{ $pendingTrainingCount }}
+                    MENUNGGU
+
+                </div>
+
+            </div>
+
+
+            <!-- INFO -->
+
+            <div class="training-notification-info">
+
+                <span class="material-symbols-outlined">
+                    info
+                </span>
+
+                <div>
+
+                    Pelatih dapat melihat pengajuan Izin / Sakit
+                    untuk latihan KKO.
+
+                    Persetujuan atau penolakan pengajuan tetap
+                    dilakukan oleh Guru.
+
+                </div>
+
+            </div>
+
+
+            <!-- LIST -->
+
+            @if($pendingTrainingRequests->isNotEmpty())
+
+                <div class="training-notification-list">
+
+
+                    @foreach($pendingTrainingRequests as $leaveRequest)
+
+                        @php
+
+                            $studentName =
+                                $leaveRequest
+                                    ->student?->user?->name
+                                ?? 'Siswa KKO';
+
+
+                            $studentInitial =
+                                strtoupper(
+                                    substr(
+                                        $studentName,
+                                        0,
+                                        1
+                                    )
+                                );
+
+
+                            $isSick =
+                                $leaveRequest->type
+                                === 'sick';
+
+
+                            $session =
+                                $leaveRequest
+                                    ->trainingSession;
+
+                        @endphp
+
+
+                        <div class="training-request-item">
+
+
+                            <!-- LEFT -->
+
+                            <div class="training-request-main">
+
+                                <div class="training-request-avatar">
+
+                                    {{ $studentInitial }}
+
+                                </div>
+
+
+                                <div class="training-request-content">
+
+
+                                    <!-- NAME + TYPE -->
+
+                                    <div class="training-request-top">
+
+                                        <span class="training-request-name">
+
+                                            {{ $studentName }}
+
+                                        </span>
+
+
+                                        <span
+                                            class="training-request-type {{
+                                                $isSick
+                                                    ? 'sick'
+                                                    : 'permission'
+                                            }}"
+                                        >
+
+                                            <span class="material-symbols-outlined">
+
+                                                {{
+                                                    $isSick
+                                                        ? 'medical_services'
+                                                        : 'assignment'
+                                                }}
+
+                                            </span>
+
+                                            {{
+                                                $isSick
+                                                    ? 'SAKIT'
+                                                    : 'IZIN'
+                                            }}
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <!-- STUDENT META -->
+
+                                    <div class="training-request-student-meta">
+
+                                        NIS:
+                                        {{
+                                            $leaveRequest
+                                                ->student?->nis
+                                            ?? '-'
+                                        }}
+
+                                        •
+
+                                        {{
+                                            $leaveRequest
+                                                ->student?->class?->name
+                                            ?? '-'
+                                        }}
+
+                                    </div>
+
+
+                                    <!-- SESSION -->
+
+                                    @if($session)
+
+                                        <div class="training-request-session">
+
+                                            <span class="material-symbols-outlined">
+                                                exercise
+                                            </span>
+
+                                            <strong>
+                                                {{ $session->sport }}
+                                            </strong>
+
+                                            <span>•</span>
+
+                                            <span>
+
+                                                {{ $session
+                                                    ->training_date
+                                                    ->copy()
+                                                    ->locale('id')
+                                                    ->translatedFormat(
+                                                        'd F Y'
+                                                    ) }}
+
+                                            </span>
+
+                                            @if($session->start_time)
+
+                                                <span>•</span>
+
+                                                <span>
+
+                                                    {{ \Carbon\Carbon::parse(
+                                                        $session->start_time
+                                                    )->format('H:i') }}
+
+                                                    WIB
+
+                                                </span>
+
+                                            @endif
+
+                                            @if($session->location)
+
+                                                <span>•</span>
+
+                                                <span>
+                                                    {{ $session->location }}
+                                                </span>
+
+                                            @endif
+
+                                        </div>
+
+                                    @else
+
+                                        <div class="training-request-session">
+
+                                            <span class="material-symbols-outlined">
+                                                event_busy
+                                            </span>
+
+                                            Sesi latihan tidak ditemukan
+
+                                        </div>
+
+                                    @endif
+
+
+                                    <!-- REASON -->
+
+                                    <div class="training-request-reason">
+
+                                        <strong>
+                                            Alasan:
+                                        </strong>
+
+                                        {{ $leaveRequest->reason }}
+
+                                    </div>
+
+
+                                    <!-- ATTACHMENT -->
+
+                                    @if($leaveRequest->attachment)
+
+                                        <div class="training-request-attachment">
+
+                                            <span class="material-symbols-outlined">
+                                                attach_file
+                                            </span>
+
+                                            LAMPIRAN TERSEDIA
+
+                                        </div>
+
+                                    @endif
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            <div class="training-request-status">
+
+                                <span class="material-symbols-outlined">
+                                    schedule
+                                </span>
+
+                                MENUNGGU GURU
+
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <div class="training-notification-empty">
+
+                    <div class="training-notification-empty-icon">
+
+                        <span class="material-symbols-outlined">
+                            notifications_off
+                        </span>
+
+                    </div>
+
+                    <strong>
+                        Tidak ada pengajuan latihan baru
+                    </strong>
+
+                    <p>
+
+                        Pengajuan Izin / Sakit latihan dari siswa
+                        yang masih menunggu Guru akan muncul di sini.
+
+                    </p>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
          CABANG OLAHRAGA
     ================================================== -->
 
@@ -685,8 +1531,6 @@
             </div>
 
 
-            <!-- LIHAT SEMUA -->
-
             <a
                 href="{{ route('students.sports.index') }}"
                 class="text-link"
@@ -706,9 +1550,7 @@
         <div class="sports-grid">
 
 
-            <!-- =================================================
-                 ATLETIK
-            ================================================== -->
+            <!-- ATLETIK -->
 
             <a
                 href="{{ route(
@@ -735,9 +1577,7 @@
             </a>
 
 
-            <!-- =================================================
-                 BOLA BASKET
-            ================================================== -->
+            <!-- BOLA BASKET -->
 
             <a
                 href="{{ route(
@@ -764,9 +1604,7 @@
             </a>
 
 
-            <!-- =================================================
-                 SEPAK BOLA
-            ================================================== -->
+            <!-- SEPAK BOLA -->
 
             <a
                 href="{{ route(
@@ -793,9 +1631,7 @@
             </a>
 
 
-            <!-- =================================================
-                 BOLA VOLI
-            ================================================== -->
+            <!-- BOLA VOLI -->
 
             <a
                 href="{{ route(
@@ -852,9 +1688,7 @@
         <div class="pelatih-management-grid">
 
 
-            <!-- =================================================
-                 KEHADIRAN LATIHAN
-            ================================================== -->
+            <!-- KEHADIRAN LATIHAN -->
 
             <a
                 href="{{ route('training.index') }}"
@@ -890,9 +1724,7 @@
             </a>
 
 
-            <!-- =================================================
-                 BERITA KKO
-            ================================================== -->
+            <!-- BERITA KKO -->
 
             <button
                 type="button"
@@ -928,9 +1760,7 @@
             </button>
 
 
-            <!-- =================================================
-                 DATA CABANG OLAHRAGA SISWA
-            ================================================== -->
+            <!-- DATA CABANG -->
 
             <a
                 href="{{ route('students.sports.index') }}"
@@ -1045,4 +1875,5 @@
 
 
 </body>
+
 </html>
