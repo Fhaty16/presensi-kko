@@ -75,21 +75,18 @@
         |--------------------------------------------------------------------------
         */
 
-        a.teacher-action-card {
+        a.teacher-action-card,
+        a.management-card,
+        a.sport-card,
+        a.text-link {
             color: inherit;
             text-decoration: none;
         }
 
-        a.teacher-action-card:visited {
-            color: inherit;
-        }
-
-        a.management-card {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        a.management-card:visited {
+        a.teacher-action-card:visited,
+        a.management-card:visited,
+        a.sport-card:visited,
+        a.text-link:visited {
             color: inherit;
         }
 
@@ -111,7 +108,7 @@
 
         /*
         |--------------------------------------------------------------------------
-        | MANAGEMENT 2 COLUMN
+        | MANAGEMENT GRID
         |--------------------------------------------------------------------------
         */
 
@@ -127,6 +124,56 @@
 
         /*
         |--------------------------------------------------------------------------
+        | FULL WIDTH MANAGEMENT CARD
+        |--------------------------------------------------------------------------
+        */
+
+        .management-card-full {
+            grid-column: 1 / -1;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA CABANG CARD
+        |--------------------------------------------------------------------------
+        */
+
+        .student-sport-management {
+            position: relative;
+
+            border-color: rgba(157, 202, 255, .35);
+        }
+
+        .student-sport-management .management-icon {
+            color: #9dcaff;
+
+            background: rgba(0, 114, 188, .12);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SPORT CARD HOVER
+        |--------------------------------------------------------------------------
+        */
+
+        a.sport-card {
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                background .18s ease;
+        }
+
+        a.sport-card:hover {
+            transform: translateY(-2px);
+
+            border-color: rgba(157, 202, 255, .55);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
         | MOBILE
         |--------------------------------------------------------------------------
         */
@@ -135,6 +182,10 @@
 
             .pelatih-management-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .management-card-full {
+                grid-column: auto;
             }
 
         }
@@ -546,9 +597,7 @@
         <div class="teacher-actions">
 
 
-            <!-- =================================================
-                 INPUT MANUAL
-            ================================================== -->
+            <!-- INPUT MANUAL -->
 
             <button
                 type="button"
@@ -580,9 +629,7 @@
             </button>
 
 
-            <!-- =================================================
-                 BARCODE SEKOLAH
-            ================================================== -->
+            <!-- BARCODE SEKOLAH -->
 
             <a
                 href="{{ route('barcode.display') }}"
@@ -623,7 +670,6 @@
 
     <section class="dashboard-section">
 
-
         <div class="section-heading">
 
             <div>
@@ -639,8 +685,10 @@
             </div>
 
 
-            <button
-                type="button"
+            <!-- LIHAT SEMUA -->
+
+            <a
+                href="{{ route('students.sports.index') }}"
                 class="text-link"
             >
 
@@ -650,7 +698,7 @@
                     arrow_forward
                 </span>
 
-            </button>
+            </a>
 
         </div>
 
@@ -658,10 +706,17 @@
         <div class="sports-grid">
 
 
-            <!-- ATLETIK -->
+            <!-- =================================================
+                 ATLETIK
+            ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Atletik',
+                    ]
+                ) }}"
                 class="sport-card sport-blue"
             >
 
@@ -677,13 +732,20 @@
                     Data Siswa
                 </span>
 
-            </button>
+            </a>
 
 
-            <!-- BASKET -->
+            <!-- =================================================
+                 BOLA BASKET
+            ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Bola Basket',
+                    ]
+                ) }}"
                 class="sport-card sport-silver"
             >
 
@@ -699,13 +761,20 @@
                     Data Siswa
                 </span>
 
-            </button>
+            </a>
 
 
-            <!-- SEPAK BOLA -->
+            <!-- =================================================
+                 SEPAK BOLA
+            ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Sepak Bola',
+                    ]
+                ) }}"
                 class="sport-card sport-blue"
             >
 
@@ -721,13 +790,20 @@
                     Data Siswa
                 </span>
 
-            </button>
+            </a>
 
 
-            <!-- BOLA VOLI -->
+            <!-- =================================================
+                 BOLA VOLI
+            ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route(
+                    'students.sports.index',
+                    [
+                        'sport' => 'Bola Voli',
+                    ]
+                ) }}"
                 class="sport-card sport-silver"
             >
 
@@ -743,7 +819,7 @@
                     Data Siswa
                 </span>
 
-            </button>
+            </a>
 
         </div>
 
@@ -755,7 +831,6 @@
     ================================================== -->
 
     <section class="dashboard-section">
-
 
         <div class="section-heading">
 
@@ -852,6 +927,44 @@
 
             </button>
 
+
+            <!-- =================================================
+                 DATA CABANG OLAHRAGA SISWA
+            ================================================== -->
+
+            <a
+                href="{{ route('students.sports.index') }}"
+                class="management-card management-card-full student-sport-management"
+            >
+
+                <div class="management-icon">
+
+                    <span class="material-symbols-outlined">
+                        groups
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Data Cabang Olahraga Siswa
+                    </strong>
+
+                    <p>
+                        Atur dan kelola cabang olahraga seluruh siswa KKO
+                    </p>
+
+                </div>
+
+
+                <span class="material-symbols-outlined management-arrow">
+                    arrow_forward
+                </span>
+
+            </a>
+
         </div>
 
     </section>
@@ -884,16 +997,16 @@
     </a>
 
 
-    <!-- BERITA -->
+    <!-- DATA SISWA -->
 
-    <a href="#">
+    <a href="{{ route('students.sports.index') }}">
 
         <span class="material-symbols-outlined">
-            newspaper
+            groups
         </span>
 
         <span>
-            Berita
+            Siswa
         </span>
 
     </a>
@@ -932,5 +1045,4 @@
 
 
 </body>
-
 </html>

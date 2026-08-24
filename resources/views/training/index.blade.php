@@ -9,9 +9,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Kehadiran Latihan - KKO SMANDA</title>
+    <title>
+        Kehadiran Latihan - KKO SMANDA
+    </title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -25,7 +30,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         rel="stylesheet"
     >
 
@@ -34,75 +39,85 @@
         href="{{ asset('css/kko.css') }}"
     >
 
-
     <style>
+        body {
+            margin: 0;
 
-        /* =====================================================
-           MATERIAL SYMBOLS
-        ===================================================== */
+            background: #101415;
+            color: #ffffff;
+
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
             font-style: normal;
+
             line-height: 1;
+
             letter-spacing: normal;
             text-transform: none;
+
             white-space: nowrap;
-            direction: ltr;
+
             font-feature-settings: 'liga';
+
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | PAGE
+        |--------------------------------------------------------------------------
+        */
 
-        /* =====================================================
-           PAGE
-        ===================================================== */
+        .training-page {
+            width: min(
+                1120px,
+                calc(100% - 40px)
+            );
 
-        .training-container {
-            max-width: 1240px;
             margin: 0 auto;
-            padding: 38px 24px 100px;
+
+            padding: 34px 0 100px;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | BACK
+        |--------------------------------------------------------------------------
+        */
 
-        /* =====================================================
-           BACK
-        ===================================================== */
-
-        .training-back {
+        .back-link {
             display: inline-flex;
             align-items: center;
+
             gap: 7px;
 
-            margin-bottom: 25px;
+            margin-bottom: 24px;
 
             color: #9dcaff;
 
             text-decoration: none;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-
-            transition: .18s ease;
         }
 
-        .training-back:hover {
-            color: #ffffff;
+        .back-link .material-symbols-outlined {
+            font-size: 17px;
         }
 
-        .training-back .material-symbols-outlined {
-            font-size: 18px;
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | HEADING
+        |--------------------------------------------------------------------------
+        */
 
-
-        /* =====================================================
-           HEADING
-        ===================================================== */
-
-        .training-heading-row {
+        .page-heading {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
@@ -112,103 +127,155 @@
             margin-bottom: 28px;
         }
 
-        .training-heading {
-            min-width: 0;
-        }
-
-        .training-label {
+        .page-label {
             display: block;
 
-            margin-bottom: 8px;
+            margin-bottom: 6px;
 
             color: #9dcaff;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 800;
 
-            letter-spacing: 1px;
+            letter-spacing: 1.4px;
         }
 
-        .training-heading h1 {
+        .page-heading h1 {
             margin: 0;
 
-            color: #e0e3e5;
-
             font-family: 'Anybody', sans-serif;
-            font-size: 32px;
+            font-size: 31px;
             font-weight: 800;
         }
 
-        .training-heading p {
+        .page-heading p {
             margin: 7px 0 0;
 
-            color: #8a919c;
+            color: #7e8a94;
 
-            font-size: 12px;
+            font-size: 10px;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE BUTTON
+        |--------------------------------------------------------------------------
+        */
 
-        /* =====================================================
-           CREATE BUTTON
-        ===================================================== */
-
-        .training-create-button {
-            min-height: 42px;
-
+        .create-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
 
             gap: 7px;
 
-            padding: 0 17px;
+            min-height: 42px;
 
-            flex: 0 0 auto;
+            padding: 0 15px;
 
-            color: #ffffff;
-            background: #0072bc;
+            color: #101415;
+            background: #9dcaff;
 
-            border: 1px solid #1685d2;
-            border-radius: 10px;
+            border: 1px solid #9dcaff;
+            border-radius: 9px;
 
             text-decoration: none;
 
+            font-size: 9px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .create-button .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUCCESS
+        |--------------------------------------------------------------------------
+        */
+
+        .success-message {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 18px;
+            padding: 12px 14px;
+
+            color: #8ce8c3;
+            background: rgba(80, 200, 150, .07);
+
+            border: 1px solid rgba(80, 200, 150, .20);
+            border-radius: 10px;
+
+            font-size: 9px;
+        }
+
+        .success-message .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SECTION TITLE
+        |--------------------------------------------------------------------------
+        */
+
+        .section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 13px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+
             font-family: 'Anybody', sans-serif;
-            font-size: 10px;
-            font-weight: 700;
-
-            transition: .18s ease;
+            font-size: 20px;
         }
 
-        .training-create-button:hover {
-            background: #1685d2;
+        .section-heading p {
+            margin: 5px 0 0;
 
-            transform: translateY(-1px);
+            color: #788590;
+
+            font-size: 9px;
         }
 
-        .training-create-button .material-symbols-outlined {
-            font-size: 17px;
+        .session-count {
+            color: #82929e;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | LIST
+        |--------------------------------------------------------------------------
+        */
 
-        /* =====================================================
-           STATS
-        ===================================================== */
-
-        .training-stats {
+        .training-list {
             display: grid;
 
-            grid-template-columns:
-                repeat(5, minmax(0, 1fr));
-
-            gap: 10px;
-
-            margin-bottom: 29px;
+            gap: 12px;
         }
 
-        .training-stat {
-            padding: 15px;
+        .training-card {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 18px;
 
             background: #1b2531;
 
@@ -216,588 +283,426 @@
             border-radius: 13px;
         }
 
-        .training-stat-label {
+        .training-card::before {
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 3px;
+            height: 100%;
+
+            content: '';
+
+            background: #9dcaff;
+        }
+
+        .training-card-top {
             display: flex;
-            align-items: center;
-
-            gap: 6px;
-
-            margin-bottom: 9px;
-
-            color: #82909d;
-
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
-            font-weight: 700;
-        }
-
-        .training-stat-label .material-symbols-outlined {
-            font-size: 15px;
-        }
-
-        .training-stat strong {
-            color: #ffffff;
-
-            font-family: 'Anybody', sans-serif;
-            font-size: 23px;
-            font-weight: 800;
-        }
-
-        .training-stat.present
-        .training-stat-label {
-            color: #8ce8c3;
-        }
-
-        .training-stat.permission
-        .training-stat-label {
-            color: #eacb84;
-        }
-
-        .training-stat.sick
-        .training-stat-label {
-            color: #9dcaff;
-        }
-
-        .training-stat.absent
-        .training-stat-label {
-            color: #ffaaa5;
-        }
-
-
-        /* =====================================================
-           TOOLBAR
-        ===================================================== */
-
-        .training-toolbar {
-            display: flex;
-            align-items: flex-end;
+            align-items: flex-start;
             justify-content: space-between;
-
-            gap: 15px;
-
-            margin-bottom: 14px;
-        }
-
-        .training-toolbar h2 {
-            margin: 0;
-
-            color: #e0e3e5;
-
-            font-family: 'Anybody', sans-serif;
-            font-size: 21px;
-        }
-
-        .training-toolbar p {
-            margin: 4px 0 0;
-
-            color: #8a919c;
-
-            font-size: 10px;
-        }
-
-        .training-search {
-            width: 285px;
-            height: 40px;
-
-            padding: 0 13px;
-
-            color: #e0e3e5;
-            background: #1a1e21;
-
-            border: 1px solid #404751;
-            border-radius: 9px;
-
-            outline: none;
-
-            font-size: 11px;
-        }
-
-        .training-search:focus {
-            border-color: #9dcaff;
-        }
-
-
-        /* =====================================================
-           SESSION LIST
-        ===================================================== */
-
-        .training-list {
-            display: flex;
-            flex-direction: column;
-
-            gap: 12px;
-        }
-
-        .training-session {
-            display: grid;
-
-            grid-template-columns:
-                minmax(230px, 1.5fr)
-                minmax(170px, 1fr)
-                minmax(200px, 1.2fr)
-                auto;
-
-            align-items: center;
 
             gap: 20px;
 
-            padding: 18px;
-
-            color: inherit;
-            background: #1b2531;
-
-            border: 1px solid #34485d;
-            border-radius: 15px;
-
-            text-decoration: none;
-
-            transition:
-                border-color .18s ease,
-                background .18s ease,
-                transform .18s ease;
+            margin-bottom: 17px;
         }
 
-        .training-session:hover {
-            background: #1e2a37;
-
-            border-color: #4b647d;
-
-            transform: translateY(-1px);
-        }
-
-
-        /* =====================================================
-           SESSION PRIMARY
-        ===================================================== */
-
-        .training-session-primary {
-            display: flex;
-            align-items: center;
-
-            gap: 12px;
-
+        .training-main {
             min-width: 0;
         }
 
-        .training-session-icon {
-            width: 46px;
-            height: 46px;
+        .training-sport {
+            display: flex;
+            align-items: center;
 
-            flex: 0 0 46px;
+            gap: 9px;
+
+            margin-bottom: 7px;
+        }
+
+        .sport-icon {
+            width: 34px;
+            height: 34px;
+
+            flex-shrink: 0;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            color: #9dcaff;
-            background: rgba(0, 114, 188, .16);
+            color: #101415;
+            background: #9dcaff;
 
-            border: 1px solid rgba(157, 202, 255, .16);
-            border-radius: 12px;
+            border-radius: 8px;
         }
 
-        .training-session-icon
-        .material-symbols-outlined {
-            font-size: 23px;
+        .sport-icon .material-symbols-outlined {
+            font-size: 19px;
         }
 
-        .training-session-primary small {
-            display: block;
-
-            margin-bottom: 4px;
-
-            color: #747d88;
-
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 7px;
-            font-weight: 700;
-        }
-
-        .training-session-primary strong {
-            display: block;
-
-            overflow: hidden;
-
-            color: #e0e3e5;
-
+        .training-sport strong {
             font-family: 'Anybody', sans-serif;
-            font-size: 14px;
-            font-weight: 750;
-
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            font-size: 16px;
+            font-weight: 800;
         }
 
-        .training-session-primary span {
-            display: block;
-
-            margin-top: 5px;
-
-            color: #8a919c;
-
-            font-size: 9px;
-        }
-
-
-        /* =====================================================
-           META
-        ===================================================== */
-
-        .training-meta {
-            display: flex;
-            flex-direction: column;
-
-            gap: 8px;
-        }
-
-        .training-meta-item {
-            display: flex;
-            align-items: center;
-
-            gap: 7px;
-
-            color: #9aa4ae;
+        .training-date {
+            color: #7e8a94;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
 
-        .training-meta-item
-        .material-symbols-outlined {
-            color: #71808e;
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS BADGE
+        |--------------------------------------------------------------------------
+        */
 
-            font-size: 15px;
+        .training-status {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 7px 9px;
+
+            border-radius: 7px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+
+            white-space: nowrap;
         }
 
+        .status-upcoming {
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .08);
 
-        /* =====================================================
-           COUNTS
-        ===================================================== */
+            border: 1px solid rgba(157, 202, 255, .18);
+        }
 
-        .training-counts {
+        .status-active {
+            color: #8ce8c3;
+            background: rgba(80, 200, 150, .07);
+
+            border: 1px solid rgba(80, 200, 150, .20);
+        }
+
+        .status-finished {
+            color: #8d99a2;
+            background: rgba(120, 130, 140, .06);
+
+            border: 1px solid rgba(150, 160, 170, .14);
+        }
+
+        .training-status .material-symbols-outlined {
+            font-size: 14px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DETAILS
+        |--------------------------------------------------------------------------
+        */
+
+        .training-details {
             display: grid;
 
             grid-template-columns:
                 repeat(4, minmax(0, 1fr));
 
-            gap: 6px;
+            gap: 9px;
+
+            margin-bottom: 18px;
         }
 
-        .training-count {
-            padding: 8px 5px;
+        .detail-box {
+            padding: 11px;
 
-            text-align: center;
+            background: #141c23;
 
-            background: #151b20;
-
-            border: 1px solid #303c48;
-            border-radius: 8px;
+            border: 1px solid #2d3d4b;
+            border-radius: 9px;
         }
 
-        .training-count span {
+        .detail-box span {
             display: block;
 
-            margin-bottom: 4px;
+            margin-bottom: 5px;
 
-            color: #77828d;
+            color: #6f7d88;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 6px;
+            font-size: 7px;
+            font-weight: 800;
+        }
+
+        .detail-box strong {
+            display: block;
+
+            overflow: hidden;
+
+            color: #dfe5e8;
+
+            font-size: 9px;
             font-weight: 700;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .training-count strong {
-            color: #e0e3e5;
+        /*
+        |--------------------------------------------------------------------------
+        | NOTE
+        |--------------------------------------------------------------------------
+        */
 
-            font-family: 'Anybody', sans-serif;
-            font-size: 12px;
+        .training-note {
+            margin-bottom: 17px;
+            padding: 10px 11px;
+
+            color: #82909a;
+            background: rgba(255, 255, 255, .015);
+
+            border: 1px solid #2c3b47;
+            border-radius: 8px;
+
+            font-size: 8px;
+            line-height: 1.5;
         }
 
-        .training-count.present strong {
-            color: #8ce8c3;
+        /*
+        |--------------------------------------------------------------------------
+        | ACTION
+        |--------------------------------------------------------------------------
+        */
+
+        .training-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #2d3d4a;
         }
 
-        .training-count.permission strong {
-            color: #eacb84;
+        .attendance-summary {
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            color: #788792;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
         }
 
-        .training-count.sick strong {
+        .attendance-summary .material-symbols-outlined {
             color: #9dcaff;
+
+            font-size: 17px;
         }
 
-        .training-count.absent strong {
-            color: #ffaaa5;
+        .training-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            gap: 8px;
         }
 
-
-        /* =====================================================
-           ARROW
-        ===================================================== */
-
-        .training-session-arrow {
-            color: #778390;
-
-            font-size: 22px;
-
-            transition: .18s ease;
+        .training-actions form {
+            margin: 0;
         }
 
-        .training-session:hover
-        .training-session-arrow {
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+
+            min-height: 35px;
+
+            box-sizing: border-box;
+
+            padding: 0 11px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-size: 8px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .detail-button {
+            color: #101415;
+            background: #9dcaff;
+
+            border: 1px solid #9dcaff;
+        }
+
+        .edit-button {
             color: #9dcaff;
+            background: rgba(0, 114, 188, .08);
 
-            transform: translateX(3px);
+            border: 1px solid rgba(157, 202, 255, .20);
         }
 
+        .delete-button {
+            color: #ff9b9b;
+            background: rgba(255, 80, 80, .06);
 
-        /* =====================================================
-           EMPTY STATE
-        ===================================================== */
+            border: 1px solid rgba(255, 100, 100, .20);
+        }
 
-        .training-empty {
-            padding: 58px 20px;
+        .action-button .material-symbols-outlined {
+            font-size: 15px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | EMPTY
+        |--------------------------------------------------------------------------
+        */
+
+        .empty-state {
+            padding: 60px 20px;
 
             text-align: center;
 
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 15px;
+            border-radius: 13px;
         }
 
-        .training-empty-icon {
-            width: 58px;
-            height: 58px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            margin: 0 auto 13px;
-
-            color: #9dcaff;
-            background: rgba(0, 114, 188, .13);
-
-            border: 1px solid rgba(157, 202, 255, .15);
-            border-radius: 15px;
-        }
-
-        .training-empty-icon
-        .material-symbols-outlined {
-            font-size: 29px;
-        }
-
-        .training-empty strong {
+        .empty-state .material-symbols-outlined {
             display: block;
 
-            color: #e0e3e5;
+            margin-bottom: 11px;
+
+            color: #60717d;
+
+            font-size: 43px;
+        }
+
+        .empty-state strong {
+            display: block;
 
             font-family: 'Anybody', sans-serif;
             font-size: 15px;
         }
 
-        .training-empty p {
-            margin: 6px 0 17px;
+        .empty-state p {
+            margin: 6px 0 18px;
 
-            color: #8a919c;
+            color: #788590;
 
-            font-size: 10px;
-        }
-
-        .training-empty-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-
-            min-height: 38px;
-
-            padding: 0 14px;
-
-            color: #ffffff;
-            background: #0072bc;
-
-            border: 1px solid #1685d2;
-            border-radius: 9px;
-
-            text-decoration: none;
-
-            font-family: 'Anybody', sans-serif;
             font-size: 9px;
-            font-weight: 700;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | MOBILE
+        |--------------------------------------------------------------------------
+        */
 
-        /* =====================================================
-           SEARCH EMPTY
-        ===================================================== */
+        @media (max-width: 800px) {
 
-        .training-search-empty {
-            display: none;
-
-            padding: 40px 20px;
-
-            text-align: center;
-
-            color: #8a919c;
-            background: #1b2531;
-
-            border: 1px solid #34485d;
-            border-radius: 15px;
-
-            font-size: 10px;
-        }
-
-
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
-
-        @media (max-width: 1000px) {
-
-            .training-stats {
-                grid-template-columns:
-                    repeat(3, minmax(0, 1fr));
-            }
-
-            .training-session {
-                grid-template-columns:
-                    minmax(230px, 1.3fr)
-                    minmax(170px, 1fr)
-                    auto;
-            }
-
-            .training-counts {
-                grid-column: 1 / 3;
-            }
-
-        }
-
-
-        @media (max-width: 720px) {
-
-            .training-container {
-                padding: 25px 14px 100px;
-            }
-
-            .training-heading-row {
-                align-items: stretch;
-                flex-direction: column;
-            }
-
-            .training-heading h1 {
-                font-size: 26px;
-            }
-
-            .training-create-button {
-                width: 100%;
-            }
-
-            .training-stats {
+            .training-details {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
 
-            .training-toolbar {
-                align-items: stretch;
+            .training-card-footer {
+                align-items: flex-start;
                 flex-direction: column;
             }
 
-            .training-search {
+            .training-actions {
                 width: 100%;
-            }
-
-            .training-session {
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-
-                gap: 15px;
-            }
-
-            .training-counts {
-                grid-column: auto;
-            }
-
-            .training-session-arrow {
-                display: none;
             }
 
         }
 
-    </style>
+        @media (max-width: 600px) {
 
+            .training-page {
+                width: calc(100% - 28px);
+
+                padding:
+                    24px
+                    0
+                    90px;
+            }
+
+            .page-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-heading h1 {
+                font-size: 26px;
+            }
+
+            .create-button {
+                width: 100%;
+
+                box-sizing: border-box;
+            }
+
+            .training-card-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .training-details {
+                grid-template-columns: 1fr;
+            }
+
+            .training-actions {
+                display: grid;
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .training-actions form {
+                display: contents;
+            }
+
+            .detail-button {
+                grid-column: 1 / -1;
+            }
+
+            .action-button {
+                width: 100%;
+            }
+
+        }
+    </style>
 </head>
 
 
 <body class="dashboard-page">
 
 
-@php
-
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD TUJUAN
-    |--------------------------------------------------------------------------
-    */
-
-    $dashboardRoute =
-        auth()->user()->role === 'guru'
-            ? route('guru.dashboard')
-            : route('pelatih.dashboard');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | STATISTIK KESELURUHAN
-    |--------------------------------------------------------------------------
-    */
-
-    $totalSessions =
-        $sessions->count();
-
-
-    $allAttendances =
-        $sessions->flatMap(
-            fn ($session) =>
-                $session->attendances
-        );
-
-
-    $totalPresent =
-        $allAttendances
-            ->where('status', 'present')
-            ->count();
-
-
-    $totalPermission =
-        $allAttendances
-            ->where('status', 'permission')
-            ->count();
-
-
-    $totalSick =
-        $allAttendances
-            ->where('status', 'sick')
-            ->count();
-
-
-    $totalAbsent =
-        $allAttendances
-            ->where('status', 'absent')
-            ->count();
-
-@endphp
-
-
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="kko-header">
 
     <div class="kko-header-inner">
-
 
         <div class="kko-brand">
 
@@ -830,9 +735,7 @@
         </div>
 
 
-
         <div class="kko-header-actions">
-
 
             <div class="header-profile">
 
@@ -868,7 +771,6 @@
             </div>
 
 
-
             <form
                 method="POST"
                 action="{{ route('logout') }}"
@@ -890,7 +792,6 @@
 
             </form>
 
-
         </div>
 
     </div>
@@ -898,19 +799,14 @@
 </header>
 
 
+<main class="training-page">
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
-<main class="training-container">
-
-
-    <!-- BACK -->
 
     <a
-        href="{{ $dashboardRoute }}"
-        class="training-back"
+        href="{{ auth()->user()->role === 'guru'
+            ? route('guru.dashboard')
+            : route('pelatih.dashboard') }}"
+        class="back-link"
     >
 
         <span class="material-symbols-outlined">
@@ -922,18 +818,27 @@
     </a>
 
 
+    @if(session('success'))
 
-    <!-- =================================================
-         HEADING
-    ================================================== -->
+        <div class="success-message">
 
-    <section class="training-heading-row">
+            <span class="material-symbols-outlined">
+                check_circle
+            </span>
+
+            {{ session('success') }}
+
+        </div>
+
+    @endif
 
 
-        <div class="training-heading">
+    <section class="page-heading">
 
-            <span class="training-label">
-                MANAJEMEN LATIHAN
+        <div>
+
+            <span class="page-label">
+                MANAJEMEN KKO
             </span>
 
             <h1>
@@ -941,7 +846,7 @@
             </h1>
 
             <p>
-                Kelola sesi latihan dan catat kehadiran siswa KKO.
+                Kelola jadwal, barcode, dan presensi setiap sesi latihan KKO.
             </p>
 
         </div>
@@ -949,7 +854,7 @@
 
         <a
             href="{{ route('training.create') }}"
-            class="training-create-button"
+            class="create-button"
         >
 
             <span class="material-symbols-outlined">
@@ -960,561 +865,459 @@
 
         </a>
 
-
     </section>
 
 
+    <section>
 
-    <!-- =================================================
-         STATISTIK
-    ================================================== -->
+        <div class="section-heading">
 
-    <section class="training-stats">
+            <div>
 
+                <h2>
+                    Daftar Sesi
+                </h2>
 
-        <article class="training-stat">
-
-            <div class="training-stat-label">
-
-                <span class="material-symbols-outlined">
-                    calendar_month
-                </span>
-
-                TOTAL SESI
+                <p>
+                    Sesi latihan terbaru ditampilkan paling atas.
+                </p>
 
             </div>
 
-            <strong>
-                {{ $totalSessions }}
-            </strong>
 
-        </article>
+            <span class="session-count">
 
+                {{ $sessions->count() }}
+                SESI
 
-
-        <article class="training-stat present">
-
-            <div class="training-stat-label">
-
-                <span class="material-symbols-outlined">
-                    check_circle
-                </span>
-
-                HADIR
-
-            </div>
-
-            <strong>
-                {{ $totalPresent }}
-            </strong>
-
-        </article>
-
-
-
-        <article class="training-stat permission">
-
-            <div class="training-stat-label">
-
-                <span class="material-symbols-outlined">
-                    assignment
-                </span>
-
-                IZIN
-
-            </div>
-
-            <strong>
-                {{ $totalPermission }}
-            </strong>
-
-        </article>
-
-
-
-        <article class="training-stat sick">
-
-            <div class="training-stat-label">
-
-                <span class="material-symbols-outlined">
-                    medical_services
-                </span>
-
-                SAKIT
-
-            </div>
-
-            <strong>
-                {{ $totalSick }}
-            </strong>
-
-        </article>
-
-
-
-        <article class="training-stat absent">
-
-            <div class="training-stat-label">
-
-                <span class="material-symbols-outlined">
-                    cancel
-                </span>
-
-                ALFA
-
-            </div>
-
-            <strong>
-                {{ $totalAbsent }}
-            </strong>
-
-        </article>
-
-
-    </section>
-
-
-
-    <!-- =================================================
-         TOOLBAR
-    ================================================== -->
-
-    <section class="training-toolbar">
-
-
-        <div>
-
-            <h2>
-                Riwayat Sesi Latihan
-            </h2>
-
-            <p>
-                {{ $sessions->count() }} sesi latihan tersimpan.
-            </p>
+            </span>
 
         </div>
 
 
         @if($sessions->isNotEmpty())
 
-            <input
-                type="search"
-                id="trainingSearch"
-                class="training-search"
-                placeholder="Cari cabor atau lokasi..."
-            >
+            <div class="training-list">
 
-        @endif
+                @foreach($sessions as $session)
 
+                    @php
 
-    </section>
-
-
-
-    <!-- =================================================
-         SESSION LIST
-    ================================================== -->
-
-    @if($sessions->isNotEmpty())
+                        $sessionDate =
+                            $session->training_date
+                                ? \Carbon\Carbon::parse(
+                                    $session->training_date
+                                )
+                                : null;
 
 
-        <section
-            class="training-list"
-            id="trainingList"
-        >
+                        $startDisplay =
+                            $session->start_time
+                                ? \Carbon\Carbon::parse(
+                                    $session->start_time
+                                )->format('H:i')
+                                : '-';
 
 
-            @foreach($sessions as $session)
-
-                @php
-
-                    $present =
-                        $session->attendances
-                            ->where('status', 'present')
-                            ->count();
-
-                    $permission =
-                        $session->attendances
-                            ->where('status', 'permission')
-                            ->count();
-
-                    $sick =
-                        $session->attendances
-                            ->where('status', 'sick')
-                            ->count();
-
-                    $absent =
-                        $session->attendances
-                            ->where('status', 'absent')
-                            ->count();
+                        $endDisplay =
+                            $session->end_time
+                                ? \Carbon\Carbon::parse(
+                                    $session->end_time
+                                )->format('H:i')
+                                : '-';
 
 
-                    $startTime =
-                        $session->start_time
-                            ? \Carbon\Carbon::parse(
-                                $session->start_time
-                            )->format('H:i')
-                            : null;
+                        $now =
+                            \Carbon\Carbon::now(
+                                'Asia/Jakarta'
+                            );
 
 
-                    $endTime =
-                        $session->end_time
-                            ? \Carbon\Carbon::parse(
-                                $session->end_time
-                            )->format('H:i')
-                            : null;
-
-                @endphp
+                        $startsAt = null;
+                        $endsAt = null;
 
 
-                <a
-                    href="{{ route('training.show', $session) }}"
-                    class="training-session"
-                    data-sport="{{ strtolower($session->sport ?? '') }}"
-                    data-location="{{ strtolower($session->location ?? '') }}"
-                >
+                        if (
+                            $sessionDate
+                            && $session->start_time
+                        ) {
+
+                            $startsAt =
+                                \Carbon\Carbon::parse(
+                                    $sessionDate->format('Y-m-d')
+                                    . ' '
+                                    . $startDisplay,
+                                    'Asia/Jakarta'
+                                );
+
+                        }
 
 
-                    <!-- PRIMARY -->
+                        if (
+                            $sessionDate
+                            && $session->end_time
+                        ) {
 
-                    <div class="training-session-primary">
+                            $endsAt =
+                                \Carbon\Carbon::parse(
+                                    $sessionDate->format('Y-m-d')
+                                    . ' '
+                                    . $endDisplay,
+                                    'Asia/Jakarta'
+                                );
+
+                        }
 
 
-                        <div class="training-session-icon">
+                        if (
+                            $startsAt
+                            && $now->lt($startsAt)
+                        ) {
 
-                            <span class="material-symbols-outlined">
-                                fitness_center
-                            </span>
+                            $sessionStatus =
+                                'upcoming';
+
+                            $sessionStatusLabel =
+                                'BELUM DIMULAI';
+
+                            $sessionStatusIcon =
+                                'schedule';
+
+                        } elseif (
+                            $startsAt
+                            && $endsAt
+                            && $now->between(
+                                $startsAt,
+                                $endsAt
+                            )
+                        ) {
+
+                            $sessionStatus =
+                                'active';
+
+                            $sessionStatusLabel =
+                                'SEDANG BERLANGSUNG';
+
+                            $sessionStatusIcon =
+                                'play_circle';
+
+                        } else {
+
+                            $sessionStatus =
+                                'finished';
+
+                            $sessionStatusLabel =
+                                'SELESAI';
+
+                            $sessionStatusIcon =
+                                'check_circle';
+
+                        }
+
+
+                        $attendanceCount =
+                            $session
+                                ->attendances
+                                ->count();
+
+                    @endphp
+
+
+                    <article class="training-card">
+
+
+                        <div class="training-card-top">
+
+                            <div class="training-main">
+
+                                <div class="training-sport">
+
+                                    <div class="sport-icon">
+
+                                        <span class="material-symbols-outlined">
+
+                                            @switch($session->sport)
+
+                                                @case('Atletik')
+                                                    sprint
+                                                    @break
+
+                                                @case('Bola Basket')
+                                                    sports_basketball
+                                                    @break
+
+                                                @case('Sepak Bola')
+                                                    sports_soccer
+                                                    @break
+
+                                                @case('Bola Voli')
+                                                    sports_volleyball
+                                                    @break
+
+                                                @default
+                                                    exercise
+
+                                            @endswitch
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <strong>
+                                        {{ $session->sport }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="training-date">
+
+                                    {{ $sessionDate
+                                        ? $sessionDate
+                                            ->locale('id')
+                                            ->translatedFormat(
+                                                'l, d F Y'
+                                            )
+                                        : 'Tanggal belum ditentukan' }}
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="training-status status-{{ $sessionStatus }}"
+                            >
+
+                                <span class="material-symbols-outlined">
+                                    {{ $sessionStatusIcon }}
+                                </span>
+
+                                {{ $sessionStatusLabel }}
+
+                            </div>
 
                         </div>
 
 
-                        <div>
-
-                            <small>
-                                CABANG OLAHRAGA
-                            </small>
-
-                            <strong>
-                                {{ $session->sport }}
-                            </strong>
-
-                            <span>
-
-                                {{ $session
-                                    ->training_date
-                                    ->copy()
-                                    ->locale('id')
-                                    ->translatedFormat('l, d F Y') }}
-
-                            </span>
-
-                        </div>
+                        <div class="training-details">
 
 
-                    </div>
+                            <div class="detail-box">
+
+                                <span>
+                                    JAM MULAI
+                                </span>
+
+                                <strong>
+                                    {{ $startDisplay }} WIB
+                                </strong>
+
+                            </div>
 
 
+                            <div class="detail-box">
 
-                    <!-- META -->
+                                <span>
+                                    JAM SELESAI
+                                </span>
 
-                    <div class="training-meta">
+                                <strong>
+                                    {{ $endDisplay }} WIB
+                                </strong>
 
-
-                        <div class="training-meta-item">
-
-                            <span class="material-symbols-outlined">
-                                schedule
-                            </span>
-
-                            @if($startTime && $endTime)
-
-                                {{ $startTime }}
-                                -
-                                {{ $endTime }} WIB
-
-                            @elseif($startTime)
-
-                                {{ $startTime }} WIB
-
-                            @else
-
-                                Jam belum ditentukan
-
-                            @endif
-
-                        </div>
+                            </div>
 
 
-                        <div class="training-meta-item">
+                            <div class="detail-box">
 
-                            <span class="material-symbols-outlined">
-                                location_on
-                            </span>
+                                <span>
+                                    BATAS ALFA
+                                </span>
 
-                            {{ $session->location
-                                ?? 'Lokasi belum ditentukan' }}
+                                <strong>
 
-                        </div>
+                                    @if($startsAt)
+
+                                        {{ $startsAt
+                                            ->copy()
+                                            ->addMinutes(30)
+                                            ->format('H:i') }}
+                                        WIB
+
+                                    @else
+
+                                        -
+
+                                    @endif
+
+                                </strong>
+
+                            </div>
 
 
-                        <div class="training-meta-item">
+                            <div class="detail-box">
 
-                            <span class="material-symbols-outlined">
-                                person
-                            </span>
+                                <span>
+                                    LOKASI
+                                </span>
 
-                            Dibuat oleh
-                            {{ $session->creator?->name ?? '-' }}
+                                <strong>
+                                    {{ $session->location ?: '-' }}
+                                </strong>
+
+                            </div>
 
                         </div>
 
 
-                    </div>
+                        @if($session->notes)
+
+                            <div class="training-note">
+
+                                {{ $session->notes }}
+
+                            </div>
+
+                        @endif
 
 
+                        <div class="training-card-footer">
 
-                    <!-- COUNTS -->
+                            <div class="attendance-summary">
 
-                    <div class="training-counts">
+                                <span class="material-symbols-outlined">
+                                    groups
+                                </span>
+
+                                {{ $attendanceCount }}
+                                data presensi
+
+                            </div>
 
 
-                        <div class="training-count present">
+                            <div class="training-actions">
 
-                            <span>
-                                HADIR
-                            </span>
 
-                            <strong>
-                                {{ $present }}
-                            </strong>
+                                <!-- DETAIL -->
+
+                                <a
+                                    href="{{ route(
+                                        'training.show',
+                                        $session
+                                    ) }}"
+                                    class="action-button detail-button"
+                                >
+
+                                    <span class="material-symbols-outlined">
+                                        visibility
+                                    </span>
+
+                                    Lihat Detail
+
+                                </a>
+
+
+                                <!-- EDIT -->
+
+                                <a
+                                    href="{{ route(
+                                        'training.edit',
+                                        $session
+                                    ) }}"
+                                    class="action-button edit-button"
+                                >
+
+                                    <span class="material-symbols-outlined">
+                                        edit_calendar
+                                    </span>
+
+                                    Edit Jadwal
+
+                                </a>
+
+
+                                <!-- DELETE -->
+
+                                <form
+                                    method="POST"
+                                    action="{{ route(
+                                        'training.destroy',
+                                        $session
+                                    ) }}"
+                                    onsubmit="return confirm(
+                                        'Yakin ingin menghapus sesi latihan {{ $session->sport }} ini? Data barcode dan presensi pada sesi ini juga akan dihapus.'
+                                    );"
+                                >
+
+                                    @csrf
+                                    @method('DELETE')
+
+
+                                    <button
+                                        type="submit"
+                                        class="action-button delete-button"
+                                    >
+
+                                        <span class="material-symbols-outlined">
+                                            delete
+                                        </span>
+
+                                        Hapus
+
+                                    </button>
+
+                                </form>
+
+                            </div>
 
                         </div>
 
+                    </article>
 
-                        <div class="training-count permission">
-
-                            <span>
-                                IZIN
-                            </span>
-
-                            <strong>
-                                {{ $permission }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="training-count sick">
-
-                            <span>
-                                SAKIT
-                            </span>
-
-                            <strong>
-                                {{ $sick }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="training-count absent">
-
-                            <span>
-                                ALFA
-                            </span>
-
-                            <strong>
-                                {{ $absent }}
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-
-
-                    <!-- ARROW -->
-
-                    <span class="material-symbols-outlined training-session-arrow">
-                        chevron_right
-                    </span>
-
-
-                </a>
-
-
-            @endforeach
-
-
-        </section>
-
-
-
-        <!-- SEARCH EMPTY -->
-
-        <div
-            class="training-search-empty"
-            id="trainingSearchEmpty"
-        >
-
-            Tidak ditemukan sesi latihan yang sesuai.
-
-        </div>
-
-
-    @else
-
-
-        <!-- =================================================
-             EMPTY
-        ================================================== -->
-
-        <section class="training-empty">
-
-
-            <div class="training-empty-icon">
-
-                <span class="material-symbols-outlined">
-                    fitness_center
-                </span>
+                @endforeach
 
             </div>
 
+        @else
 
-            <strong>
-                Belum ada sesi latihan
-            </strong>
-
-
-            <p>
-                Buat sesi latihan pertama untuk mulai mencatat kehadiran siswa.
-            </p>
-
-
-            <a
-                href="{{ route('training.create') }}"
-                class="training-empty-button"
-            >
+            <div class="empty-state">
 
                 <span class="material-symbols-outlined">
-                    add
+                    event_busy
                 </span>
 
-                Buat Sesi Latihan
+                <strong>
+                    Belum Ada Sesi Latihan
+                </strong>
 
-            </a>
+                <p>
+                    Buat sesi latihan terlebih dahulu untuk memulai presensi.
+                </p>
 
 
-        </section>
+                <a
+                    href="{{ route('training.create') }}"
+                    class="create-button"
+                >
 
+                    <span class="material-symbols-outlined">
+                        add
+                    </span>
 
-    @endif
+                    Buat Sesi Latihan
 
+                </a>
+
+            </div>
+
+        @endif
+
+    </section>
 
 </main>
 
 
-
-<!-- =====================================================
-     JAVASCRIPT SEARCH
-===================================================== -->
-
-<script>
-
-    const trainingSearch =
-        document.getElementById(
-            'trainingSearch'
-        );
-
-    const trainingSessions =
-        document.querySelectorAll(
-            '.training-session'
-        );
-
-    const trainingList =
-        document.getElementById(
-            'trainingList'
-        );
-
-    const trainingSearchEmpty =
-        document.getElementById(
-            'trainingSearchEmpty'
-        );
-
-
-    if (trainingSearch) {
-
-        trainingSearch.addEventListener(
-            'input',
-            function () {
-
-                const keyword =
-                    trainingSearch.value
-                        .toLowerCase()
-                        .trim();
-
-
-                let visibleCount = 0;
-
-
-                trainingSessions.forEach(
-                    function (session) {
-
-                        const sport =
-                            session.dataset.sport || '';
-
-                        const location =
-                            session.dataset.location || '';
-
-
-                        const visible =
-                            sport.includes(keyword)
-                            ||
-                            location.includes(keyword);
-
-
-                        session.style.display =
-                            visible
-                                ? ''
-                                : 'none';
-
-
-                        if (visible) {
-                            visibleCount++;
-                        }
-
-                    }
-                );
-
-
-                if (visibleCount === 0) {
-
-                    trainingList.style.display =
-                        'none';
-
-                    trainingSearchEmpty.style.display =
-                        'block';
-
-                } else {
-
-                    trainingList.style.display =
-                        'flex';
-
-                    trainingSearchEmpty.style.display =
-                        'none';
-
-                }
-
-            }
-        );
-
-    }
-
-</script>
-
-
 </body>
-
 </html>

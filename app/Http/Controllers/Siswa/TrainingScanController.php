@@ -17,16 +17,29 @@ class TrainingScanController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | AMBIL DATA SISWA LOGIN
+    | KONFIGURASI PRESENSI
+    |--------------------------------------------------------------------------
+    */
+
+    private const LATE_LIMIT_MINUTES = 10;
+
+    private const ABSENT_LIMIT_MINUTES = 30;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AMBIL SISWA LOGIN
     |--------------------------------------------------------------------------
     */
 
     private function getStudent(): Student
     {
-        $student = Student::where(
-            'user_id',
-            auth()->id()
-        )->first();
+        $student =
+            Student::where(
+                'user_id',
+                auth()->id()
+            )->first();
+
 
         abort_unless(
             $student,
@@ -34,54 +47,257 @@ class TrainingScanController extends Controller
             'Data siswa tidak ditemukan.'
         );
 
+
         return $student;
     }
 
+
     /*
     |--------------------------------------------------------------------------
-    | JADWAL LATIHAN KKO SISWA
+    | NORMALISASI CABANG OLAHRAGA
     |--------------------------------------------------------------------------
-    |
-    | Halaman:
-    |
-    | /siswa/latihan
-    |
-    | Menampilkan jadwal latihan mulai hari ini dan seterusnya.
-    | Presensi siswa untuk setiap sesi juga ikut dimuat.
-    |
+    */
+
+    private function normalizeSport(
+        ?string $sport
+    ): string {
+        return mb_strtolower(
+            trim(
+                $sport ?? ''
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CEK CABANG SISWA DAN SESI
+    |--------------------------------------------------------------------------
+    */
+
+    private function studentCanAccessSession(
+        Student $student,
+        TrainingSession $trainingSession
+    ): bool {
+        if (!$student->sport) {
+            return false;
+        }
+
+
+        return $this->normalizeSport(
+            $student->sport
+        ) === $this->normalizeSport(
+            $trainingSession->sport
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BENTUK WAKTU SESI
+    |--------------------------------------------------------------------------
+    */
+
+    private function getSessionTimes(
+        TrainingSession $trainingSession
+    ): ?array {
+        if (
+            !$trainingSession->training_date
+            || !$trainingSession->start_time
+            || !$trainingSession->end_time
+        ) {
+            return null;
+        }
+
+
+        $timezone =
+            'Asia/Jakarta';
+
+
+        $date =
+            Carbon::parse(
+                $trainingSession->training_date,
+                $timezone
+            )->format(
+                'Y-m-d'
+            );
+
+
+        $startTime =
+            Carbon::parse(
+                $trainingSession->start_time,
+                $timezone
+            )->format(
+                'H:i:s'
+            );
+
+
+        $endTime =
+            Carbon::parse(
+                $trainingSession->end_time,
+                $timezone
+            )->format(
+                'H:i:s'
+            );
+
+
+        $startsAt =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date . ' ' . $startTime,
+                $timezone
+            );
+
+
+        $endsAt =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date . ' ' . $endTime,
+                $timezone
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        $lateLimit =
+            $startsAt
+                ->copy()
+                ->addMinutes(
+                    self::LATE_LIMIT_MINUTES
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        $alphaAt =
+            $startsAt
+                ->copy()
+                ->addMinutes(
+                    self::ABSENT_LIMIT_MINUTES
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS AKHIR SCANNER
+        |--------------------------------------------------------------------------
+        |
+        | Jika jam selesai lebih cepat dari +30 menit,
+        | gunakan jam selesai.
+        |
+        */
+
+        $closesAt =
+            $endsAt->lt($alphaAt)
+                ? $endsAt->copy()
+                : $alphaAt->copy();
+
+
+        return [
+            'starts_at' =>
+                $startsAt,
+
+            'late_limit' =>
+                $lateLimit,
+
+            'alpha_at' =>
+                $alphaAt,
+
+            'ends_at' =>
+                $endsAt,
+
+            'closes_at' =>
+                $closesAt,
+        ];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | JADWAL LATIHAN SISWA
+    |--------------------------------------------------------------------------
     */
 
     public function index(): View
     {
-        $student = $this->getStudent();
+        $student =
+            $this->getStudent();
 
-        $today = Carbon::now(
-            'Asia/Jakarta'
-        )->toDateString();
 
-        $sessions = TrainingSession::query()
-            ->with([
-                'attendances' => function ($query) use ($student) {
-                    $query->where(
-                        'student_id',
-                        $student->id
-                    );
-                },
-            ])
-            ->whereDate(
-                'training_date',
-                '>=',
-                $today
-            )
-            ->orderBy(
-                'training_date',
-                'asc'
-            )
-            ->orderBy(
-                'start_time',
-                'asc'
-            )
-            ->get();
+        $today =
+            Carbon::now(
+                'Asia/Jakarta'
+            )->toDateString();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BELUM PUNYA CABANG
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$student->sport) {
+
+            $sessions =
+                collect();
+
+
+            return view(
+                'siswa.training-index',
+                compact(
+                    'student',
+                    'sessions'
+                )
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JADWAL SESUAI CABANG SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        $sessions =
+            TrainingSession::query()
+                ->with([
+                    'attendances' =>
+                        function ($query) use (
+                            $student
+                        ) {
+                            $query->where(
+                                'student_id',
+                                $student->id
+                            );
+                        },
+                ])
+                ->where(
+                    'sport',
+                    $student->sport
+                )
+                ->whereDate(
+                    'training_date',
+                    '>=',
+                    $today
+                )
+                ->orderBy(
+                    'training_date',
+                    'asc'
+                )
+                ->orderBy(
+                    'start_time',
+                    'asc'
+                )
+                ->get();
+
 
         return view(
             'siswa.training-index',
@@ -92,31 +308,180 @@ class TrainingScanController extends Controller
         );
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | HALAMAN SCANNER LATIHAN
     |--------------------------------------------------------------------------
-    |
-    | Scanner dapat dibuka dari salah satu jadwal latihan.
-    |
-    | Contoh:
-    |
-    | /siswa/latihan/scan?session=3
-    |
     */
 
     public function scanner(
         Request $request
     ): View {
-        $student = $this->getStudent();
+        $student =
+            $this->getStudent();
 
-        $trainingSession = null;
 
-        if ($request->filled('session')) {
-            $trainingSession = TrainingSession::findOrFail(
-                $request->integer('session')
+        /*
+        |--------------------------------------------------------------------------
+        | BELUM PUNYA CABANG
+        |--------------------------------------------------------------------------
+        */
+
+        abort_if(
+            !$student->sport,
+            403,
+            'Cabang olahraga siswa belum ditentukan.'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HARUS MEMILIH SESI
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $request->filled('session'),
+            404,
+            'Sesi latihan tidak ditemukan.'
+        );
+
+
+        $trainingSession =
+            TrainingSession::findOrFail(
+                $request->integer(
+                    'session'
+                )
             );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI CABANG
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $this->studentCanAccessSession(
+                $student,
+                $trainingSession
+            ),
+            403,
+            'Kamu tidak terdaftar pada cabang olahraga sesi latihan ini.'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI JADWAL
+        |--------------------------------------------------------------------------
+        */
+
+        $times =
+            $this->getSessionTimes(
+                $trainingSession
+            );
+
+
+        if (!$times) {
+            return redirect()
+                ->route(
+                    'siswa.training.index'
+                )
+                ->with(
+                    'training_info',
+                    'Jadwal latihan belum lengkap.'
+                );
         }
+
+
+        $now =
+            Carbon::now(
+                'Asia/Jakarta'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BELUM DIMULAI
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $now->lt(
+                $times['starts_at']
+            )
+        ) {
+            return redirect()
+                ->route(
+                    'siswa.training.index'
+                )
+                ->with(
+                    'training_info',
+                    'Presensi latihan belum dibuka.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUDAH LEWAT BATAS PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $now->gt(
+                $times['closes_at']
+            )
+        ) {
+            return redirect()
+                ->route(
+                    'siswa.training.index'
+                )
+                ->with(
+                    'training_info',
+                    'Presensi latihan sudah ditutup. Batas presensi adalah 30 menit setelah latihan dimulai.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CEK SUDAH PUNYA PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        $existingAttendance =
+            TrainingAttendance::where(
+                'training_session_id',
+                $trainingSession->id
+            )
+                ->where(
+                    'student_id',
+                    $student->id
+                )
+                ->first();
+
+
+        if ($existingAttendance) {
+
+            return redirect()
+                ->route(
+                    'siswa.training.index'
+                )
+                ->with(
+                    'training_info',
+                    'Kamu sudah memiliki data presensi untuk sesi latihan tersebut.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BUKA SCANNER
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'siswa.training-scan',
@@ -127,9 +492,10 @@ class TrainingScanController extends Controller
         );
     }
 
+
     /*
     |--------------------------------------------------------------------------
-    | PROSES SCAN QR LATIHAN
+    | PROSES SCAN QR
     |--------------------------------------------------------------------------
     */
 
@@ -137,68 +503,92 @@ class TrainingScanController extends Controller
         Request $request
     ): JsonResponse {
         $request->validate([
+
             'token' => [
                 'required',
                 'string',
                 'size:64',
             ],
 
-            /*
-            |--------------------------------------------------------------------------
-            | SESSION DARI HALAMAN JADWAL
-            |--------------------------------------------------------------------------
-            |
-            | Dibuat nullable dulu agar scanner yang sekarang tetap kompatibel.
-            | Setelah view scanner kita perbarui, ID sesi akan ikut dikirim.
-            |
-            */
-
             'training_session_id' => [
-                'nullable',
+                'required',
                 'integer',
                 'exists:training_sessions,id',
             ],
+
         ]);
 
-        $student = Student::where(
-            'user_id',
-            auth()->id()
-        )->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | SISWA LOGIN
+        |--------------------------------------------------------------------------
+        */
+
+        $student =
+            Student::where(
+                'user_id',
+                auth()->id()
+            )->first();
+
 
         if (!$student) {
             return response()->json([
-                'success' => false,
-                'message' => 'Data siswa tidak ditemukan.',
+                'success' =>
+                    false,
+
+                'message' =>
+                    'Data siswa tidak ditemukan.',
             ], 404);
         }
 
-        $now = Carbon::now(
-            'Asia/Jakarta'
-        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | CABANG BELUM DITENTUKAN
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$student->sport) {
+            return response()->json([
+                'success' =>
+                    false,
+
+                'message' =>
+                    'Cabang olahraga kamu belum ditentukan.',
+            ], 403);
+        }
+
+
+        $now =
+            Carbon::now(
+                'Asia/Jakarta'
+            );
+
 
         try {
+
             return DB::transaction(
                 function () use (
                     $request,
                     $student,
                     $now
                 ) {
+
                     /*
                     |--------------------------------------------------------------------------
-                    | KUNCI TOKEN QR
+                    | AMBIL DAN KUNCI QR
                     |--------------------------------------------------------------------------
-                    |
-                    | Satu token QR hanya boleh berhasil digunakan
-                    | oleh satu siswa.
-                    |
                     */
 
-                    $barcode = TrainingBarcode::where(
-                        'token',
-                        $request->token
-                    )
-                        ->lockForUpdate()
-                        ->first();
+                    $barcode =
+                        TrainingBarcode::where(
+                            'token',
+                            $request->token
+                        )
+                            ->lockForUpdate()
+                            ->first();
+
 
                     /*
                     |--------------------------------------------------------------------------
@@ -208,27 +598,182 @@ class TrainingScanController extends Controller
 
                     if (!$barcode) {
                         return response()->json([
-                            'success' => false,
-                            'message' => 'QR latihan tidak valid.',
+                            'success' =>
+                                false,
+
+                            'message' =>
+                                'QR latihan tidak valid.',
                         ], 422);
                     }
 
+
                     /*
                     |--------------------------------------------------------------------------
-                    | QR SUDAH DIGUNAKAN
+                    | AMBIL SESI QR
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $session =
+                        $barcode
+                            ->trainingSession;
+
+
+                    if (!$session) {
+                        return response()->json([
+                            'success' =>
+                                false,
+
+                            'message' =>
+                                'Sesi latihan tidak ditemukan.',
+                        ], 404);
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | COCOKKAN SESI
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        (int) $request
+                            ->training_session_id
+                        !==
+                        (int) $session->id
+                    ) {
+                        return response()->json([
+                            'success' =>
+                                false,
+
+                            'message' =>
+                                'QR ini bukan untuk sesi latihan yang kamu pilih.',
+                        ], 422);
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | VALIDASI CABANG
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        !$this->studentCanAccessSession(
+                            $student,
+                            $session
+                        )
+                    ) {
+                        return response()->json([
+                            'success' =>
+                                false,
+
+                            'message' =>
+                                'QR ini bukan untuk cabang olahraga kamu. Cabang kamu: '
+                                . $student->sport
+                                . '.',
+                        ], 403);
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | VALIDASI JADWAL
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $times =
+                        $this->getSessionTimes(
+                            $session
+                        );
+
+
+                    if (!$times) {
+                        return response()->json([
+                            'success' =>
+                                false,
+
+                            'message' =>
+                                'Jadwal latihan belum lengkap.',
+                        ], 422);
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BELUM DIMULAI
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        $now->lt(
+                            $times['starts_at']
+                        )
+                    ) {
+                        return response()->json([
+                            'success' =>
+                                false,
+
+                            'message' =>
+                                'Presensi latihan belum dibuka.',
+                        ], 422);
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | LEWAT BATAS +30 MENIT
+                    |--------------------------------------------------------------------------
+                    |
+                    | Ini proteksi utama backend.
+                    |
+                    | Walaupun QR lama masih berada di layar siswa,
+                    | request tetap ditolak.
+                    |
+                    */
+
+                    if (
+                        $now->gt(
+                            $times['closes_at']
+                        )
+                    ) {
+
+                        $barcode->update([
+                            'is_active' =>
+                                false,
+                        ]);
+
+
+                        return response()->json([
+                            'success' =>
+                                false,
+
+                            'message' =>
+                                'Presensi latihan sudah ditutup. Kamu sudah melewati batas presensi 30 menit.',
+                        ], 422);
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | QR SUDAH DIPAKAI
                     |--------------------------------------------------------------------------
                     */
 
                     if (
                         !$barcode->is_active
-                        || !is_null($barcode->used_at)
+                        || !is_null(
+                            $barcode->used_at
+                        )
                     ) {
                         return response()->json([
-                            'success' => false,
+                            'success' =>
+                                false,
+
                             'message' =>
                                 'QR ini sudah digunakan. Scan QR terbaru.',
                         ], 422);
                     }
+
 
                     /*
                     |--------------------------------------------------------------------------
@@ -242,151 +787,36 @@ class TrainingScanController extends Controller
                             $barcode->expired_at
                         )
                     ) {
+
                         $barcode->update([
-                            'is_active' => false,
+                            'is_active' =>
+                                false,
                         ]);
 
+
                         return response()->json([
-                            'success' => false,
+                            'success' =>
+                                false,
+
                             'message' =>
                                 'QR sudah kedaluwarsa. Scan QR terbaru.',
                         ], 422);
                     }
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | AMBIL SESI DARI QR
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $session =
-                        $barcode->trainingSession;
-
-                    if (!$session) {
-                        return response()->json([
-                            'success' => false,
-                            'message' =>
-                                'Sesi latihan tidak ditemukan.',
-                        ], 404);
-                    }
 
                     /*
                     |--------------------------------------------------------------------------
-                    | COCOKKAN DENGAN SESI YANG DIPILIH SISWA
+                    | CEK PRESENSI YANG SUDAH ADA
                     |--------------------------------------------------------------------------
                     |
-                    | Jika siswa membuka scanner dari jadwal Basket,
-                    | QR Sepak Bola tidak boleh diterima pada halaman tersebut.
+                    | Termasuk:
                     |
-                    */
-
-                    if (
-                        $request->filled(
-                            'training_session_id'
-                        )
-                        &&
-                        (int) $request->training_session_id
-                            !== (int) $session->id
-                    ) {
-                        return response()->json([
-                            'success' => false,
-                            'message' =>
-                                'QR ini bukan untuk sesi latihan yang kamu pilih.',
-                        ], 422);
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | VALIDASI JADWAL SESI
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (
-                        !$session->training_date
-                        || !$session->start_time
-                        || !$session->end_time
-                    ) {
-                        return response()->json([
-                            'success' => false,
-                            'message' =>
-                                'Jadwal latihan belum lengkap.',
-                        ], 422);
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BENTUK TANGGAL & JAM SESI
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $date = $session
-                        ->training_date
-                        ->format('Y-m-d');
-
-                    $startTime = Carbon::parse(
-                        $session->start_time,
-                        'Asia/Jakarta'
-                    )->format('H:i:s');
-
-                    $endTime = Carbon::parse(
-                        $session->end_time,
-                        'Asia/Jakarta'
-                    )->format('H:i:s');
-
-                    $startsAt =
-                        Carbon::createFromFormat(
-                            'Y-m-d H:i:s',
-                            $date . ' ' . $startTime,
-                            'Asia/Jakarta'
-                        );
-
-                    $endsAt =
-                        Carbon::createFromFormat(
-                            'Y-m-d H:i:s',
-                            $date . ' ' . $endTime,
-                            'Asia/Jakarta'
-                        );
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BELUM DIMULAI
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if ($now->lt($startsAt)) {
-                        return response()->json([
-                            'success' => false,
-                            'message' =>
-                                'Presensi latihan belum dibuka.',
-                        ], 422);
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SUDAH SELESAI
-                    |--------------------------------------------------------------------------
+                    | Hadir
+                    | Terlambat
+                    | Izin
+                    | Sakit
+                    | Alfa
                     |
-                    | Tepat pada jam selesai masih diperbolehkan.
-                    | Setelah jam selesai baru ditutup.
-                    |
-                    */
-
-                    if ($now->gt($endsAt)) {
-                        $barcode->update([
-                            'is_active' => false,
-                        ]);
-
-                        return response()->json([
-                            'success' => false,
-                            'message' =>
-                                'Presensi latihan sudah ditutup.',
-                        ], 422);
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | CEK SUDAH PERNAH PRESENSI
-                    |--------------------------------------------------------------------------
                     */
 
                     $existingAttendance =
@@ -401,22 +831,56 @@ class TrainingScanController extends Controller
                             ->lockForUpdate()
                             ->first();
 
+
                     if ($existingAttendance) {
+
+                        $statusLabel =
+                            match (
+                                $existingAttendance->status
+                            ) {
+                                'present' =>
+                                    'Hadir',
+
+                                'late' =>
+                                    'Terlambat',
+
+                                'permission' =>
+                                    'Izin',
+
+                                'sick' =>
+                                    'Sakit',
+
+                                'absent' =>
+                                    'Alfa',
+
+                                default =>
+                                    ucfirst(
+                                        $existingAttendance->status
+                                    ),
+                            };
+
+
                         return response()->json([
-                            'success' => false,
+                            'success' =>
+                                false,
 
                             'message' =>
-                                'Kamu sudah melakukan presensi untuk sesi latihan ini.',
+                                'Kamu sudah memiliki presensi dengan status '
+                                . $statusLabel
+                                . '.',
 
                             'attendance' => [
+
                                 'status' =>
-                                    $existingAttendance->status,
+                                    $existingAttendance
+                                        ->status,
 
                                 'status_label' =>
-                                    $existingAttendance->status_label,
+                                    $statusLabel,
 
                                 'checked_in_at' =>
-                                    $existingAttendance->checked_in_at
+                                    $existingAttendance
+                                        ->checked_in_at
                                         ? $existingAttendance
                                             ->checked_in_at
                                             ->timezone(
@@ -426,37 +890,34 @@ class TrainingScanController extends Controller
                                                 'H:i:s'
                                             )
                                         : null,
+
                             ],
                         ], 422);
                     }
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BATAS TERLAMBAT
-                    |--------------------------------------------------------------------------
-                    |
-                    | Contoh sesi mulai 19:00:
-                    |
-                    | 19:00:00 - 19:10:00 = HADIR
-                    | 19:10:01 - 20:00:00 = TERLAMBAT
-                    |
-                    */
-
-                    $lateLimit = $startsAt
-                        ->copy()
-                        ->addMinutes(10);
 
                     /*
                     |--------------------------------------------------------------------------
-                    | TENTUKAN STATUS
+                    | TENTUKAN HADIR / TERLAMBAT
                     |--------------------------------------------------------------------------
+                    |
+                    | Mulai sampai tepat +10 menit:
+                    |
+                    | HADIR
+                    |
+                    | Setelah +10 menit sampai tepat +30 menit:
+                    |
+                    | TERLAMBAT
+                    |
                     */
 
-                    $status = $now->lte(
-                        $lateLimit
-                    )
-                        ? 'present'
-                        : 'late';
+                    $status =
+                        $now->lte(
+                            $times['late_limit']
+                        )
+                            ? 'present'
+                            : 'late';
+
 
                     /*
                     |--------------------------------------------------------------------------
@@ -466,6 +927,7 @@ class TrainingScanController extends Controller
 
                     $attendance =
                         TrainingAttendance::create([
+
                             'training_session_id' =>
                                 $session->id,
 
@@ -480,24 +942,18 @@ class TrainingScanController extends Controller
 
                             'notes' =>
                                 'Presensi melalui QR latihan.',
+
                         ]);
+
 
                     /*
                     |--------------------------------------------------------------------------
-                    | MATIKAN QR
+                    | QR SEKALI PAKAI
                     |--------------------------------------------------------------------------
-                    |
-                    | Begitu berhasil digunakan:
-                    |
-                    | is_active = false
-                    | used_by_student_id = siswa
-                    | used_at = waktu scan
-                    |
-                    | Halaman QR Guru/Pelatih akan menghasilkan token baru.
-                    |
                     */
 
                     $barcode->update([
+
                         'is_active' =>
                             false,
 
@@ -506,16 +962,20 @@ class TrainingScanController extends Controller
 
                         'used_at' =>
                             $now,
+
                     ]);
+
 
                     /*
                     |--------------------------------------------------------------------------
-                    | RESPONSE BERHASIL
+                    | RESPONSE
                     |--------------------------------------------------------------------------
                     */
 
                     return response()->json([
-                        'success' => true,
+
+                        'success' =>
+                            true,
 
                         'message' =>
                             $status === 'present'
@@ -523,6 +983,7 @@ class TrainingScanController extends Controller
                                 : 'Presensi berhasil. Kamu tercatat Terlambat.',
 
                         'attendance' => [
+
                             'id' =>
                                 $attendance->id,
 
@@ -547,39 +1008,54 @@ class TrainingScanController extends Controller
 
                             'location' =>
                                 $session->location
-                                    ?? '-',
+                                ?? '-',
 
                             'training_date' =>
-                                $session
-                                    ->training_date
-                                    ->format(
-                                        'Y-m-d'
-                                    ),
+                                Carbon::parse(
+                                    $session->training_date
+                                )->format(
+                                    'Y-m-d'
+                                ),
 
                             'start_time' =>
-                                $startsAt->format(
-                                    'H:i'
-                                ),
+                                $times['starts_at']
+                                    ->format(
+                                        'H:i'
+                                    ),
 
                             'late_limit' =>
-                                $lateLimit->format(
-                                    'H:i'
-                                ),
+                                $times['late_limit']
+                                    ->format(
+                                        'H:i'
+                                    ),
+
+                            'alpha_limit' =>
+                                $times['alpha_at']
+                                    ->format(
+                                        'H:i'
+                                    ),
 
                             'end_time' =>
-                                $endsAt->format(
-                                    'H:i'
-                                ),
+                                $times['ends_at']
+                                    ->format(
+                                        'H:i'
+                                    ),
+
                         ],
+
                     ]);
                 }
             );
 
         } catch (\Throwable $e) {
+
             report($e);
 
+
             return response()->json([
-                'success' => false,
+                'success' =>
+                    false,
+
                 'message' =>
                     'Terjadi kesalahan saat menyimpan presensi latihan.',
             ], 500);

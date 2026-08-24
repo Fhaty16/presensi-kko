@@ -10,7 +10,16 @@ use Illuminate\Support\Str;
 
 class TrainingBarcodeService
 {
+    /*
+    |--------------------------------------------------------------------------
+    | KONFIGURASI
+    |--------------------------------------------------------------------------
+    */
+
     private const LIFETIME_SECONDS = 60;
+
+    private const ATTENDANCE_LIMIT_MINUTES = 30;
+
 
     /*
     |--------------------------------------------------------------------------
@@ -21,7 +30,10 @@ class TrainingBarcodeService
     public function getCurrent(
         TrainingSession $trainingSession
     ): array {
-        $now = Carbon::now('Asia/Jakarta');
+        $timezone = 'Asia/Jakarta';
+
+        $now = Carbon::now($timezone);
+
 
         /*
         |--------------------------------------------------------------------------
@@ -30,9 +42,9 @@ class TrainingBarcodeService
         */
 
         if (
-            !$trainingSession->training_date ||
-            !$trainingSession->start_time ||
-            !$trainingSession->end_time
+            !$trainingSession->training_date
+            || !$trainingSession->start_time
+            || !$trainingSession->end_time
         ) {
             return [
                 'status' => 'no_schedule',
@@ -40,37 +52,99 @@ class TrainingBarcodeService
             ];
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | BENTUK WAKTU SESI
+        | BENTUK TANGGAL SESI
         |--------------------------------------------------------------------------
         */
 
-        $date = $trainingSession
-            ->training_date
-            ->format('Y-m-d');
+        $date =
+            Carbon::parse(
+                $trainingSession->training_date,
+                $timezone
+            )->format('Y-m-d');
 
-        $startTime = Carbon::parse(
-            $trainingSession->start_time,
-            'Asia/Jakarta'
-        )->format('H:i:s');
 
-        $endTime = Carbon::parse(
-            $trainingSession->end_time,
-            'Asia/Jakarta'
-        )->format('H:i:s');
+        $startTime =
+            Carbon::parse(
+                $trainingSession->start_time,
+                $timezone
+            )->format('H:i:s');
 
-        $startsAt = Carbon::createFromFormat(
-            'Y-m-d H:i:s',
-            $date . ' ' . $startTime,
-            'Asia/Jakarta'
-        );
 
-        $endsAt = Carbon::createFromFormat(
-            'Y-m-d H:i:s',
-            $date . ' ' . $endTime,
-            'Asia/Jakarta'
-        );
+        $endTime =
+            Carbon::parse(
+                $trainingSession->end_time,
+                $timezone
+            )->format('H:i:s');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | WAKTU SESI
+        |--------------------------------------------------------------------------
+        */
+
+        $startsAt =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date . ' ' . $startTime,
+                $timezone
+            );
+
+
+        $endsAt =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date . ' ' . $endTime,
+                $timezone
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS ALFA / BATAS PRESENSI
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Mulai       : 14:00
+        | Batas Alfa  : 14:30
+        |
+        | Tepat 14:30:00 masih diperbolehkan.
+        | Setelah 14:30:00 ditutup.
+        |
+        */
+
+        $alphaAt =
+            $startsAt
+                ->copy()
+                ->addMinutes(
+                    self::ATTENDANCE_LIMIT_MINUTES
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | WAKTU PENUTUPAN QR
+        |--------------------------------------------------------------------------
+        |
+        | QR tidak boleh melewati:
+        |
+        | 1. Jam selesai latihan
+        | atau
+        | 2. Batas Alfa +30 menit
+        |
+        | mana yang lebih dahulu.
+        |
+        */
+
+        $closesAt =
+            $endsAt->lt($alphaAt)
+                ? $endsAt->copy()
+                : $alphaAt->copy();
+
 
         /*
         |--------------------------------------------------------------------------
@@ -79,6 +153,10 @@ class TrainingBarcodeService
         */
 
         if ($now->lt($startsAt)) {
+            $this->deactivateAll(
+                $trainingSession
+            );
+
             return [
                 'status' => 'not_started',
 
@@ -90,16 +168,26 @@ class TrainingBarcodeService
 
                 'ends_at' =>
                     $endsAt->toIso8601String(),
+
+                'closes_at' =>
+                    $closesAt->toIso8601String(),
             ];
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | LATIHAN SUDAH SELESAI
+        | PRESENSI SUDAH DITUTUP
         |--------------------------------------------------------------------------
+        |
+        | Ditutup jika:
+        |
+        | - sudah melewati jam selesai
+        | - atau sudah melewati +30 menit
+        |
         */
 
-        if ($now->gt($endsAt)) {
+        if ($now->gt($closesAt)) {
             $this->deactivateAll(
                 $trainingSession
             );
@@ -108,12 +196,19 @@ class TrainingBarcodeService
                 'status' => 'ended',
 
                 'message' =>
-                    'Presensi latihan sudah ditutup.',
+                    'Presensi latihan sudah ditutup karena batas waktu presensi telah berakhir.',
+
+                'starts_at' =>
+                    $startsAt->toIso8601String(),
 
                 'ends_at' =>
                     $endsAt->toIso8601String(),
+
+                'closes_at' =>
+                    $closesAt->toIso8601String(),
             ];
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -125,12 +220,14 @@ class TrainingBarcodeService
             function () use (
                 $trainingSession,
                 $now,
-                $endsAt
+                $startsAt,
+                $endsAt,
+                $closesAt
             ) {
 
                 /*
                 |--------------------------------------------------------------------------
-                | NONAKTIFKAN BARCODE EXPIRED / SUDAH DIGUNAKAN
+                | NONAKTIFKAN QR EXPIRED / SUDAH DIGUNAKAN
                 |--------------------------------------------------------------------------
                 */
 
@@ -160,54 +257,95 @@ class TrainingBarcodeService
                         'is_active' => false,
                     ]);
 
+
                 /*
                 |--------------------------------------------------------------------------
-                | CARI BARCODE YANG MASIH AKTIF
+                | CARI QR YANG MASIH AKTIF
                 |--------------------------------------------------------------------------
                 */
 
-                $barcode = TrainingBarcode::where(
-                    'training_session_id',
-                    $trainingSession->id
-                )
-                    ->where(
-                        'is_active',
-                        true
+                $barcode =
+                    TrainingBarcode::where(
+                        'training_session_id',
+                        $trainingSession->id
                     )
-                    ->whereNull(
-                        'used_at'
-                    )
-                    ->where(
-                        'expired_at',
-                        '>',
-                        $now
-                    )
-                    ->latest('id')
-                    ->first();
+                        ->where(
+                            'is_active',
+                            true
+                        )
+                        ->whereNull(
+                            'used_at'
+                        )
+                        ->where(
+                            'expired_at',
+                            '>',
+                            $now
+                        )
+                        ->latest('id')
+                        ->first();
+
 
                 /*
                 |--------------------------------------------------------------------------
-                | BUAT BARCODE BARU
+                | BUAT QR BARU
                 |--------------------------------------------------------------------------
                 */
 
                 if (!$barcode) {
-                    $expiredAt = $now
-                        ->copy()
-                        ->addSeconds(
-                            self::LIFETIME_SECONDS
-                        );
+
+                    $expiredAt =
+                        $now
+                            ->copy()
+                            ->addSeconds(
+                                self::LIFETIME_SECONDS
+                            );
+
 
                     /*
                     |--------------------------------------------------------------------------
-                    | BARCODE TIDAK BOLEH MELEWATI JAM SELESAI LATIHAN
+                    | QR TIDAK BOLEH MELEWATI BATAS PRESENSI
                     |--------------------------------------------------------------------------
                     */
 
-                    if ($expiredAt->gt($endsAt)) {
+                    if (
+                        $expiredAt->gt(
+                            $closesAt
+                        )
+                    ) {
                         $expiredAt =
-                            $endsAt->copy();
+                            $closesAt->copy();
                     }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | PENGAMAN
+                    |--------------------------------------------------------------------------
+                    |
+                    | Jangan buat QR jika waktunya sudah habis.
+                    |
+                    */
+
+                    if (
+                        $expiredAt->lte(
+                            $now
+                        )
+                    ) {
+                        $this->deactivateAll(
+                            $trainingSession
+                        );
+
+                        return [
+                            'status' => 'ended',
+
+                            'message' =>
+                                'Presensi latihan sudah ditutup.',
+
+                            'closes_at' =>
+                                $closesAt->toIso8601String(),
+                        ];
+                    }
+
 
                     $barcode =
                         TrainingBarcode::create([
@@ -231,9 +369,10 @@ class TrainingBarcodeService
                         ]);
                 }
 
+
                 /*
                 |--------------------------------------------------------------------------
-                | HITUNG SISA WAKTU
+                | HITUNG SISA WAKTU QR
                 |--------------------------------------------------------------------------
                 */
 
@@ -245,6 +384,13 @@ class TrainingBarcodeService
                             false
                         )
                     );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | RESPONSE
+                |--------------------------------------------------------------------------
+                */
 
                 return [
                     'status' =>
@@ -263,14 +409,24 @@ class TrainingBarcodeService
 
                     'seconds_remaining' =>
                         $secondsRemaining,
+
+                    'starts_at' =>
+                        $startsAt->toIso8601String(),
+
+                    'ends_at' =>
+                        $endsAt->toIso8601String(),
+
+                    'closes_at' =>
+                        $closesAt->toIso8601String(),
                 ];
             }
         );
     }
 
+
     /*
     |--------------------------------------------------------------------------
-    | NONAKTIFKAN SEMUA BARCODE SESI
+    | NONAKTIFKAN SEMUA QR SESI
     |--------------------------------------------------------------------------
     */
 

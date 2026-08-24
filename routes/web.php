@@ -47,6 +47,7 @@ use App\Http\Controllers\Pelatih\DashboardController as PelatihDashboardControll
 use App\Http\Controllers\BarcodeDisplayController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingBarcodeController;
+use App\Http\Controllers\StudentSportController;
 
 
 /*
@@ -56,8 +57,10 @@ use App\Http\Controllers\TrainingBarcodeController;
 */
 
 Route::get('/', function () {
+
     return redirect()
         ->route('login');
+
 });
 
 
@@ -88,6 +91,7 @@ Route::middleware('auth')
 
             default =>
                 abort(403),
+
         };
 
     })
@@ -216,6 +220,7 @@ Route::middleware([
             ]
         )
         ->name('leave.reject');
+
     });
 
 
@@ -280,10 +285,8 @@ Route::middleware([
         | JADWAL LATIHAN KKO
         |--------------------------------------------------------------------------
         |
-        | Halaman daftar jadwal latihan untuk siswa.
-        |
-        | URL:
-        | /siswa/latihan
+        | Controller hanya menampilkan sesi sesuai cabang
+        | olahraga siswa.
         |
         */
 
@@ -301,12 +304,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | SCANNER PRESENSI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Dibuka dari jadwal latihan.
-        |
-        | Contoh:
-        | /siswa/latihan/scan?session=3
-        |
         */
 
         Route::get(
@@ -375,6 +372,7 @@ Route::middleware([
             ]
         )
         ->name('leave.store');
+
     });
 
 
@@ -406,6 +404,7 @@ Route::middleware([
             ]
         )
         ->name('dashboard');
+
     });
 
 
@@ -416,10 +415,8 @@ Route::middleware([
 |
 | Digunakan oleh Guru dan Pelatih.
 |
-| Role tetap diperiksa di:
-|
-| - TrainingController
-| - TrainingBarcodeController
+| TrainingController dan TrainingBarcodeController melakukan
+| pengecekan role Guru / Pelatih.
 |
 */
 
@@ -446,6 +443,9 @@ Route::middleware('auth')
         |--------------------------------------------------------------------------
         | BUAT SESI LATIHAN
         |--------------------------------------------------------------------------
+        |
+        | Route ini HARUS berada sebelum /latihan/{trainingSession}
+        |
         */
 
         Route::get(
@@ -476,15 +476,65 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
-        | BARCODE PRESENSI LATIHAN
+        | EDIT SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Setiap sesi latihan mempunyai QR sendiri.
+        | Menampilkan halaman edit:
         |
-        | Contoh:
+        | tanggal
+        | jam mulai
+        | jam selesai
+        | lokasi
+        | catatan
         |
-        | /latihan/1/barcode
-        |
+        */
+
+        Route::get(
+            '/latihan/{trainingSession}/edit',
+            [
+                TrainingController::class,
+                'edit',
+            ]
+        )
+        ->name('training.edit');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE SESI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::put(
+            '/latihan/{trainingSession}',
+            [
+                TrainingController::class,
+                'update',
+            ]
+        )
+        ->name('training.update');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HAPUS SESI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::delete(
+            '/latihan/{trainingSession}',
+            [
+                TrainingController::class,
+                'destroy',
+            ]
+        )
+        ->name('training.destroy');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BARCODE PRESENSI LATIHAN
+        |--------------------------------------------------------------------------
         */
 
         Route::get(
@@ -501,9 +551,6 @@ Route::middleware('auth')
         |--------------------------------------------------------------------------
         | TOKEN BARCODE LATIHAN AKTIF
         |--------------------------------------------------------------------------
-        |
-        | Dipanggil oleh JavaScript halaman barcode.
-        |
         */
 
         Route::get(
@@ -521,9 +568,11 @@ Route::middleware('auth')
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Route parameter harus berada setelah:
+        | Route parameter umum ini harus berada paling bawah
+        | setelah:
         |
         | /latihan/buat
+        | /latihan/{trainingSession}/edit
         | /latihan/{trainingSession}/barcode
         | /latihan/{trainingSession}/barcode/current
         |
@@ -537,6 +586,60 @@ Route::middleware('auth')
             ]
         )
         ->name('training.show');
+
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| DATA CABANG OLAHRAGA SISWA
+|--------------------------------------------------------------------------
+|
+| Digunakan Guru dan Pelatih untuk:
+|
+| - melihat cabang olahraga siswa
+| - menentukan cabang olahraga siswa
+| - mengganti cabang olahraga siswa
+| - memfilter siswa berdasarkan cabang olahraga
+|
+| StudentSportController melakukan pengecekan role.
+|
+*/
+
+Route::middleware('auth')
+    ->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | DAFTAR SISWA & CABANG OLAHRAGA
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/data-cabang-siswa',
+            [
+                StudentSportController::class,
+                'index',
+            ]
+        )
+        ->name('students.sports.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE CABANG OLAHRAGA SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        Route::put(
+            '/data-cabang-siswa/{student}',
+            [
+                StudentSportController::class,
+                'update',
+            ]
+        )
+        ->name('students.sports.update');
+
     });
 
 
@@ -545,8 +648,7 @@ Route::middleware('auth')
 | BARCODE PRESENSI MASUK SEKOLAH
 |--------------------------------------------------------------------------
 |
-| Barcode ini khusus presensi masuk sekolah.
-|
+| Barcode khusus presensi masuk sekolah.
 | Tidak digunakan untuk presensi latihan.
 |
 */
@@ -584,6 +686,7 @@ Route::middleware('auth')
             ]
         )
         ->name('barcode.current');
+
     });
 
 

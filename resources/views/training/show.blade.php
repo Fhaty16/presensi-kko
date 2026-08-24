@@ -9,9 +9,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Detail Sesi Latihan - KKO SMANDA</title>
+    <title>
+        Detail Latihan - KKO SMANDA
+    </title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -25,7 +30,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         rel="stylesheet"
     >
 
@@ -35,10 +40,12 @@
     >
 
     <style>
-
-        /* =====================================================
-           MATERIAL ICON
-        ===================================================== */
+        body {
+            margin: 0;
+            background: #101415;
+            color: #ffffff;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
@@ -48,206 +55,162 @@
             letter-spacing: normal;
             text-transform: none;
             white-space: nowrap;
+            word-wrap: normal;
             direction: ltr;
             font-feature-settings: 'liga';
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
 
-
-        /* =====================================================
-           PAGE
-        ===================================================== */
-
         .training-show-container {
-            max-width: 1180px;
+            width: min(1120px, calc(100% - 40px));
             margin: 0 auto;
-            padding: 38px 24px 100px;
+            padding: 34px 0 100px;
         }
-
-
-        /* =====================================================
-           BACK
-        ===================================================== */
 
         .training-back {
             display: inline-flex;
             align-items: center;
             gap: 7px;
 
-            margin-bottom: 25px;
+            margin-bottom: 24px;
 
             color: #9dcaff;
-
             text-decoration: none;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-
-            transition: .18s ease;
-        }
-
-        .training-back:hover {
-            color: #ffffff;
         }
 
         .training-back .material-symbols-outlined {
-            font-size: 18px;
+            font-size: 17px;
         }
-
-
-        /* =====================================================
-           HEADING
-        ===================================================== */
-
-        .training-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-
-            gap: 20px;
-
-            margin-bottom: 25px;
-        }
-
-        .training-label {
-            display: block;
-
-            margin-bottom: 7px;
-
-            color: #9dcaff;
-
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            font-weight: 800;
-
-            letter-spacing: 1px;
-        }
-
-        .training-heading h1 {
-            margin: 0;
-
-            color: #e0e3e5;
-
-            font-family: 'Anybody', sans-serif;
-            font-size: 30px;
-            font-weight: 800;
-        }
-
-        .training-heading p {
-            margin: 6px 0 0;
-
-            color: #8a919c;
-
-            font-size: 11px;
-        }
-
-        .training-status-badge {
-            display: inline-flex;
-            align-items: center;
-
-            gap: 6px;
-
-            padding: 8px 12px;
-
-            color: #9dcaff;
-            background: rgba(0, 114, 188, .12);
-
-            border: 1px solid rgba(157, 202, 255, .18);
-            border-radius: 30px;
-
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
-            font-weight: 700;
-        }
-
-        .training-status-badge .material-symbols-outlined {
-            font-size: 15px;
-        }
-
-
-        /* =====================================================
-           SUCCESS
-        ===================================================== */
 
         .success-message {
             display: flex;
             align-items: center;
-
             gap: 8px;
 
-            margin-bottom: 20px;
-            padding: 13px 15px;
+            margin-bottom: 18px;
+            padding: 12px 14px;
 
             color: #8ce8c3;
-            background: rgba(80, 200, 150, .08);
+            background: rgba(80, 200, 150, .07);
 
-            border: 1px solid rgba(80, 200, 150, .22);
-            border-radius: 11px;
+            border: 1px solid rgba(80, 200, 150, .20);
+            border-radius: 10px;
 
             font-size: 10px;
         }
 
         .success-message .material-symbols-outlined {
-            font-size: 19px;
+            font-size: 18px;
         }
 
+        .training-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
 
-        /* =====================================================
-           SESSION CARD
-        ===================================================== */
+            margin-bottom: 22px;
+        }
+
+        .training-label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: #9dcaff;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .training-heading h1 {
+            margin: 0;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 31px;
+            font-weight: 800;
+        }
+
+        .training-heading p {
+            margin: 7px 0 0;
+            color: #7e8a94;
+            font-size: 10px;
+        }
+
+        .training-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 9px 12px;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .08);
+
+            border: 1px solid rgba(157, 202, 255, .17);
+            border-radius: 8px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 800;
+        }
+
+        .training-status-badge .material-symbols-outlined {
+            font-size: 17px;
+        }
 
         .session-card {
-            padding: 23px;
+            margin-bottom: 17px;
+            padding: 20px;
 
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 16px;
-
-            margin-bottom: 18px;
+            border-radius: 15px;
         }
 
         .session-card-header {
             display: flex;
             align-items: center;
+            gap: 11px;
 
-            gap: 12px;
-
-            margin-bottom: 21px;
-            padding-bottom: 17px;
-
-            border-bottom: 1px solid rgba(64, 71, 81, .65);
+            margin-bottom: 17px;
         }
 
         .session-icon {
-            width: 48px;
-            height: 48px;
+            width: 42px;
+            height: 42px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            flex: 0 0 48px;
+            flex-shrink: 0;
 
             color: #9dcaff;
-            background: rgba(0, 114, 188, .16);
+            background: rgba(0, 114, 188, .10);
 
-            border: 1px solid rgba(157, 202, 255, .17);
-            border-radius: 12px;
+            border: 1px solid rgba(157, 202, 255, .15);
+            border-radius: 10px;
         }
 
         .session-icon .material-symbols-outlined {
-            font-size: 25px;
+            font-size: 22px;
         }
 
         .session-card-header small {
             display: block;
 
-            margin-bottom: 4px;
+            margin-bottom: 3px;
 
-            color: #788492;
+            color: #687783;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 7px;
@@ -255,17 +218,13 @@
         }
 
         .session-card-header strong {
-            color: #ffffff;
+            display: block;
+
+            color: #e3e7ea;
 
             font-family: 'Anybody', sans-serif;
-            font-size: 17px;
-            font-weight: 800;
+            font-size: 16px;
         }
-
-
-        /* =====================================================
-           SESSION INFO
-        ===================================================== */
 
         .session-info-grid {
             display: grid;
@@ -273,29 +232,26 @@
             grid-template-columns:
                 repeat(4, minmax(0, 1fr));
 
-            gap: 12px;
+            gap: 9px;
         }
 
         .session-info {
-            min-height: 81px;
-
-            padding: 14px;
+            padding: 12px;
 
             background: #151b20;
 
             border: 1px solid #303c48;
-            border-radius: 11px;
+            border-radius: 9px;
         }
 
         .session-info-label {
             display: flex;
             align-items: center;
+            gap: 5px;
 
-            gap: 6px;
+            margin-bottom: 7px;
 
-            margin-bottom: 8px;
-
-            color: #74818d;
+            color: #697783;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 7px;
@@ -303,109 +259,86 @@
         }
 
         .session-info-label .material-symbols-outlined {
+            color: #9dcaff;
             font-size: 14px;
         }
 
         .session-info strong {
-            display: block;
-
             color: #dce2e7;
-
-            font-size: 11px;
-            font-weight: 700;
-
-            line-height: 1.45;
+            font-size: 10px;
+            line-height: 1.5;
         }
 
-
-        /* =====================================================
-           NOTES
-        ===================================================== */
-
         .session-notes {
-            margin-top: 13px;
-            padding: 14px;
+            margin-top: 12px;
+            padding: 11px 12px;
 
-            color: #9aa4ae;
+            color: #88949e;
             background: #151b20;
 
             border: 1px solid #303c48;
-            border-radius: 11px;
+            border-radius: 9px;
 
-            font-size: 10px;
+            font-size: 9px;
             line-height: 1.6;
         }
 
         .session-notes-label {
             display: block;
 
-            margin-bottom: 6px;
+            margin-bottom: 5px;
 
-            color: #74818d;
+            color: #687783;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 7px;
-            font-weight: 700;
+            font-weight: 800;
         }
-
-
-        /* =====================================================
-           BARCODE PANEL
-        ===================================================== */
 
         .barcode-panel {
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             gap: 20px;
 
-            margin-bottom: 28px;
-            padding: 18px 20px;
+            margin-bottom: 27px;
+            padding: 18px;
 
-            background:
-                linear-gradient(
-                    110deg,
-                    rgba(0, 114, 188, .11),
-                    rgba(27, 37, 49, 1) 45%
-                );
+            background: linear-gradient(
+                135deg,
+                #17232f,
+                #131b22
+            );
 
-            border: 1px solid #34485d;
+            border: 1px solid #35516a;
             border-radius: 14px;
         }
 
         .barcode-panel-left {
             display: flex;
-            align-items: center;
-
+            align-items: flex-start;
             gap: 13px;
-
-            min-width: 0;
         }
 
         .barcode-panel-icon {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
 
-            flex: 0 0 48px;
+            flex-shrink: 0;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
             color: #9dcaff;
-            background: rgba(0, 114, 188, .18);
+            background: rgba(0, 114, 188, .12);
 
             border: 1px solid rgba(157, 202, 255, .16);
-            border-radius: 12px;
+            border-radius: 11px;
         }
 
         .barcode-panel-icon .material-symbols-outlined {
             font-size: 25px;
-        }
-
-        .barcode-panel-content {
-            min-width: 0;
         }
 
         .barcode-panel-label {
@@ -413,199 +346,152 @@
 
             margin-bottom: 4px;
 
-            color: #9dcaff;
+            color: #7fa8d0;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 7px;
             font-weight: 800;
-
-            letter-spacing: .7px;
         }
 
         .barcode-panel-content strong {
             display: block;
-
-            color: #e0e3e5;
-
-            font-family: 'Anybody', sans-serif;
-            font-size: 14px;
-            font-weight: 800;
+            color: #edf0f2;
+            font-size: 13px;
         }
 
         .barcode-panel-content p {
-            margin: 5px 0 0;
+            margin: 5px 0 9px;
 
-            color: #818c96;
+            color: #7f8d98;
 
             font-size: 9px;
+            line-height: 1.5;
         }
 
         .barcode-rules {
             display: flex;
-            align-items: center;
-
-            gap: 8px;
-
-            margin-top: 9px;
-
             flex-wrap: wrap;
+            gap: 7px;
         }
 
         .barcode-rule {
             display: inline-flex;
             align-items: center;
-
-            gap: 5px;
+            gap: 4px;
 
             padding: 5px 7px;
 
-            color: #8796a3;
-            background: #151b20;
+            color: #8595a1;
+            background: #11181e;
 
-            border: 1px solid #303c48;
+            border: 1px solid #2f3d49;
             border-radius: 6px;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 6px;
-            font-weight: 700;
+            font-size: 7px;
         }
 
         .barcode-rule .material-symbols-outlined {
             color: #9dcaff;
-
             font-size: 12px;
         }
 
         .barcode-button {
-            min-height: 42px;
-
-            flex: 0 0 auto;
+            flex-shrink: 0;
 
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
             gap: 7px;
 
-            padding: 0 16px;
+            min-height: 40px;
+            padding: 0 14px;
 
-            color: #ffffff;
-            background: #0072bc;
+            color: #101415;
+            background: #9dcaff;
 
-            border: 1px solid #1685d2;
-            border-radius: 10px;
+            border-radius: 9px;
 
             text-decoration: none;
 
-            font-family: 'Anybody', sans-serif;
             font-size: 9px;
-            font-weight: 700;
-
-            white-space: nowrap;
-
-            transition: .18s ease;
-        }
-
-        .barcode-button:hover {
-            background: #1685d2;
-
-            transform: translateY(-1px);
+            font-weight: 800;
         }
 
         .barcode-button .material-symbols-outlined {
-            font-size: 18px;
+            font-size: 17px;
         }
-
-
-        /* =====================================================
-           ATTENDANCE HEADING
-        ===================================================== */
 
         .attendance-heading {
             display: flex;
+            align-items: flex-end;
             justify-content: space-between;
-            align-items: center;
-
             gap: 15px;
 
-            margin-bottom: 13px;
+            margin-bottom: 14px;
         }
 
         .attendance-heading h2 {
             margin: 0;
 
-            color: #e0e3e5;
-
             font-family: 'Anybody', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
+            font-size: 21px;
         }
 
         .attendance-heading p {
-            margin: 4px 0 0;
+            margin: 5px 0 0;
 
-            color: #7f8993;
+            color: #77848f;
 
             font-size: 9px;
         }
 
         .attendance-count {
-            padding: 7px 10px;
-
-            color: #9dcaff;
-            background: rgba(0, 114, 188, .10);
-
-            border: 1px solid rgba(157, 202, 255, .15);
-            border-radius: 20px;
+            color: #8697a4;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
-            font-weight: 700;
         }
-
-
-        /* =====================================================
-           ATTENDANCE STATS
-        ===================================================== */
 
         .attendance-stats {
             display: grid;
 
             grid-template-columns:
-                repeat(5, minmax(0, 1fr));
+                repeat(6, minmax(0, 1fr));
 
-            gap: 9px;
+            gap: 8px;
 
-            margin-bottom: 16px;
+            margin-bottom: 15px;
         }
 
         .attendance-stat {
-            padding: 13px;
+            padding: 12px;
 
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 11px;
+            border-radius: 10px;
         }
 
         .attendance-stat span {
             display: block;
 
-            margin-bottom: 6px;
+            margin-bottom: 7px;
 
-            color: #7e8994;
+            color: #72808b;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 7px;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .attendance-stat strong {
+            display: block;
+
             color: #ffffff;
 
             font-family: 'Anybody', sans-serif;
-            font-size: 19px;
-            font-weight: 800;
+            font-size: 21px;
         }
 
         .attendance-stat.present strong {
@@ -628,10 +514,9 @@
             color: #ffaaa5;
         }
 
-
-        /* =====================================================
-           ATTENDANCE LIST
-        ===================================================== */
+        .attendance-stat.attended {
+            border-color: rgba(157, 202, 255, .23);
+        }
 
         .attendance-list {
             overflow: hidden;
@@ -639,42 +524,61 @@
             background: #1b2531;
 
             border: 1px solid #34485d;
-            border-radius: 14px;
+            border-radius: 13px;
+        }
+
+        .attendance-table-head {
+            display: grid;
+
+            grid-template-columns:
+                minmax(200px, 1.5fr)
+                minmax(90px, .7fr)
+                minmax(110px, .7fr)
+                minmax(110px, .7fr)
+                minmax(180px, 1fr);
+
+            gap: 12px;
+
+            padding: 10px 14px;
+
+            color: #64727d;
+            background: #151b20;
+
+            border-bottom: 1px solid #303c48;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
         }
 
         .attendance-row {
             display: grid;
 
             grid-template-columns:
-                minmax(240px, 1.6fr)
-                120px
-                minmax(200px, 1fr);
+                minmax(200px, 1.5fr)
+                minmax(90px, .7fr)
+                minmax(110px, .7fr)
+                minmax(110px, .7fr)
+                minmax(180px, 1fr);
 
             align-items: center;
+            gap: 12px;
 
-            gap: 15px;
+            padding: 13px 14px;
 
-            padding: 15px 18px;
-
-            border-bottom:
-                1px solid rgba(64, 71, 81, .48);
+            border-bottom: 1px solid #2d3944;
         }
 
         .attendance-row:last-child {
             border-bottom: 0;
         }
 
-
-        /* =====================================================
-           STUDENT
-        ===================================================== */
-
         .student-info strong {
             display: block;
 
             color: #e0e3e5;
 
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
         }
 
@@ -686,13 +590,13 @@
             color: #747f89;
 
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
+            font-size: 7px;
         }
 
-
-        /* =====================================================
-           STATUS
-        ===================================================== */
+        .class-text {
+            color: #9da7af;
+            font-size: 9px;
+        }
 
         .status-badge {
             width: fit-content;
@@ -731,16 +635,31 @@
             background: rgba(255, 120, 120, .09);
         }
 
-        .attendance-note {
-            color: #87919a;
+        .scan-time strong {
+            display: block;
 
+            color: #dce3e8;
+
+            font-family: 'JetBrains Mono', monospace;
             font-size: 9px;
         }
 
+        .scan-time span {
+            display: block;
 
-        /* =====================================================
-           EMPTY ATTENDANCE
-        ===================================================== */
+            margin-top: 3px;
+
+            color: #697783;
+
+            font-size: 7px;
+        }
+
+        .attendance-note {
+            color: #87919a;
+
+            font-size: 8px;
+            line-height: 1.5;
+        }
 
         .attendance-empty {
             padding: 50px 20px;
@@ -791,17 +710,10 @@
             color: #7e8994;
 
             font-size: 9px;
-
             line-height: 1.6;
         }
 
-
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
-
-        @media (max-width: 900px) {
-
+        @media (max-width: 1000px) {
             .session-info-grid {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
@@ -812,13 +724,20 @@
                     repeat(3, minmax(0, 1fr));
             }
 
+            .attendance-table-head {
+                display: none;
+            }
+
+            .attendance-row {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
         }
 
-
         @media (max-width: 700px) {
-
             .training-show-container {
-                padding: 25px 14px 100px;
+                width: calc(100% - 28px);
+                padding: 24px 0 100px;
             }
 
             .training-heading {
@@ -831,7 +750,7 @@
             }
 
             .session-card {
-                padding: 17px;
+                padding: 15px;
             }
 
             .session-info-grid {
@@ -845,7 +764,6 @@
 
             .barcode-button {
                 width: 100%;
-
                 box-sizing: border-box;
             }
 
@@ -864,13 +782,10 @@
                 flex-direction: column;
                 align-items: flex-start;
 
-                gap: 8px;
+                gap: 9px;
             }
-
         }
-
     </style>
-
 </head>
 
 
@@ -878,42 +793,6 @@
 
 
 @php
-
-    /*
-    |--------------------------------------------------------------------------
-    | STATISTIK KEHADIRAN
-    |--------------------------------------------------------------------------
-    */
-
-    $presentCount =
-        $trainingSession->attendances
-            ->where('status', 'present')
-            ->count();
-
-
-    $lateCount =
-        $trainingSession->attendances
-            ->where('status', 'late')
-            ->count();
-
-
-    $permissionCount =
-        $trainingSession->attendances
-            ->where('status', 'permission')
-            ->count();
-
-
-    $sickCount =
-        $trainingSession->attendances
-            ->where('status', 'sick')
-            ->count();
-
-
-    $absentCount =
-        $trainingSession->attendances
-            ->where('status', 'absent')
-            ->count();
-
 
     /*
     |--------------------------------------------------------------------------
@@ -939,11 +818,8 @@
 
     /*
     |--------------------------------------------------------------------------
-    | BATAS HADIR NORMAL
+    | BATAS HADIR
     |--------------------------------------------------------------------------
-    |
-    | 10 menit setelah jam mulai masih dianggap Hadir.
-    |
     */
 
     $lateLimit =
@@ -958,15 +834,9 @@
 @endphp
 
 
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="kko-header">
 
     <div class="kko-header-inner">
-
 
         <div class="kko-brand">
 
@@ -999,9 +869,7 @@
         </div>
 
 
-
         <div class="kko-header-actions">
-
 
             <div class="header-profile">
 
@@ -1037,7 +905,6 @@
             </div>
 
 
-
             <form
                 method="POST"
                 action="{{ route('logout') }}"
@@ -1059,7 +926,6 @@
 
             </form>
 
-
         </div>
 
     </div>
@@ -1067,15 +933,7 @@
 </header>
 
 
-
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
 <main class="training-show-container">
-
-
-    <!-- BACK -->
 
     <a
         href="{{ route('training.index') }}"
@@ -1089,7 +947,6 @@
         Kembali ke Kehadiran Latihan
 
     </a>
-
 
 
     @if(session('success'))
@@ -1107,13 +964,7 @@
     @endif
 
 
-
-    <!-- =================================================
-         HEADING
-    ================================================== -->
-
     <section class="training-heading">
-
 
         <div>
 
@@ -1126,7 +977,7 @@
             </h1>
 
             <p>
-                Kelola informasi dan presensi siswa pada sesi latihan ini.
+                Kelola informasi dan rekap presensi siswa pada sesi ini.
             </p>
 
         </div>
@@ -1142,20 +993,12 @@
 
         </div>
 
-
     </section>
 
 
-
-    <!-- =================================================
-         INFORMASI SESI
-    ================================================== -->
-
     <section class="session-card">
 
-
         <div class="session-card-header">
-
 
             <div class="session-icon">
 
@@ -1164,7 +1007,6 @@
                 </span>
 
             </div>
-
 
             <div>
 
@@ -1178,15 +1020,10 @@
 
             </div>
 
-
         </div>
 
 
-
         <div class="session-info-grid">
-
-
-            <!-- TANGGAL -->
 
             <div class="session-info">
 
@@ -1212,8 +1049,6 @@
 
             </div>
 
-
-            <!-- JAM -->
 
             <div class="session-info">
 
@@ -1250,8 +1085,6 @@
             </div>
 
 
-            <!-- LOKASI -->
-
             <div class="session-info">
 
                 <div class="session-info-label">
@@ -1265,16 +1098,12 @@
                 </div>
 
                 <strong>
-
                     {{ $trainingSession->location
                         ?? 'Belum ditentukan' }}
-
                 </strong>
 
             </div>
 
-
-            <!-- DIBUAT OLEH -->
 
             <div class="session-info">
 
@@ -1289,18 +1118,12 @@
                 </div>
 
                 <strong>
-
-                    {{ $trainingSession
-                        ->creator?->name
-                        ?? '-' }}
-
+                    {{ $trainingSession->creator?->name ?? '-' }}
                 </strong>
 
             </div>
 
-
         </div>
-
 
 
         @if($trainingSession->notes)
@@ -1317,20 +1140,12 @@
 
         @endif
 
-
     </section>
 
 
-
-    <!-- =================================================
-         BARCODE PRESENSI LATIHAN
-    ================================================== -->
-
     <section class="barcode-panel">
 
-
         <div class="barcode-panel-left">
-
 
             <div class="barcode-panel-icon">
 
@@ -1352,14 +1167,13 @@
                 </strong>
 
                 <p>
-                    Tampilkan QR khusus untuk sesi latihan ini agar siswa dapat melakukan presensi.
+                    Tampilkan QR khusus sesi ini agar siswa dapat melakukan presensi menggunakan akun masing-masing.
                 </p>
 
 
                 <div class="barcode-rules">
 
-
-                    @if($startTime)
+                    @if($lateLimit)
 
                         <span class="barcode-rule">
 
@@ -1382,7 +1196,7 @@
                                 schedule
                             </span>
 
-                            Lewat {{ $lateLimit }} WIB = Terlambat
+                            Lewat {{ $lateLimit }} = Terlambat
 
                         </span>
 
@@ -1403,18 +1217,18 @@
 
                     @endif
 
-
                 </div>
 
             </div>
 
-
         </div>
 
 
-
         <a
-            href="{{ route('training.barcode.display', $trainingSession) }}"
+            href="{{ route(
+                'training.barcode.display',
+                $trainingSession
+            ) }}"
             class="barcode-button"
         >
 
@@ -1426,29 +1240,21 @@
 
         </a>
 
-
     </section>
 
 
-
-    <!-- =================================================
-         KEHADIRAN SISWA
-    ================================================== -->
-
     <section>
 
-
         <div class="attendance-heading">
-
 
             <div>
 
                 <h2>
-                    Kehadiran Siswa
+                    Rekap Kehadiran
                 </h2>
 
                 <p>
-                    Data otomatis dari hasil scan barcode latihan siswa.
+                    Data presensi siswa pada sesi latihan ini.
                 </p>
 
             </div>
@@ -1456,22 +1262,15 @@
 
             <div class="attendance-count">
 
-                {{ $trainingSession->attendances->count() }}
+                {{ $attendanceStats['total'] }}
                 siswa tercatat
 
             </div>
 
-
         </div>
 
 
-
-        <!-- =================================================
-             STATISTIK
-        ================================================== -->
-
         <div class="attendance-stats">
-
 
             <div class="attendance-stat present">
 
@@ -1480,7 +1279,7 @@
                 </span>
 
                 <strong>
-                    {{ $presentCount }}
+                    {{ $attendanceStats['present'] }}
                 </strong>
 
             </div>
@@ -1493,7 +1292,7 @@
                 </span>
 
                 <strong>
-                    {{ $lateCount }}
+                    {{ $attendanceStats['late'] }}
                 </strong>
 
             </div>
@@ -1506,7 +1305,7 @@
                 </span>
 
                 <strong>
-                    {{ $permissionCount }}
+                    {{ $attendanceStats['permission'] }}
                 </strong>
 
             </div>
@@ -1519,7 +1318,7 @@
                 </span>
 
                 <strong>
-                    {{ $sickCount }}
+                    {{ $attendanceStats['sick'] }}
                 </strong>
 
             </div>
@@ -1532,27 +1331,60 @@
                 </span>
 
                 <strong>
-                    {{ $absentCount }}
+                    {{ $attendanceStats['absent'] }}
                 </strong>
 
             </div>
 
 
+            <div class="attendance-stat attended">
+
+                <span>
+                    DATANG
+                </span>
+
+                <strong>
+                    {{ $attendanceStats['attended'] }}
+                </strong>
+
+            </div>
+
         </div>
 
 
-
-        <!-- =================================================
-             DATA KEHADIRAN
-        ================================================== -->
-
         @if($trainingSession->attendances->isNotEmpty())
-
 
             <div class="attendance-list">
 
+                <div class="attendance-table-head">
 
-                @foreach($trainingSession->attendances as $attendance)
+                    <div>
+                        SISWA
+                    </div>
+
+                    <div>
+                        KELAS
+                    </div>
+
+                    <div>
+                        STATUS
+                    </div>
+
+                    <div>
+                        WAKTU
+                    </div>
+
+                    <div>
+                        CATATAN
+                    </div>
+
+                </div>
+
+
+                @foreach(
+                    $trainingSession->attendances
+                    as $attendance
+                )
 
                     @php
 
@@ -1584,9 +1416,6 @@
 
                     <div class="attendance-row">
 
-
-                        <!-- SISWA -->
-
                         <div class="student-info">
 
                             <strong>
@@ -1609,45 +1438,70 @@
                         </div>
 
 
-                        <!-- STATUS -->
+                        <div class="class-text">
 
-                        <span
-                            class="status-badge {{ $statusClass }}"
-                        >
-
-                            {{ $statusLabel }}
-
-                        </span>
-
-
-                        <!-- CATATAN -->
-
-                        <div class="attendance-note">
-
-                            {{ $attendance->notes
-                                ?? 'Presensi melalui barcode latihan.' }}
+                            {{ $attendance
+                                ->student?->class?->name
+                                ?? '-' }}
 
                         </div>
 
 
-                    </div>
+                        <span
+                            class="status-badge {{ $statusClass }}"
+                        >
+                            {{ $statusLabel }}
+                        </span>
 
+
+                        <div class="scan-time">
+
+                            @if($attendance->checked_in_at)
+
+                                <strong>
+
+                                    {{ $attendance
+                                        ->checked_in_at
+                                        ->timezone('Asia/Jakarta')
+                                        ->format('H:i:s') }}
+
+                                </strong>
+
+                                <span>
+                                    WIB
+                                </span>
+
+                            @else
+
+                                <strong>
+                                    --:--:--
+                                </strong>
+
+                                <span>
+                                    Tidak ada waktu scan
+                                </span>
+
+                            @endif
+
+                        </div>
+
+
+                        <div class="attendance-note">
+
+                            {{ $attendance->notes
+                                ?? '-' }}
+
+                        </div>
+
+                    </div>
 
                 @endforeach
 
-
             </div>
-
 
         @else
 
-
-            <!-- =================================================
-                 BELUM ADA SCAN
-            ================================================== -->
-
             <div class="attendance-empty">
-
 
                 <div class="attendance-empty-icon">
 
@@ -1657,29 +1511,21 @@
 
                 </div>
 
-
                 <strong>
                     Belum ada siswa melakukan presensi
                 </strong>
 
-
                 <p>
-                    Buka Barcode Latihan di atas. Siswa kemudian melakukan scan menggunakan akun masing-masing dan data kehadiran akan muncul otomatis di halaman ini.
+                    Buka Barcode Latihan di atas. Setelah siswa melakukan scan, nama, status, kelas, dan waktu presensinya akan muncul otomatis di halaman ini.
                 </p>
-
 
             </div>
 
-
         @endif
-
 
     </section>
 
-
 </main>
 
-
 </body>
-
 </html>
