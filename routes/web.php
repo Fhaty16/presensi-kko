@@ -558,19 +558,8 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
-        | UPDATE STATUS IZIN / SAKIT LATIHAN
+        | UPDATE STATUS PRESENSI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Digunakan Guru / Pelatih untuk mengubah status siswa
-        | pada sesi tertentu menjadi:
-        |
-        | - permission = Izin
-        | - sick       = Sakit
-        |
-        | Contoh URL:
-        |
-        | /latihan/15/siswa/4/status
-        |
         */
 
         Route::put(
@@ -585,13 +574,8 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
-        | HAPUS STATUS IZIN / SAKIT LATIHAN
+        | HAPUS STATUS PRESENSI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Jika status Izin / Sakit dihapus setelah batas Alfa,
-        | controller akan mengecek ulang dan siswa dapat langsung
-        | menjadi Alfa.
-        |
         */
 
         Route::delete(
@@ -609,14 +593,7 @@ Route::middleware('auth')
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Route parameter umum ini harus berada paling bawah
-        | setelah:
-        |
-        | /latihan/buat
-        | /latihan/{trainingSession}/edit
-        | /latihan/{trainingSession}/barcode
-        | /latihan/{trainingSession}/barcode/current
-        | /latihan/{trainingSession}/siswa/{student}/status
+        | Route parameter umum ini harus berada paling bawah.
         |
         */
 
@@ -643,6 +620,8 @@ Route::middleware('auth')
 | - menentukan cabang olahraga siswa
 | - mengganti cabang olahraga siswa
 | - memfilter siswa berdasarkan cabang olahraga
+| - melihat rekap presensi latihan
+| - melihat detail riwayat presensi per siswa
 |
 | StudentSportController melakukan pengecekan role.
 |
@@ -665,6 +644,31 @@ Route::middleware('auth')
             ]
         )
         ->name('students.sports.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DETAIL RIWAYAT PRESENSI SISWA
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | /data-cabang-siswa/4/riwayat-presensi
+        |
+        | Query parameter:
+        |
+        | ?month=8&year=2026
+        |
+        */
+
+        Route::get(
+            '/data-cabang-siswa/{student}/riwayat-presensi',
+            [
+                StudentSportController::class,
+                'attendanceDetail',
+            ]
+        )
+        ->name('students.sports.attendance-detail');
 
 
         /*

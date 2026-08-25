@@ -13,8 +13,14 @@ class StudentSportController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | CEK AKSES
+    | VALIDASI ROLE
     |--------------------------------------------------------------------------
+    |
+    | Halaman ini hanya boleh diakses oleh:
+    |
+    | - Guru
+    | - Pelatih
+    |
     */
 
     private function authorizeRole(): void
@@ -157,7 +163,6 @@ class StudentSportController extends Controller
         */
 
         if (!$selectedSport) {
-
             $activeTab =
                 'data';
         }
@@ -259,7 +264,6 @@ class StudentSportController extends Controller
             $sports
             as $sport
         ) {
-
             $sportStats[$sport] =
                 $allStudents
                     ->where(
@@ -362,12 +366,6 @@ class StudentSportController extends Controller
         |--------------------------------------------------------------------------
         | REKAP PRESENSI CABANG
         |--------------------------------------------------------------------------
-        |
-        | Rekap hanya dihitung jika:
-        |
-        | - cabang olahraga dipilih
-        | - tab Rekap dibuka
-        |
         */
 
         if (
@@ -377,7 +375,7 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | AMBIL SEMUA SESI PADA BULAN & TAHUN
+            | AMBIL SESI LATIHAN
             |--------------------------------------------------------------------------
             */
 
@@ -409,12 +407,8 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | HANYA SESI YANG SUDAH LEWAT BATAS ALFA +30 MENIT
+            | HANYA SESI YANG SUDAH LEWAT +30 MENIT
             |--------------------------------------------------------------------------
-            |
-            | Sesi yang masih berlangsung atau belum dimulai tidak ikut
-            | dihitung agar siswa tidak langsung dianggap Alfa.
-            |
             */
 
             $trainingSessions =
@@ -425,7 +419,6 @@ class StudentSportController extends Controller
                         ) use (
                             $now
                         ) {
-
                             if (
                                 !$session->training_date
                                 || !$session->start_time
@@ -503,7 +496,7 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | SEMUA PRESENSI DARI SESI TERPILIH
+            | SEMUA PRESENSI
             |--------------------------------------------------------------------------
             */
 
@@ -513,7 +506,6 @@ class StudentSportController extends Controller
                         function (
                             TrainingSession $session
                         ) {
-
                             return $session
                                 ->attendances;
                         }
@@ -524,7 +516,6 @@ class StudentSportController extends Controller
                         ) use (
                             $studentIds
                         ) {
-
                             return $studentIds
                                 ->contains(
                                     $attendance
@@ -537,7 +528,7 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | STATISTIK HADIR
+            | HADIR
             |--------------------------------------------------------------------------
             */
 
@@ -552,7 +543,7 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | STATISTIK TERLAMBAT
+            | TERLAMBAT
             |--------------------------------------------------------------------------
             */
 
@@ -567,7 +558,7 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | STATISTIK IZIN
+            | IZIN
             |--------------------------------------------------------------------------
             */
 
@@ -582,7 +573,7 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | STATISTIK SAKIT
+            | SAKIT
             |--------------------------------------------------------------------------
             */
 
@@ -597,69 +588,21 @@ class StudentSportController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | ALFA TERCATAT
+            | ALFA
             |--------------------------------------------------------------------------
+            |
+            | Alfa hanya dihitung berdasarkan record absent yang
+            | benar-benar tersimpan di database.
+            |
             */
 
-            $explicitAbsentCount =
+            $absentCount =
                 $allAttendances
                     ->where(
                         'status',
                         'absent'
                     )
                     ->count();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | PRESENSI YANG SEHARUSNYA ADA
-            |--------------------------------------------------------------------------
-            |
-            | Contoh:
-            |
-            | 10 siswa
-            | 4 sesi
-            |
-            | Total yang seharusnya = 40 record presensi.
-            |
-            */
-
-            $expectedAttendanceCount =
-                $totalSessions
-                *
-                $students->count();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | PRESENSI YANG BELUM MEMILIKI RECORD
-            |--------------------------------------------------------------------------
-            |
-            | Karena sesi sudah lewat +30 menit, siswa yang tidak memiliki
-            | record tetap dianggap Alfa dalam laporan.
-            |
-            */
-
-            $missingAttendanceCount =
-                max(
-                    0,
-                    $expectedAttendanceCount
-                    -
-                    $allAttendances
-                        ->count()
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | TOTAL ALFA
-            |--------------------------------------------------------------------------
-            */
-
-            $absentCount =
-                $explicitAbsentCount
-                +
-                $missingAttendanceCount;
 
 
             /*
@@ -672,6 +615,18 @@ class StudentSportController extends Controller
                 $presentCount
                 +
                 $lateCount;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | JUMLAH PRESENSI YANG SEHARUSNYA ADA
+            |--------------------------------------------------------------------------
+            */
+
+            $expectedAttendanceCount =
+                $totalSessions
+                *
+                $students->count();
 
 
             /*
@@ -823,45 +778,17 @@ class StudentSportController extends Controller
 
                             /*
                             |--------------------------------------------------------------------------
-                            | ALFA YANG TERCATAT
+                            | ALFA
                             |--------------------------------------------------------------------------
                             */
 
-                            $explicitAbsent =
+                            $absent =
                                 $studentAttendances
                                     ->where(
                                         'status',
                                         'absent'
                                     )
                                     ->count();
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | RECORD YANG BELUM ADA
-                            |--------------------------------------------------------------------------
-                            */
-
-                            $missing =
-                                max(
-                                    0,
-                                    $totalSessions
-                                    -
-                                    $studentAttendances
-                                        ->count()
-                                );
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | TOTAL ALFA SISWA
-                            |--------------------------------------------------------------------------
-                            */
-
-                            $absent =
-                                $explicitAbsent
-                                +
-                                $missing;
 
 
                             /*
@@ -904,6 +831,7 @@ class StudentSportController extends Controller
                             */
 
                             return [
+
                                 'student' =>
                                     $student,
 
@@ -927,6 +855,7 @@ class StudentSportController extends Controller
 
                                 'percentage' =>
                                     $percentage,
+
                             ];
                         }
                     )
@@ -962,6 +891,396 @@ class StudentSportController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | DETAIL RIWAYAT PRESENSI SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    public function attendanceDetail(
+        Request $request,
+        Student $student
+    ): View {
+        $this->authorizeRole();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SISWA HARUS AKTIF
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $student->status === 'active',
+            404,
+            'Siswa tidak ditemukan.'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LOAD DATA SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        $student->load([
+            'user',
+            'class',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CABANG SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        $sport =
+            $student->sport;
+
+
+        if (
+            !$sport
+            || !in_array(
+                $sport,
+                $this->sports(),
+                true
+            )
+        ) {
+            abort(
+                404,
+                'Cabang olahraga siswa tidak ditemukan.'
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | WAKTU SEKARANG
+        |--------------------------------------------------------------------------
+        */
+
+        $now =
+            Carbon::now(
+                'Asia/Jakarta'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BULAN
+        |--------------------------------------------------------------------------
+        */
+
+        $selectedMonth =
+            (int) $request->query(
+                'month',
+                $now->month
+            );
+
+
+        if (
+            $selectedMonth < 1
+            || $selectedMonth > 12
+        ) {
+            $selectedMonth =
+                $now->month;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TAHUN
+        |--------------------------------------------------------------------------
+        */
+
+        $selectedYear =
+            (int) $request->query(
+                'year',
+                $now->year
+            );
+
+
+        if (
+            $selectedYear < 2020
+            || $selectedYear > 2100
+        ) {
+            $selectedYear =
+                $now->year;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL SESI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
+        $sessions =
+            TrainingSession::query()
+                ->with([
+                    'attendances',
+                ])
+                ->where(
+                    'sport',
+                    $sport
+                )
+                ->whereYear(
+                    'training_date',
+                    $selectedYear
+                )
+                ->whereMonth(
+                    'training_date',
+                    $selectedMonth
+                )
+                ->orderBy(
+                    'training_date'
+                )
+                ->orderBy(
+                    'start_time'
+                )
+                ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HANYA SESI YANG SUDAH LEWAT BATAS +30 MENIT
+        |--------------------------------------------------------------------------
+        */
+
+        $sessions =
+            $sessions
+                ->filter(
+                    function (
+                        TrainingSession $session
+                    ) use (
+                        $now
+                    ) {
+                        if (
+                            !$session->training_date
+                            || !$session->start_time
+                        ) {
+                            return false;
+                        }
+
+
+                        $date =
+                            Carbon::parse(
+                                $session->training_date
+                            )->format(
+                                'Y-m-d'
+                            );
+
+
+                        $startTime =
+                            Carbon::parse(
+                                $session->start_time,
+                                'Asia/Jakarta'
+                            )->format(
+                                'H:i:s'
+                            );
+
+
+                        $startsAt =
+                            Carbon::createFromFormat(
+                                'Y-m-d H:i:s',
+                                $date
+                                . ' '
+                                . $startTime,
+                                'Asia/Jakarta'
+                            );
+
+
+                        return $now->gt(
+                            $startsAt
+                                ->copy()
+                                ->addMinutes(
+                                    30
+                                )
+                        );
+                    }
+                )
+                ->values();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT PER SESI
+        |--------------------------------------------------------------------------
+        */
+
+        $history =
+            $sessions
+                ->map(
+                    function (
+                        TrainingSession $session
+                    ) use (
+                        $student
+                    ) {
+                        $attendance =
+                            $session
+                                ->attendances
+                                ->firstWhere(
+                                    'student_id',
+                                    $student->id
+                                );
+
+
+                        return [
+
+                            'session' =>
+                                $session,
+
+                            'attendance' =>
+                                $attendance,
+
+                            'status' =>
+                                $attendance?->status,
+
+                            'checked_in_at' =>
+                                $attendance?->checked_in_at,
+
+                            'notes' =>
+                                $attendance?->notes,
+
+                        ];
+                    }
+                )
+                ->values();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HITUNG STATISTIK
+        |--------------------------------------------------------------------------
+        */
+
+        $present =
+            $history
+                ->where(
+                    'status',
+                    'present'
+                )
+                ->count();
+
+
+        $late =
+            $history
+                ->where(
+                    'status',
+                    'late'
+                )
+                ->count();
+
+
+        $permission =
+            $history
+                ->where(
+                    'status',
+                    'permission'
+                )
+                ->count();
+
+
+        $sick =
+            $history
+                ->where(
+                    'status',
+                    'sick'
+                )
+                ->count();
+
+
+        $absent =
+            $history
+                ->where(
+                    'status',
+                    'absent'
+                )
+                ->count();
+
+
+        $attended =
+            $present
+            +
+            $late;
+
+
+        $totalSessions =
+            $sessions
+                ->count();
+
+
+        $percentage =
+            $totalSessions > 0
+                ? round(
+                    (
+                        $attended
+                        /
+                        $totalSessions
+                    )
+                    *
+                    100,
+                    1
+                )
+                : 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATISTIK
+        |--------------------------------------------------------------------------
+        */
+
+        $stats = [
+
+            'sessions' =>
+                $totalSessions,
+
+            'present' =>
+                $present,
+
+            'late' =>
+                $late,
+
+            'permission' =>
+                $permission,
+
+            'sick' =>
+                $sick,
+
+            'absent' =>
+                $absent,
+
+            'attended' =>
+                $attended,
+
+            'percentage' =>
+                $percentage,
+
+        ];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
+
+        return view(
+            'students.attendance-detail',
+            compact(
+                'student',
+                'sport',
+                'selectedMonth',
+                'selectedYear',
+                'history',
+                'stats'
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | UPDATE CABANG SISWA
     |--------------------------------------------------------------------------
     */
@@ -971,6 +1290,19 @@ class StudentSportController extends Controller
         Student $student
     ): RedirectResponse {
         $this->authorizeRole();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SISWA HARUS AKTIF
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $student->status === 'active',
+            422,
+            'Siswa tidak aktif dan tidak dapat diubah.'
+        );
 
 
         /*
@@ -1024,7 +1356,6 @@ class StudentSportController extends Controller
                 $validated['current_filter']
             )
         ) {
-
             $routeParameters['sport'] =
                 $validated[
                     'current_filter'

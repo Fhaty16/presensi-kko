@@ -49,6 +49,7 @@
             font-family: 'Hanken Grotesk', sans-serif;
         }
 
+
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
@@ -70,14 +71,17 @@
             -webkit-font-smoothing: antialiased;
         }
 
+
         a {
             color: inherit;
         }
 
 
-        /* =====================================================
-           PAGE
-        ===================================================== */
+        /*
+        =====================================================
+        PAGE
+        =====================================================
+        */
 
         .sport-page {
             width: min(
@@ -91,9 +95,11 @@
         }
 
 
-        /* =====================================================
-           BACK
-        ===================================================== */
+        /*
+        =====================================================
+        BACK
+        =====================================================
+        */
 
         .back-link {
             display: inline-flex;
@@ -112,14 +118,17 @@
             font-weight: 700;
         }
 
+
         .back-link .material-symbols-outlined {
             font-size: 17px;
         }
 
 
-        /* =====================================================
-           HEADING
-        ===================================================== */
+        /*
+        =====================================================
+        HEADING
+        =====================================================
+        */
 
         .page-heading {
             display: flex;
@@ -130,6 +139,7 @@
 
             margin-bottom: 24px;
         }
+
 
         .page-label {
             display: block;
@@ -145,6 +155,7 @@
             letter-spacing: 1.4px;
         }
 
+
         .page-heading h1 {
             margin: 0;
 
@@ -153,6 +164,7 @@
             font-weight: 800;
         }
 
+
         .page-heading p {
             margin: 7px 0 0;
 
@@ -160,6 +172,7 @@
 
             font-size: 10px;
         }
+
 
         .role-badge {
             display: inline-flex;
@@ -181,9 +194,11 @@
         }
 
 
-        /* =====================================================
-           MESSAGE
-        ===================================================== */
+        /*
+        =====================================================
+        MESSAGE
+        =====================================================
+        */
 
         .success-message {
             display: flex;
@@ -203,14 +218,17 @@
             font-size: 9px;
         }
 
+
         .success-message .material-symbols-outlined {
             font-size: 18px;
         }
 
 
-        /* =====================================================
-           FILTER CABANG
-        ===================================================== */
+        /*
+        =====================================================
+        FILTER CABANG
+        =====================================================
+        */
 
         .filter-bar {
             display: flex;
@@ -222,6 +240,7 @@
             margin-bottom: 11px;
         }
 
+
         .filter-bar > span {
             color: #72808c;
 
@@ -229,6 +248,7 @@
             font-size: 8px;
             font-weight: 700;
         }
+
 
         .show-all-button {
             display: inline-flex;
@@ -251,19 +271,23 @@
             font-weight: 800;
         }
 
+
         .show-all-button.active {
             color: #101415;
             background: #9dcaff;
         }
+
 
         .show-all-button .material-symbols-outlined {
             font-size: 15px;
         }
 
 
-        /* =====================================================
-           CARD CABANG
-        ===================================================== */
+        /*
+        =====================================================
+        CARD CABANG
+        =====================================================
+        */
 
         .stats-grid {
             display: grid;
@@ -275,6 +299,7 @@
 
             margin-bottom: 18px;
         }
+
 
         .stat-card {
             display: block;
@@ -294,17 +319,20 @@
                 background .18s ease;
         }
 
+
         .stat-card:hover {
             transform: translateY(-2px);
 
             border-color: rgba(157, 202, 255, .48);
         }
 
+
         .stat-card.active {
             background: rgba(0, 114, 188, .12);
 
             border-color: #9dcaff;
         }
+
 
         .stat-card span {
             display: block;
@@ -320,6 +348,7 @@
             line-height: 1.4;
         }
 
+
         .stat-card strong {
             display: block;
 
@@ -331,13 +360,16 @@
             font-size: 22px;
         }
 
+
         .stat-card.active span {
             color: #9dcaff;
         }
 
+
         .stat-card.unassigned {
             cursor: default;
         }
+
 
         .stat-card.unassigned:hover {
             transform: none;
@@ -345,14 +377,17 @@
             border-color: #34485d;
         }
 
+
         .stat-card.unassigned strong {
             color: #ffb866;
         }
 
 
-        /* =====================================================
-           TAB
-        ===================================================== */
+        /*
+        =====================================================
+        TAB
+        =====================================================
+        */
 
         .sport-tabs {
             display: inline-flex;
@@ -368,6 +403,7 @@
             border: 1px solid #303c48;
             border-radius: 10px;
         }
+
 
         .sport-tab {
             display: inline-flex;
@@ -390,23 +426,28 @@
             font-weight: 700;
         }
 
+
         .sport-tab:hover {
             color: #dce7ef;
         }
+
 
         .sport-tab.active {
             color: #101415;
             background: #9dcaff;
         }
 
+
         .sport-tab .material-symbols-outlined {
             font-size: 16px;
         }
 
 
-        /* =====================================================
-           LIST HEADING
-        ===================================================== */
+        /*
+        =====================================================
+        LIST HEADING
+        =====================================================
+        */
 
         .list-heading {
             display: flex;
@@ -418,12 +459,14 @@
             margin-bottom: 13px;
         }
 
+
         .list-heading h2 {
             margin: 0;
 
             font-family: 'Anybody', sans-serif;
             font-size: 20px;
         }
+
 
         .list-heading p {
             margin: 5px 0 0;
@@ -433,6 +476,7 @@
             font-size: 9px;
         }
 
+
         .student-count {
             color: #82929e;
 
@@ -441,15 +485,18 @@
         }
 
 
-        /* =====================================================
-           STUDENT LIST
-        ===================================================== */
+        /*
+        =====================================================
+        STUDENT LIST
+        =====================================================
+        */
 
         .student-list {
             display: grid;
 
             gap: 10px;
         }
+
 
         .student-card {
             display: grid;
@@ -471,6 +518,7 @@
             border-radius: 12px;
         }
 
+
         .student-profile {
             display: flex;
             align-items: center;
@@ -479,6 +527,7 @@
 
             min-width: 0;
         }
+
 
         .student-avatar {
             width: 43px;
@@ -500,9 +549,11 @@
             font-weight: 800;
         }
 
+
         .student-data {
             min-width: 0;
         }
+
 
         .student-data strong {
             display: block;
@@ -517,6 +568,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
 
         .student-meta {
             display: flex;
@@ -533,9 +585,11 @@
         }
 
 
-        /* =====================================================
-           SPORT SELECT
-        ===================================================== */
+        /*
+        =====================================================
+        SPORT SELECT
+        =====================================================
+        */
 
         .sport-field label {
             display: block;
@@ -548,6 +602,7 @@
             font-size: 7px;
             font-weight: 800;
         }
+
 
         .sport-field select {
             width: 100%;
@@ -569,9 +624,11 @@
             font-weight: 600;
         }
 
+
         .sport-field select:focus {
             border-color: #9dcaff;
         }
+
 
         .save-button {
             display: inline-flex;
@@ -599,18 +656,22 @@
             white-space: nowrap;
         }
 
+
         .save-button:hover {
             filter: brightness(1.05);
         }
+
 
         .save-button .material-symbols-outlined {
             font-size: 16px;
         }
 
 
-        /* =====================================================
-           REKAP FILTER
-        ===================================================== */
+        /*
+        =====================================================
+        REKAP FILTER
+        =====================================================
+        */
 
         .recap-filter-panel {
             display: flex;
@@ -628,6 +689,7 @@
             border-radius: 12px;
         }
 
+
         .recap-filter-info strong {
             display: block;
 
@@ -636,6 +698,7 @@
             font-family: 'Anybody', sans-serif;
             font-size: 14px;
         }
+
 
         .recap-filter-info span {
             display: block;
@@ -647,12 +710,14 @@
             font-size: 8px;
         }
 
+
         .recap-filter-form {
             display: flex;
             align-items: flex-end;
 
             gap: 8px;
         }
+
 
         .recap-filter-field label {
             display: block;
@@ -665,6 +730,7 @@
             font-size: 7px;
             font-weight: 800;
         }
+
 
         .recap-filter-field select {
             min-width: 130px;
@@ -686,9 +752,11 @@
             font-size: 9px;
         }
 
+
         .recap-filter-field select:focus {
             border-color: #9dcaff;
         }
+
 
         .recap-filter-button {
             display: inline-flex;
@@ -713,14 +781,17 @@
             font-weight: 800;
         }
 
+
         .recap-filter-button .material-symbols-outlined {
             font-size: 16px;
         }
 
 
-        /* =====================================================
-           REKAP STATS
-        ===================================================== */
+        /*
+        =====================================================
+        REKAP STATS
+        =====================================================
+        */
 
         .recap-stats {
             display: grid;
@@ -733,6 +804,7 @@
             margin-bottom: 15px;
         }
 
+
         .recap-stat {
             padding: 13px;
 
@@ -741,6 +813,7 @@
             border: 1px solid #34485d;
             border-radius: 10px;
         }
+
 
         .recap-stat span {
             display: block;
@@ -754,6 +827,7 @@
             font-weight: 800;
         }
 
+
         .recap-stat strong {
             display: block;
 
@@ -763,30 +837,37 @@
             font-size: 22px;
         }
 
+
         .recap-stat.present strong {
             color: #8ce8c3;
         }
+
 
         .recap-stat.late strong {
             color: #ffb866;
         }
 
+
         .recap-stat.permission strong {
             color: #eacb84;
         }
 
+
         .recap-stat.sick strong {
             color: #9dcaff;
         }
+
 
         .recap-stat.absent strong {
             color: #ffaaa5;
         }
 
 
-        /* =====================================================
-           OVERALL ATTENDANCE
-        ===================================================== */
+        /*
+        =====================================================
+        OVERALL ATTENDANCE
+        =====================================================
+        */
 
         .overall-attendance {
             display: flex;
@@ -804,6 +885,7 @@
             border-radius: 11px;
         }
 
+
         .overall-attendance strong {
             display: block;
 
@@ -811,6 +893,7 @@
 
             font-size: 10px;
         }
+
 
         .overall-attendance span {
             display: block;
@@ -821,6 +904,7 @@
 
             font-size: 8px;
         }
+
 
         .overall-percentage {
             flex-shrink: 0;
@@ -833,9 +917,11 @@
         }
 
 
-        /* =====================================================
-           REKAP TABLE
-        ===================================================== */
+        /*
+        =====================================================
+        REKAP TABLE
+        =====================================================
+        */
 
         .recap-table-wrapper {
             overflow-x: auto;
@@ -843,8 +929,9 @@
             border-radius: 13px;
         }
 
+
         .recap-table {
-            min-width: 850px;
+            min-width: 980px;
 
             overflow: hidden;
 
@@ -854,6 +941,7 @@
             border-radius: 13px;
         }
 
+
         .recap-table-head,
         .recap-row {
             display: grid;
@@ -861,12 +949,14 @@
             grid-template-columns:
                 minmax(250px, 1.7fr)
                 repeat(5, minmax(70px, .45fr))
-                minmax(100px, .7fr);
+                minmax(100px, .7fr)
+                minmax(90px, .55fr);
 
             align-items: center;
 
             gap: 10px;
         }
+
 
         .recap-table-head {
             padding: 11px 14px;
@@ -881,15 +971,18 @@
             font-weight: 800;
         }
 
+
         .recap-row {
             padding: 13px 14px;
 
             border-bottom: 1px solid #2d3944;
         }
 
+
         .recap-row:last-child {
             border-bottom: 0;
         }
+
 
         .recap-student {
             display: flex;
@@ -899,6 +992,7 @@
 
             min-width: 0;
         }
+
 
         .recap-avatar {
             width: 37px;
@@ -920,9 +1014,11 @@
             font-weight: 800;
         }
 
+
         .recap-student-data {
             min-width: 0;
         }
+
 
         .recap-student-data strong {
             display: block;
@@ -937,6 +1033,7 @@
             white-space: nowrap;
         }
 
+
         .recap-student-data span {
             display: block;
 
@@ -948,6 +1045,7 @@
             font-size: 7px;
         }
 
+
         .recap-value {
             color: #d3dce2;
 
@@ -956,25 +1054,31 @@
             font-weight: 700;
         }
 
+
         .recap-value.present {
             color: #8ce8c3;
         }
+
 
         .recap-value.late {
             color: #ffb866;
         }
 
+
         .recap-value.permission {
             color: #eacb84;
         }
+
 
         .recap-value.sick {
             color: #9dcaff;
         }
 
+
         .recap-value.absent {
             color: #ffaaa5;
         }
+
 
         .percentage-badge {
             display: inline-flex;
@@ -997,9 +1101,63 @@
         }
 
 
-        /* =====================================================
-           EMPTY
-        ===================================================== */
+        /*
+        =====================================================
+        DETAIL BUTTON
+        =====================================================
+        */
+
+        .detail-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+
+            min-height: 31px;
+
+            padding: 0 10px;
+
+            color: #9dcaff;
+            background: rgba(0, 114, 188, .09);
+
+            border: 1px solid rgba(157, 202, 255, .20);
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 8px;
+            font-weight: 800;
+
+            white-space: nowrap;
+
+            transition:
+                background .18s ease,
+                border-color .18s ease,
+                transform .18s ease;
+        }
+
+
+        .detail-button:hover {
+            transform: translateY(-1px);
+
+            color: #101415;
+            background: #9dcaff;
+
+            border-color: #9dcaff;
+        }
+
+
+        .detail-button .material-symbols-outlined {
+            font-size: 14px;
+        }
+
+
+        /*
+        =====================================================
+        EMPTY
+        =====================================================
+        */
 
         .empty-state {
             padding: 50px 20px;
@@ -1012,6 +1170,7 @@
             border-radius: 13px;
         }
 
+
         .empty-state .material-symbols-outlined {
             display: block;
 
@@ -1022,12 +1181,14 @@
             font-size: 40px;
         }
 
+
         .empty-state strong {
             display: block;
 
             font-family: 'Anybody', sans-serif;
             font-size: 14px;
         }
+
 
         .empty-state p {
             max-width: 500px;
@@ -1041,9 +1202,11 @@
         }
 
 
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
+        /*
+        =====================================================
+        RESPONSIVE
+        =====================================================
+        */
 
         @media (max-width: 950px) {
 
@@ -1061,15 +1224,18 @@
                     repeat(2, minmax(0, 1fr));
             }
 
+
             .student-card {
                 grid-template-columns: 1fr;
             }
+
 
             .save-button {
                 width: 100%;
 
                 box-sizing: border-box;
             }
+
 
             .recap-filter-panel {
                 align-items: stretch;
@@ -1089,24 +1255,29 @@
                     90px;
             }
 
+
             .page-heading {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
+
             .page-heading h1 {
                 font-size: 26px;
             }
+
 
             .filter-bar {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
+
             .stats-grid {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
+
 
             .sport-tabs {
                 display: flex;
@@ -1116,14 +1287,17 @@
                 box-sizing: border-box;
             }
 
+
             .sport-tab {
                 flex: 1;
             }
+
 
             .list-heading {
                 align-items: flex-start;
                 flex-direction: column;
             }
+
 
             .recap-filter-form {
                 display: grid;
@@ -1134,19 +1308,23 @@
                     repeat(2, minmax(0, 1fr));
             }
 
+
             .recap-filter-field select {
                 width: 100%;
                 min-width: 0;
             }
 
+
             .recap-filter-button {
                 grid-column: 1 / -1;
             }
+
 
             .recap-stats {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
+
 
             .overall-attendance {
                 align-items: flex-start;
@@ -1252,9 +1430,11 @@
 
                 <div class="kko-role-badge">
 
-                    {{ auth()->user()->role === 'guru'
-                        ? 'GURU / ADMIN'
-                        : 'PELATIH' }}
+                    {{
+                        auth()->user()->role === 'guru'
+                            ? 'GURU / ADMIN'
+                            : 'PELATIH'
+                    }}
 
                 </div>
 
@@ -1269,13 +1449,15 @@
 
                 <div class="header-avatar">
 
-                    {{ strtoupper(
-                        substr(
-                            auth()->user()->name,
-                            0,
-                            1
+                    {{
+                        strtoupper(
+                            substr(
+                                auth()->user()->name,
+                                0,
+                                1
+                            )
                         )
-                    ) }}
+                    }}
 
                 </div>
 
@@ -1288,9 +1470,11 @@
 
                     <span>
 
-                        {{ auth()->user()->role === 'guru'
-                            ? 'Guru KKO'
-                            : 'Pelatih KKO' }}
+                        {{
+                            auth()->user()->role === 'guru'
+                                ? 'Guru KKO'
+                                : 'Pelatih KKO'
+                        }}
 
                     </span>
 
@@ -1335,9 +1519,11 @@
     ====================================================== -->
 
     <a
-        href="{{ auth()->user()->role === 'guru'
-            ? route('guru.dashboard')
-            : route('pelatih.dashboard') }}"
+        href="{{
+            auth()->user()->role === 'guru'
+                ? route('guru.dashboard')
+                : route('pelatih.dashboard')
+        }}"
         class="back-link"
     >
 
@@ -1488,10 +1674,12 @@
 
 
             <a
-                href="{{ route(
-                    'students.sports.index',
-                    $sportRouteParameters
-                ) }}"
+                href="{{
+                    route(
+                        'students.sports.index',
+                        $sportRouteParameters
+                    )
+                }}"
                 class="stat-card {{ $selectedSport === $sport ? 'active' : '' }}"
             >
 
@@ -1532,16 +1720,18 @@
         <nav class="sport-tabs">
 
             <a
-                href="{{ route(
-                    'students.sports.index',
-                    [
-                        'sport' =>
-                            $selectedSport,
+                href="{{
+                    route(
+                        'students.sports.index',
+                        [
+                            'sport' =>
+                                $selectedSport,
 
-                        'tab' =>
-                            'data',
-                    ]
-                ) }}"
+                            'tab' =>
+                                'data',
+                        ]
+                    )
+                }}"
                 class="sport-tab {{ $activeTab === 'data' ? 'active' : '' }}"
             >
 
@@ -1555,22 +1745,24 @@
 
 
             <a
-                href="{{ route(
-                    'students.sports.index',
-                    [
-                        'sport' =>
-                            $selectedSport,
+                href="{{
+                    route(
+                        'students.sports.index',
+                        [
+                            'sport' =>
+                                $selectedSport,
 
-                        'tab' =>
-                            'rekap',
+                            'tab' =>
+                                'rekap',
 
-                        'month' =>
-                            $selectedMonth,
+                            'month' =>
+                                $selectedMonth,
 
-                        'year' =>
-                            $selectedYear,
-                    ]
-                ) }}"
+                            'year' =>
+                                $selectedYear,
+                        ]
+                    )
+                }}"
                 class="sport-tab {{ $activeTab === 'rekap' ? 'active' : '' }}"
             >
 
@@ -1650,10 +1842,12 @@
 
                         <form
                             method="POST"
-                            action="{{ route(
-                                'students.sports.update',
-                                $student
-                            ) }}"
+                            action="{{
+                                route(
+                                    'students.sports.update',
+                                    $student
+                                )
+                            }}"
                             class="student-card"
                         >
 
@@ -1676,14 +1870,16 @@
 
                                 <div class="student-avatar">
 
-                                    {{ strtoupper(
-                                        substr(
-                                            $student->user?->name
-                                            ?? 'S',
-                                            0,
-                                            1
+                                    {{
+                                        strtoupper(
+                                            substr(
+                                                $student->user?->name
+                                                ?? 'S',
+                                                0,
+                                                1
+                                            )
                                         )
-                                    ) }}
+                                    }}
 
                                 </div>
 
@@ -1692,8 +1888,10 @@
 
                                     <strong>
 
-                                        {{ $student->user?->name
-                                            ?? 'Siswa KKO' }}
+                                        {{
+                                            $student->user?->name
+                                            ?? 'Siswa KKO'
+                                        }}
 
                                     </strong>
 
@@ -1710,9 +1908,11 @@
 
                                         <span>
 
-                                            {{ $student
-                                                ->class?->name
-                                                ?? 'Kelas belum ditentukan' }}
+                                            {{
+                                                $student
+                                                    ->class?->name
+                                                ?? 'Kelas belum ditentukan'
+                                            }}
 
                                         </span>
 
@@ -1738,9 +1938,11 @@
                                     <option
                                         value=""
                                         disabled
-                                        {{ !$student->sport
-                                            ? 'selected'
-                                            : '' }}
+                                        {{
+                                            !$student->sport
+                                                ? 'selected'
+                                                : ''
+                                        }}
                                     >
                                         Pilih Cabang Olahraga
                                     </option>
@@ -1750,9 +1952,11 @@
 
                                         <option
                                             value="{{ $sport }}"
-                                            {{ $student->sport === $sport
-                                                ? 'selected'
-                                                : '' }}
+                                            {{
+                                                $student->sport === $sport
+                                                    ? 'selected'
+                                                    : ''
+                                            }}
                                         >
                                             {{ $sport }}
                                         </option>
@@ -1895,9 +2099,11 @@
 
                 <form
                     method="GET"
-                    action="{{ route(
-                        'students.sports.index'
-                    ) }}"
+                    action="{{
+                        route(
+                            'students.sports.index'
+                        )
+                    }}"
                     class="recap-filter-form"
                 >
 
@@ -2107,12 +2313,14 @@
 
                 <div class="overall-percentage">
 
-                    {{ number_format(
-                        $recapStats['percentage'],
-                        1,
-                        ',',
-                        '.'
-                    ) }}%
+                    {{
+                        number_format(
+                            $recapStats['percentage'],
+                            1,
+                            ',',
+                            '.'
+                        )
+                    }}%
 
                 </div>
 
@@ -2162,6 +2370,10 @@
                                 KEHADIRAN
                             </div>
 
+                            <div>
+                                AKSI
+                            </div>
+
                         </div>
 
 
@@ -2188,15 +2400,17 @@
 
                                     <div class="recap-avatar">
 
-                                        {{ strtoupper(
-                                            substr(
-                                                $recapStudent
-                                                    ->user?->name
-                                                ?? 'S',
-                                                0,
-                                                1
+                                        {{
+                                            strtoupper(
+                                                substr(
+                                                    $recapStudent
+                                                        ->user?->name
+                                                    ?? 'S',
+                                                    0,
+                                                    1
+                                                )
                                             )
-                                        ) }}
+                                        }}
 
                                     </div>
 
@@ -2205,9 +2419,11 @@
 
                                         <strong>
 
-                                            {{ $recapStudent
-                                                ->user?->name
-                                                ?? 'Siswa KKO' }}
+                                            {{
+                                                $recapStudent
+                                                    ->user?->name
+                                                ?? 'Siswa KKO'
+                                            }}
 
                                         </strong>
 
@@ -2218,9 +2434,11 @@
 
                                             ·
 
-                                            {{ $recapStudent
-                                                ->class?->name
-                                                ?? '-' }}
+                                            {{
+                                                $recapStudent
+                                                    ->class?->name
+                                                ?? '-'
+                                            }}
 
                                         </span>
 
@@ -2270,14 +2488,50 @@
 
                                     <span class="percentage-badge">
 
-                                        {{ number_format(
-                                            $recap['percentage'],
-                                            1,
-                                            ',',
-                                            '.'
-                                        ) }}%
+                                        {{
+                                            number_format(
+                                                $recap['percentage'],
+                                                1,
+                                                ',',
+                                                '.'
+                                            )
+                                        }}%
 
                                     </span>
+
+                                </div>
+
+
+                                <!-- DETAIL -->
+
+                                <div>
+
+                                    <a
+                                        href="{{
+                                            route(
+                                                'students.sports.attendance-detail',
+                                                [
+                                                    'student' =>
+                                                        $recapStudent->id,
+
+                                                    'month' =>
+                                                        $selectedMonth,
+
+                                                    'year' =>
+                                                        $selectedYear,
+                                                ]
+                                            )
+                                        }}"
+                                        class="detail-button"
+                                    >
+
+                                        <span class="material-symbols-outlined">
+                                            visibility
+                                        </span>
+
+                                        Detail
+
+                                    </a>
 
                                 </div>
 
@@ -2324,4 +2578,5 @@
 
 
 </body>
+
 </html>
