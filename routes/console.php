@@ -28,37 +28,66 @@ Artisan::command('inspire', function () {
 | AUTO ALFA PRESENSI SEKOLAH
 |--------------------------------------------------------------------------
 |
-| Berjalan:
+| Scheduler mengecek Auto Alfa sekolah setiap menit.
 |
+| Hari aktif:
 | Senin - Jumat
-| Pukul 07:01 WIB
 |
-| Siswa yang belum memiliki data presensi sekolah
-| pada hari tersebut akan otomatis ditandai:
+| Waktu aktif:
+| 07:01 - 23:59 WIB
 |
-| absent / Alfa
+| Aturan:
+|
+| - Sebelum 07:01 siswa masih dapat melakukan presensi.
+|
+| - Mulai 07:01, siswa aktif yang belum mempunyai record
+|   presensi pada hari tersebut akan otomatis dibuat Alfa.
+|
+| - Siswa yang sudah memiliki status:
+|
+|   present     = Hadir
+|   late        = Terlambat
+|   permission  = Izin
+|   sick        = Sakit
+|   absent      = Alfa
+|
+|   tidak akan dibuatkan record baru.
+|
+| - Scheduler dijalankan setiap menit agar jika server baru
+|   aktif setelah pukul 07:01, misalnya 08:00 atau 12:00,
+|   Auto Alfa hari tersebut tetap dapat dijalankan.
+|
+| Command yang digunakan:
+|
+| attendance:mark-absent
 |
 */
 
 Schedule::command(
     'attendance:mark-absent'
 )
+    ->everyMinute()
     ->weekdays()
-    ->at('07:01')
-    ->timezone('Asia/Jakarta')
+    ->between(
+        '07:01',
+        '23:59'
+    )
+    ->timezone(
+        'Asia/Jakarta'
+    )
     ->withoutOverlapping();
 
 
 /*
 |--------------------------------------------------------------------------
-| AUTO ALFA PRESENSI LATIHAN
+| AUTO ALFA PRESENSI LATIHAN KKO
 |--------------------------------------------------------------------------
 |
-| Scheduler melakukan pengecekan setiap menit.
+| Scheduler mengecek seluruh sesi latihan setiap menit.
 |
 | Contoh:
 |
-| Latihan mulai 14:00
+| Latihan mulai 14:00.
 |
 | 14:00:00 - 14:10:00
 | => Hadir
@@ -67,10 +96,14 @@ Schedule::command(
 | => Terlambat
 |
 | Setelah 14:30:00
-| => siswa yang belum memiliki presensi otomatis Alfa
+| => siswa yang belum memiliki presensi otomatis Alfa.
 |
-| Command hanya memproses siswa yang cabang olahraganya
-| sama dengan cabang olahraga sesi latihan.
+| Auto Alfa hanya berlaku untuk siswa aktif yang cabang
+| olahraganya sama dengan cabang olahraga sesi latihan.
+|
+| Command yang digunakan:
+|
+| training:mark-absent
 |
 */
 
@@ -78,5 +111,7 @@ Schedule::command(
     'training:mark-absent'
 )
     ->everyMinute()
-    ->timezone('Asia/Jakarta')
+    ->timezone(
+        'Asia/Jakarta'
+    )
     ->withoutOverlapping();
