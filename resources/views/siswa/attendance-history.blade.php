@@ -11,7 +11,10 @@
 
     <title>Riwayat Presensi - KKO SMANDA</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -25,7 +28,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         rel="stylesheet"
     >
 
@@ -34,12 +37,22 @@
         href="{{ asset('css/kko.css') }}"
     >
 
-
     <style>
+        * {
+            box-sizing: border-box;
+        }
 
-        /* =====================================================
-           MATERIAL SYMBOLS
-        ===================================================== */
+        body {
+            margin: 0;
+            background: #101415;
+            color: #ffffff;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
@@ -56,10 +69,11 @@
             -webkit-font-smoothing: antialiased;
         }
 
-
-        /* =====================================================
-           PAGE
-        ===================================================== */
+        /*
+        =====================================================
+        PAGE
+        =====================================================
+        */
 
         .history-container {
             max-width: 1180px;
@@ -67,10 +81,11 @@
             padding: 38px 24px 100px;
         }
 
-
-        /* =====================================================
-           BACK
-        ===================================================== */
+        /*
+        =====================================================
+        BACK
+        =====================================================
+        */
 
         .history-back {
             display: inline-flex;
@@ -81,13 +96,9 @@
 
             color: #9dcaff;
 
-            text-decoration: none;
-
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 700;
-
-            transition: .18s ease;
         }
 
         .history-back:hover {
@@ -98,13 +109,14 @@
             font-size: 18px;
         }
 
-
-        /* =====================================================
-           HEADING
-        ===================================================== */
+        /*
+        =====================================================
+        HEADING
+        =====================================================
+        */
 
         .history-heading {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .history-label {
@@ -124,7 +136,7 @@
         .history-heading h1 {
             margin: 0;
 
-            color: #e0e3e5;
+            color: #e9edf0;
 
             font-family: 'Anybody', sans-serif;
             font-size: 32px;
@@ -139,19 +151,156 @@
             font-size: 12px;
         }
 
+        /*
+        =====================================================
+        TAB PRESENSI
+        =====================================================
+        */
 
-        /* =====================================================
-           PROFILE / MONTH
-        ===================================================== */
+        .history-tabs {
+            display: grid;
 
-        .history-control-card {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 10px;
+
+            margin-bottom: 22px;
+            padding: 6px;
+
+            background: #151b20;
+
+            border: 1px solid #303c48;
+            border-radius: 13px;
+        }
+
+        .history-tab {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            min-height: 70px;
+
+            padding: 13px 16px;
+
+            color: #7d8a95;
+
+            border: 1px solid transparent;
+            border-radius: 10px;
+
+            transition: .18s ease;
+        }
+
+        .history-tab:hover {
+            color: #e4e9ed;
+
+            background:
+                rgba(157, 202, 255, .035);
+        }
+
+        .history-tab.active {
+            color: #ffffff;
+
+            background: #1b2531;
+
+            border-color:
+                rgba(157, 202, 255, .30);
+        }
+
+        .history-tab.active::after {
+            content: '';
+
+            position: absolute;
+
+            left: 20px;
+            right: 20px;
+            bottom: -1px;
+
+            height: 2px;
+
+            background: #9dcaff;
+
+            border-radius: 10px;
+        }
+
+        .history-tab-icon {
+            width: 42px;
+            height: 42px;
+
+            flex: 0 0 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #9dcaff;
+
+            background:
+                rgba(0, 114, 188, .10);
+
+            border: 1px solid
+                rgba(157, 202, 255, .16);
+
+            border-radius: 10px;
+        }
+
+        .history-tab-icon .material-symbols-outlined {
+            font-size: 22px;
+        }
+
+        .history-tab-content {
+            min-width: 0;
+        }
+
+        .history-tab-content strong {
+            display: block;
+
+            color: inherit;
+
+            font-family: 'Anybody', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .history-tab-content span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #7f8d98;
+
+            font-size: 9px;
+        }
+
+        .history-tab-arrow {
+            margin-left: auto;
+
+            color: #61717c;
+
+            font-size: 18px;
+        }
+
+        .history-tab.active .history-tab-arrow {
+            color: #9dcaff;
+        }
+
+        /*
+        =====================================================
+        STUDENT + FILTER
+        =====================================================
+        */
+
+        .history-control {
             display: flex;
             align-items: center;
             justify-content: space-between;
 
             gap: 20px;
 
-            margin-bottom: 22px;
+            margin-bottom: 24px;
             padding: 18px;
 
             background: #1b2531;
@@ -165,6 +314,8 @@
             align-items: center;
 
             gap: 12px;
+
+            min-width: 0;
         }
 
         .history-avatar {
@@ -177,12 +328,15 @@
             align-items: center;
             justify-content: center;
 
-            background: rgba(0, 114, 188, .16);
-
-            border: 1px solid rgba(157, 202, 255, .17);
-            border-radius: 12px;
-
             color: #9dcaff;
+
+            background:
+                rgba(0, 114, 188, .16);
+
+            border: 1px solid
+                rgba(157, 202, 255, .18);
+
+            border-radius: 12px;
 
             font-family: 'Anybody', sans-serif;
             font-size: 16px;
@@ -204,7 +358,7 @@
         .history-student strong {
             display: block;
 
-            color: #e0e3e5;
+            color: #e8ecef;
 
             font-size: 12px;
         }
@@ -214,32 +368,43 @@
 
             margin-top: 4px;
 
-            color: #8a919c;
+            color: #82909a;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
 
+        .sport-badge {
+            display: inline-flex;
+            align-items: center;
 
-        /* =====================================================
-           MONTH FILTER
-        ===================================================== */
+            gap: 5px;
 
-        .history-month-form {
+            margin-top: 5px;
+
+            color: #9dcaff;
+        }
+
+        /*
+        =====================================================
+        FILTER BULAN
+        =====================================================
+        */
+
+        .history-filter {
             display: flex;
             align-items: center;
 
             gap: 8px;
         }
 
-        .history-month-input {
+        .history-month {
             width: 175px;
             height: 40px;
 
             padding: 0 12px;
 
-            color: #e0e3e5;
-
+            color: #e5e9ec;
             background: #151b20;
 
             border: 1px solid #404751;
@@ -253,11 +418,11 @@
             color-scheme: dark;
         }
 
-        .history-month-input:focus {
+        .history-month:focus {
             border-color: #9dcaff;
         }
 
-        .history-month-button {
+        .history-filter-button {
             height: 40px;
 
             display: inline-flex;
@@ -268,40 +433,34 @@
 
             padding: 0 15px;
 
+            color: #ffffff;
             background: #0072bc;
 
             border: 1px solid #1685d2;
             border-radius: 9px;
-
-            color: #ffffff;
 
             cursor: pointer;
 
             font-family: 'Anybody', sans-serif;
             font-size: 10px;
             font-weight: 700;
-
-            transition: .18s ease;
         }
 
-        .history-month-button:hover {
+        .history-filter-button:hover {
             background: #1685d2;
         }
 
-        .history-month-button .material-symbols-outlined {
-            font-size: 16px;
-        }
+        /*
+        =====================================================
+        PERIOD TITLE
+        =====================================================
+        */
 
-
-        /* =====================================================
-           MONTH TITLE
-        ===================================================== */
-
-        .history-month-title {
+        .period-title {
             margin-bottom: 14px;
         }
 
-        .history-month-title small {
+        .period-title small {
             display: block;
 
             margin-bottom: 4px;
@@ -313,17 +472,18 @@
             font-weight: 700;
         }
 
-        .history-month-title strong {
-            color: #e0e3e5;
+        .period-title strong {
+            color: #e5e9ec;
 
             font-family: 'Anybody', sans-serif;
             font-size: 18px;
         }
 
-
-        /* =====================================================
-           STATS
-        ===================================================== */
+        /*
+        =====================================================
+        STATISTIC
+        =====================================================
+        */
 
         .history-stats {
             display: grid;
@@ -336,6 +496,11 @@
             margin-bottom: 28px;
         }
 
+        .history-stats.training {
+            grid-template-columns:
+                repeat(6, minmax(0, 1fr));
+        }
+
         .history-stat {
             padding: 15px;
 
@@ -345,21 +510,16 @@
             border-radius: 13px;
         }
 
-        .history-stat-label {
-            display: flex;
-            align-items: center;
-
-            gap: 6px;
+        .history-stat span {
+            display: block;
 
             margin-bottom: 8px;
+
+            color: #778692;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
             font-weight: 700;
-        }
-
-        .history-stat-label .material-symbols-outlined {
-            font-size: 15px;
         }
 
         .history-stat strong {
@@ -372,32 +532,45 @@
             font-weight: 800;
         }
 
-        .history-stat.present .history-stat-label {
+        .history-stat.present strong {
             color: #8ce8c3;
         }
 
-        .history-stat.late .history-stat-label {
-            color: #f6c453;
+        .history-stat.late strong {
+            color: #ffb866;
         }
 
-        .history-stat.sick .history-stat-label {
-            color: #9dcaff;
-        }
-
-        .history-stat.permission .history-stat-label {
+        .history-stat.permission strong {
             color: #eacb84;
         }
 
-        .history-stat.absent .history-stat-label {
+        .history-stat.sick strong {
+            color: #9dcaff;
+        }
+
+        .history-stat.absent strong {
             color: #ffaaa5;
         }
 
+        .history-stat.percentage {
+            background:
+                rgba(0, 114, 188, .07);
 
-        /* =====================================================
-           LIST HEADER
-        ===================================================== */
+            border-color:
+                rgba(157, 202, 255, .22);
+        }
 
-        .history-list-heading {
+        .history-stat.percentage strong {
+            color: #9dcaff;
+        }
+
+        /*
+        =====================================================
+        LIST HEADING
+        =====================================================
+        */
+
+        .list-heading {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
@@ -407,19 +580,19 @@
             margin-bottom: 14px;
         }
 
-        .history-list-heading h2 {
+        .list-heading h2 {
             margin: 0;
 
-            color: #e0e3e5;
+            color: #e4e8eb;
 
             font-family: 'Anybody', sans-serif;
             font-size: 21px;
         }
 
-        .history-list-heading p {
+        .list-heading p {
             margin: 4px 0 0;
 
-            color: #8a919c;
+            color: #84919b;
 
             font-size: 10px;
         }
@@ -432,10 +605,11 @@
             font-weight: 700;
         }
 
-
-        /* =====================================================
-           HISTORY LIST
-        ===================================================== */
+        /*
+        =====================================================
+        SCHOOL LIST
+        =====================================================
+        */
 
         .history-list {
             overflow: hidden;
@@ -446,7 +620,7 @@
             border-radius: 15px;
         }
 
-        .history-item {
+        .school-item {
             display: grid;
 
             grid-template-columns:
@@ -466,19 +640,66 @@
                 1px solid rgba(64, 71, 81, .45);
         }
 
-        .history-item:last-child {
+        .school-item:last-child {
             border-bottom: 0;
         }
 
-        .history-item:hover {
-            background:
-                rgba(157, 202, 255, .025);
+        /*
+        =====================================================
+        TRAINING TABLE
+        =====================================================
+        */
+
+        .training-table-wrapper {
+            overflow-x: auto;
+
+            background: #1b2531;
+
+            border: 1px solid #34485d;
+            border-radius: 15px;
         }
 
+        .training-table {
+            width: 100%;
+            min-width: 900px;
 
-        /* =====================================================
-           DATE
-        ===================================================== */
+            border-collapse: collapse;
+        }
+
+        .training-table th {
+            padding: 12px 16px;
+
+            color: #71818d;
+            background: #151b20;
+
+            border-bottom: 1px solid #303c48;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 800;
+
+            text-align: left;
+        }
+
+        .training-table td {
+            padding: 15px 16px;
+
+            color: #dce4e9;
+
+            border-bottom: 1px solid #2d3944;
+
+            font-size: 9px;
+        }
+
+        .training-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        /*
+        =====================================================
+        COMMON DETAIL
+        =====================================================
+        */
 
         .history-date {
             display: flex;
@@ -487,7 +708,7 @@
             gap: 10px;
         }
 
-        .history-date-icon {
+        .date-icon {
             width: 38px;
             height: 38px;
 
@@ -497,99 +718,38 @@
             align-items: center;
             justify-content: center;
 
-            background: rgba(157, 202, 255, .08);
-
-            border: 1px solid rgba(157, 202, 255, .12);
-            border-radius: 10px;
-
             color: #9dcaff;
+
+            background:
+                rgba(157, 202, 255, .08);
+
+            border: 1px solid
+                rgba(157, 202, 255, .12);
+
+            border-radius: 10px;
         }
 
-        .history-date-icon .material-symbols-outlined {
-            font-size: 18px;
-        }
-
-        .history-date strong {
+        .history-date strong,
+        .training-date strong {
             display: block;
 
-            color: #e0e3e5;
+            color: #e7eaed;
 
             font-size: 10px;
         }
 
-        .history-date span {
+        .history-date span,
+        .training-date span {
             display: block;
 
             margin-top: 3px;
 
-            color: #747d88;
+            color: #74818b;
 
-            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
 
-
-        /* =====================================================
-           STATUS
-        ===================================================== */
-
-        .history-status {
-            display: inline-flex;
-            align-items: center;
-
-            gap: 5px;
-
-            width: fit-content;
-
-            padding: 6px 9px;
-
-            border-radius: 20px;
-
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
-            font-weight: 700;
-        }
-
-        .history-status .material-symbols-outlined {
-            font-size: 13px;
-        }
-
-        .history-status.present {
-            background: rgba(54, 211, 153, .10);
-
-            color: #8ce8c3;
-        }
-
-        .history-status.late {
-            background: rgba(245, 158, 11, .11);
-
-            color: #f6c453;
-        }
-
-        .history-status.sick {
-            background: rgba(157, 202, 255, .10);
-
-            color: #9dcaff;
-        }
-
-        .history-status.permission {
-            background: rgba(245, 158, 11, .10);
-
-            color: #eacb84;
-        }
-
-        .history-status.absent {
-            background: rgba(231, 70, 70, .10);
-
-            color: #ffaaa5;
-        }
-
-
-        /* =====================================================
-           DETAIL
-        ===================================================== */
-
-        .history-detail-label {
+        .detail-label {
             display: block;
 
             margin-bottom: 4px;
@@ -601,38 +761,89 @@
             font-weight: 700;
         }
 
-        .history-time {
-            color: #dce2e7;
-
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-        }
-
-        .history-muted {
-            color: #68717c;
+        .mono {
+            color: #dce4e9;
 
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
 
-        .history-notes {
-            overflow: hidden;
+        .muted {
+            color: #75838e;
 
-            color: #9ca5af;
-
-            font-size: 9px;
-            line-height: 1.45;
-
-            display: -webkit-box;
-
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
         }
 
+        .notes {
+            color: #94a2ac;
 
-        /* =====================================================
-           EMPTY
-        ===================================================== */
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        /*
+        =====================================================
+        STATUS
+        =====================================================
+        */
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            width: fit-content;
+
+            min-width: 75px;
+
+            justify-content: center;
+
+            padding: 6px 9px;
+
+            border-radius: 20px;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        .status-present {
+            color: #8ce8c3;
+            background: rgba(54, 211, 153, .10);
+        }
+
+        .status-late {
+            color: #ffb866;
+            background: rgba(245, 158, 11, .10);
+        }
+
+        .status-sick {
+            color: #9dcaff;
+            background: rgba(157, 202, 255, .10);
+        }
+
+        .status-permission {
+            color: #eacb84;
+            background: rgba(245, 158, 11, .10);
+        }
+
+        .status-absent {
+            color: #ffaaa5;
+            background: rgba(231, 70, 70, .10);
+        }
+
+        .status-empty {
+            color: #82909a;
+            background: #151b20;
+        }
+
+        /*
+        =====================================================
+        EMPTY
+        =====================================================
+        */
 
         .history-empty {
             padding: 55px 20px;
@@ -656,7 +867,7 @@
 
             margin-top: 10px;
 
-            color: #e0e3e5;
+            color: #e4e9ed;
 
             font-size: 13px;
         }
@@ -664,50 +875,26 @@
         .history-empty p {
             margin: 5px 0 0;
 
-            color: #8a919c;
+            color: #84919b;
 
             font-size: 10px;
         }
 
-
-        /* =====================================================
-           MOBILE NAV ACTIVE
-        ===================================================== */
-
-        .mobile-bottom-nav a {
-            text-decoration: none;
-        }
-
-
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
+        /*
+        =====================================================
+        RESPONSIVE
+        =====================================================
+        */
 
         @media (max-width: 950px) {
-
-            .history-stats {
+            .history-stats,
+            .history-stats.training {
                 grid-template-columns:
                     repeat(3, minmax(0, 1fr));
             }
-
-            .history-item {
-                grid-template-columns:
-                    minmax(180px, 1fr)
-                    110px
-                    120px;
-
-                gap: 12px;
-            }
-
-            .history-notes-wrapper {
-                grid-column: 1 / 4;
-            }
-
         }
 
-
         @media (max-width: 720px) {
-
             .history-container {
                 padding: 25px 14px 100px;
             }
@@ -716,83 +903,68 @@
                 font-size: 25px;
             }
 
-            .history-control-card {
+            .history-tabs {
+                grid-template-columns: 1fr;
+            }
+
+            .history-control {
                 align-items: stretch;
 
                 flex-direction: column;
             }
 
-            .history-month-form {
+            .history-filter {
                 align-items: stretch;
 
                 flex-direction: column;
             }
 
-            .history-month-input,
-            .history-month-button {
+            .history-month,
+            .history-filter-button {
                 width: 100%;
             }
 
-            .history-stats {
+            .history-stats,
+            .history-stats.training {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
 
-            .history-list-heading {
+            .list-heading {
                 align-items: flex-start;
 
                 flex-direction: column;
             }
 
             .history-list {
-                overflow: visible;
-
                 background: transparent;
 
                 border: 0;
-                border-radius: 0;
             }
 
-            .history-item {
+            .school-item {
                 display: flex;
-                flex-direction: column;
                 align-items: stretch;
-
-                gap: 13px;
+                flex-direction: column;
 
                 margin-bottom: 12px;
-                padding: 16px;
 
                 background: #1b2531;
 
-                border:
-                    1px solid #34485d !important;
-
+                border: 1px solid #34485d;
                 border-radius: 14px;
             }
-
-            .history-notes-wrapper {
-                grid-column: auto;
-            }
-
         }
-
     </style>
-
 </head>
 
 
 <body class="dashboard-page">
 
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="kko-header">
 
     <div class="kko-header-inner">
-
 
         <div class="kko-brand">
 
@@ -821,15 +993,21 @@
         </div>
 
 
-
         <div class="kko-header-actions">
-
 
             <div class="header-profile">
 
                 <div class="header-avatar">
 
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    {{
+                        strtoupper(
+                            substr(
+                                auth()->user()->name,
+                                0,
+                                1
+                            )
+                        )
+                    }}
 
                 </div>
 
@@ -849,7 +1027,6 @@
             </div>
 
 
-
             <form
                 method="POST"
                 action="{{ route('logout') }}"
@@ -860,7 +1037,6 @@
                 <button
                     type="submit"
                     class="logout-icon-button"
-                    title="Keluar"
                 >
 
                     <span class="material-symbols-outlined">
@@ -871,7 +1047,6 @@
 
             </form>
 
-
         </div>
 
     </div>
@@ -879,15 +1054,8 @@
 </header>
 
 
-
-<!-- =====================================================
-     CONTENT
-===================================================== -->
-
 <main class="history-container">
 
-
-    <!-- BACK -->
 
     <a
         href="{{ route('siswa.dashboard') }}"
@@ -903,11 +1071,6 @@
     </a>
 
 
-
-    <!-- =================================================
-         HEADING
-    ================================================== -->
-
     <section class="history-heading">
 
         <span class="history-label">
@@ -919,32 +1082,129 @@
         </h1>
 
         <p>
-            Lihat riwayat dan status kehadiran kamu setiap bulan.
+            Cek presensi sekolah dan latihan KKO dalam satu halaman.
         </p>
 
     </section>
 
 
+    <!-- =====================================================
+         TAB
+    ====================================================== -->
 
-    <!-- =================================================
-         STUDENT + MONTH FILTER
-    ================================================== -->
+    <nav class="history-tabs">
 
-    <section class="history-control-card">
+
+        <a
+            href="{{
+                route(
+                    'siswa.attendance.history',
+                    [
+                        'type' =>
+                            'school',
+
+                        'month' =>
+                            $month,
+                    ]
+                )
+            }}"
+            class="history-tab {{ $activeType === 'school' ? 'active' : '' }}"
+        >
+
+            <div class="history-tab-icon">
+
+                <span class="material-symbols-outlined">
+                    school
+                </span>
+
+            </div>
+
+            <div class="history-tab-content">
+
+                <strong>
+                    Presensi Sekolah
+                </strong>
+
+                <span>
+                    Riwayat kehadiran masuk sekolah
+                </span>
+
+            </div>
+
+            <span class="material-symbols-outlined history-tab-arrow">
+                chevron_right
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{
+                route(
+                    'siswa.attendance.history',
+                    [
+                        'type' =>
+                            'training',
+
+                        'month' =>
+                            $month,
+                    ]
+                )
+            }}"
+            class="history-tab {{ $activeType === 'training' ? 'active' : '' }}"
+        >
+
+            <div class="history-tab-icon">
+
+                <span class="material-symbols-outlined">
+                    sports
+                </span>
+
+            </div>
+
+            <div class="history-tab-content">
+
+                <strong>
+                    Presensi Latihan
+                </strong>
+
+                <span>
+                    Riwayat kehadiran latihan KKO
+                </span>
+
+            </div>
+
+            <span class="material-symbols-outlined history-tab-arrow">
+                chevron_right
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <!-- =====================================================
+         STUDENT + FILTER
+    ====================================================== -->
+
+    <section class="history-control">
 
 
         <div class="history-student">
 
-
             <div class="history-avatar">
 
-                {{ strtoupper(
-                    substr(
-                        $student->user?->name ?? 'S',
-                        0,
-                        1
+                {{
+                    strtoupper(
+                        substr(
+                            $student->user?->name
+                            ?? 'S',
+                            0,
+                            1
+                        )
                     )
-                ) }}
+                }}
 
             </div>
 
@@ -963,37 +1223,58 @@
 
                     NIS {{ $student->nis ?? '-' }}
 
-                    •
+                    ·
 
                     {{ $student->class?->name ?? 'KKO' }}
 
                 </span>
 
+
+                @if(
+                    $activeType === 'training'
+                    && $sport
+                )
+
+                    <span class="sport-badge">
+
+                        <span class="material-symbols-outlined">
+                            sports
+                        </span>
+
+                        {{ $sport }}
+
+                    </span>
+
+                @endif
+
             </div>
 
-
         </div>
-
 
 
         <form
             method="GET"
             action="{{ route('siswa.attendance.history') }}"
-            class="history-month-form"
+            class="history-filter"
         >
+
+            <input
+                type="hidden"
+                name="type"
+                value="{{ $activeType }}"
+            >
 
             <input
                 type="month"
                 name="month"
                 value="{{ $month }}"
-                class="history-month-input"
+                class="history-month"
                 required
             >
 
-
             <button
                 type="submit"
-                class="history-month-button"
+                class="history-filter-button"
             >
 
                 <span class="material-symbols-outlined">
@@ -1010,218 +1291,254 @@
     </section>
 
 
+    <!-- =====================================================
+         PRESENSI SEKOLAH
+    ====================================================== -->
 
-    <!-- =================================================
-         MONTH
-    ================================================== -->
-
-    <div class="history-month-title">
-
-        <small>
-            REKAP BULAN
-        </small>
-
-        <strong>
-            {{ $selectedMonth->copy()->locale('id')->translatedFormat('F Y') }}
-        </strong>
-
-    </div>
+    @if($activeType === 'school')
 
 
+        <div class="period-title">
 
-    <!-- =================================================
-         STATS
-    ================================================== -->
-
-    <section class="history-stats">
-
-
-        <article class="history-stat present">
-
-            <div class="history-stat-label">
-
-                <span class="material-symbols-outlined">
-                    check_circle
-                </span>
-
-                HADIR
-
-            </div>
+            <small>
+                REKAP PRESENSI SEKOLAH
+            </small>
 
             <strong>
-                {{ $hadir }}
+
+                {{
+                    $selectedMonth
+                        ->copy()
+                        ->locale('id')
+                        ->translatedFormat('F Y')
+                }}
+
             </strong>
-
-        </article>
-
-
-
-        <article class="history-stat late">
-
-            <div class="history-stat-label">
-
-                <span class="material-symbols-outlined">
-                    schedule
-                </span>
-
-                TERLAMBAT
-
-            </div>
-
-            <strong>
-                {{ $terlambat }}
-            </strong>
-
-        </article>
-
-
-
-        <article class="history-stat sick">
-
-            <div class="history-stat-label">
-
-                <span class="material-symbols-outlined">
-                    medical_services
-                </span>
-
-                SAKIT
-
-            </div>
-
-            <strong>
-                {{ $sakit }}
-            </strong>
-
-        </article>
-
-
-
-        <article class="history-stat permission">
-
-            <div class="history-stat-label">
-
-                <span class="material-symbols-outlined">
-                    assignment
-                </span>
-
-                IZIN
-
-            </div>
-
-            <strong>
-                {{ $izin }}
-            </strong>
-
-        </article>
-
-
-
-        <article class="history-stat absent">
-
-            <div class="history-stat-label">
-
-                <span class="material-symbols-outlined">
-                    cancel
-                </span>
-
-                ALFA
-
-            </div>
-
-            <strong>
-                {{ $alfa }}
-            </strong>
-
-        </article>
-
-
-    </section>
-
-
-
-    <!-- =================================================
-         LIST HEADING
-    ================================================== -->
-
-    <section class="history-list-heading">
-
-
-        <div>
-
-            <h2>
-                Detail Kehadiran
-            </h2>
-
-            <p>
-                Riwayat presensi pada bulan yang dipilih.
-            </p>
 
         </div>
 
 
-        <span class="history-total">
+        <section class="history-stats">
 
-            {{ $attendances->count() }} catatan presensi
+            <article class="history-stat present">
 
-        </span>
+                <span>
+                    HADIR
+                </span>
 
+                <strong>
+                    {{ $schoolStats['present'] }}
+                </strong>
 
-    </section>
-
-
-
-    <!-- =================================================
-         LIST
-    ================================================== -->
-
-    @if($attendances->isNotEmpty())
+            </article>
 
 
-        <section class="history-list">
+            <article class="history-stat late">
+
+                <span>
+                    TERLAMBAT
+                </span>
+
+                <strong>
+                    {{ $schoolStats['late'] }}
+                </strong>
+
+            </article>
 
 
-            @foreach($attendances as $attendance)
+            <article class="history-stat sick">
 
-                @php
+                <span>
+                    SAKIT
+                </span>
 
-                    $statusLabel = match ($attendance->status) {
-                        'present' => 'Hadir',
-                        'late' => 'Terlambat',
-                        'sick' => 'Sakit',
-                        'permission' => 'Izin',
-                        'absent' => 'Alfa',
-                        default => '-',
-                    };
+                <strong>
+                    {{ $schoolStats['sick'] }}
+                </strong>
 
-                    $statusIcon = match ($attendance->status) {
-                        'present' => 'check_circle',
-                        'late' => 'schedule',
-                        'sick' => 'medical_services',
-                        'permission' => 'assignment',
-                        'absent' => 'cancel',
-                        default => 'help',
-                    };
-
-                    $attendanceDate =
-                        \Carbon\Carbon::parse(
-                            $attendance->attendance_date
-                        )->locale('id');
-
-                @endphp
+            </article>
 
 
-                <article class="history-item">
+            <article class="history-stat permission">
+
+                <span>
+                    IZIN
+                </span>
+
+                <strong>
+                    {{ $schoolStats['permission'] }}
+                </strong>
+
+            </article>
 
 
-                    <!-- DATE -->
+            <article class="history-stat absent">
 
-                    <div class="history-date">
+                <span>
+                    ALFA
+                </span>
+
+                <strong>
+                    {{ $schoolStats['absent'] }}
+                </strong>
+
+            </article>
+
+        </section>
 
 
-                        <div class="history-date-icon">
+        <section class="list-heading">
 
-                            <span class="material-symbols-outlined">
-                                calendar_month
+            <div>
+
+                <h2>
+                    Detail Kehadiran Sekolah
+                </h2>
+
+                <p>
+                    Riwayat presensi sekolah pada bulan yang dipilih.
+                </p>
+
+            </div>
+
+            <span class="history-total">
+
+                {{ $schoolAttendances->count() }}
+                catatan presensi
+
+            </span>
+
+        </section>
+
+
+        @if($schoolAttendances->isNotEmpty())
+
+
+            <section class="history-list">
+
+
+                @foreach(
+                    $schoolAttendances
+                    as $attendance
+                )
+
+                    @php
+
+                        $statusLabel =
+                            match (
+                                $attendance->status
+                            ) {
+
+                                'present' =>
+                                    'Hadir',
+
+                                'late' =>
+                                    'Terlambat',
+
+                                'sick' =>
+                                    'Sakit',
+
+                                'permission' =>
+                                    'Izin',
+
+                                'absent' =>
+                                    'Alfa',
+
+                                default =>
+                                    '-',
+
+                            };
+
+
+                        $statusClass =
+                            match (
+                                $attendance->status
+                            ) {
+
+                                'present' =>
+                                    'status-present',
+
+                                'late' =>
+                                    'status-late',
+
+                                'sick' =>
+                                    'status-sick',
+
+                                'permission' =>
+                                    'status-permission',
+
+                                'absent' =>
+                                    'status-absent',
+
+                                default =>
+                                    'status-empty',
+
+                            };
+
+
+                        $attendanceDate =
+                            \Carbon\Carbon::parse(
+                                $attendance
+                                    ->attendance_date
+                            )
+                                ->locale('id');
+
+                    @endphp
+
+
+                    <article class="school-item">
+
+
+                        <div class="history-date">
+
+                            <div class="date-icon">
+
+                                <span class="material-symbols-outlined">
+                                    calendar_month
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+
+                                    {{
+                                        $attendanceDate
+                                            ->translatedFormat(
+                                                'd F Y'
+                                            )
+                                    }}
+
+                                </strong>
+
+                                <span>
+
+                                    {{
+                                        $attendanceDate
+                                            ->translatedFormat(
+                                                'l'
+                                            )
+                                    }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="detail-label">
+                                STATUS
+                            </span>
+
+                            <span class="status-badge {{ $statusClass }}">
+
+                                {{ $statusLabel }}
+
                             </span>
 
                         </div>
@@ -1229,170 +1546,608 @@
 
                         <div>
 
-                            <strong>
-                                {{ $attendanceDate->translatedFormat('d F Y') }}
-                            </strong>
-
-                            <span>
-                                {{ $attendanceDate->translatedFormat('l') }}
+                            <span class="detail-label">
+                                JAM MASUK
                             </span>
+
+
+                            @if($attendance->check_in_time)
+
+                                <span class="mono">
+
+                                    {{
+                                        \Carbon\Carbon::parse(
+                                            $attendance
+                                                ->check_in_time
+                                        )
+                                            ->format(
+                                                'H:i'
+                                            )
+                                    }}
+
+                                    WIB
+
+                                </span>
+
+                            @else
+
+                                <span class="muted">
+                                    -
+                                </span>
+
+                            @endif
 
                         </div>
 
 
-                    </div>
+                        <div>
 
-
-
-                    <!-- STATUS -->
-
-                    <div>
-
-                        <span class="history-detail-label">
-                            STATUS
-                        </span>
-
-                        <span
-                            class="history-status {{ $attendance->status }}"
-                        >
-
-                            <span class="material-symbols-outlined">
-                                {{ $statusIcon }}
+                            <span class="detail-label">
+                                KETERANGAN
                             </span>
 
-                            {{ $statusLabel }}
 
-                        </span>
+                            @if($attendance->barcode_id)
 
-                    </div>
+                                <span class="muted">
+                                    Presensi QR
+                                </span>
+
+                            @elseif(
+                                in_array(
+                                    $attendance->status,
+                                    [
+                                        'sick',
+                                        'permission',
+                                    ],
+                                    true
+                                )
+                            )
+
+                                <span class="muted">
+                                    Izin / Sakit
+                                </span>
+
+                            @else
+
+                                <span class="muted">
+                                    Manual / Sistem
+                                </span>
+
+                            @endif
+
+                        </div>
 
 
+                        <div>
 
-                    <!-- TIME -->
-
-                    <div>
-
-                        <span class="history-detail-label">
-                            JAM MASUK
-                        </span>
-
-
-                        @if($attendance->check_in_time)
-
-                            <span class="history-time">
-
-                                {{ \Carbon\Carbon::parse(
-                                    $attendance->check_in_time
-                                )->format('H:i') }}
-
-                                WIB
-
+                            <span class="detail-label">
+                                CATATAN
                             </span>
 
-                        @else
+                            <div class="notes">
 
-                            <span class="history-muted">
-                                -
-                            </span>
-
-                        @endif
-
-
-                    </div>
-
-
-
-                    <!-- SOURCE -->
-
-                    <div>
-
-                        <span class="history-detail-label">
-                            KETERANGAN
-                        </span>
-
-                        @if($attendance->barcode_id)
-
-                            <span class="history-muted">
-                                Presensi QR
-                            </span>
-
-                        @elseif(in_array(
-                            $attendance->status,
-                            ['sick', 'permission'],
-                            true
-                        ))
-
-                            <span class="history-muted">
-                                Izin / Sakit
-                            </span>
-
-                        @else
-
-                            <span class="history-muted">
-                                Manual / Sistem
-                            </span>
-
-                        @endif
-
-                    </div>
-
-
-
-                    <!-- NOTES -->
-
-                    <div class="history-notes-wrapper">
-
-                        <span class="history-detail-label">
-                            CATATAN
-                        </span>
-
-
-                        @if($attendance->notes)
-
-                            <div class="history-notes">
-
-                                {{ $attendance->notes }}
+                                {{
+                                    $attendance->notes
+                                    ?? 'Tidak ada catatan'
+                                }}
 
                             </div>
 
-                        @else
+                        </div>
 
-                            <span class="history-muted">
-                                Tidak ada catatan
-                            </span>
 
-                        @endif
+                    </article>
 
-                    </div>
 
+                @endforeach
+
+
+            </section>
+
+
+        @else
+
+
+            <div class="history-empty">
+
+                <span class="material-symbols-outlined">
+                    history
+                </span>
+
+                <strong>
+                    Belum ada riwayat presensi sekolah
+                </strong>
+
+                <p>
+                    Tidak ditemukan data presensi sekolah pada bulan ini.
+                </p>
+
+            </div>
+
+
+        @endif
+
+
+    @endif
+
+
+    <!-- =====================================================
+         PRESENSI LATIHAN
+    ====================================================== -->
+
+    @if($activeType === 'training')
+
+
+        @if(!$sport)
+
+
+            <div class="history-empty">
+
+                <span class="material-symbols-outlined">
+                    warning
+                </span>
+
+                <strong>
+                    Cabang olahraga belum ditentukan
+                </strong>
+
+                <p>
+
+                    Riwayat latihan belum dapat ditampilkan karena
+                    cabang olahraga kamu belum ditentukan.
+
+                </p>
+
+            </div>
+
+
+        @else
+
+
+            <div class="period-title">
+
+                <small>
+                    REKAP PRESENSI LATIHAN
+                </small>
+
+                <strong>
+
+                    {{
+                        $selectedMonth
+                            ->copy()
+                            ->locale('id')
+                            ->translatedFormat('F Y')
+                    }}
+
+                    ·
+
+                    {{ $sport }}
+
+                </strong>
+
+            </div>
+
+
+            <section class="history-stats training">
+
+                <article class="history-stat present">
+
+                    <span>
+                        HADIR
+                    </span>
+
+                    <strong>
+                        {{ $trainingStats['present'] }}
+                    </strong>
 
                 </article>
 
 
-            @endforeach
+                <article class="history-stat late">
+
+                    <span>
+                        TERLAMBAT
+                    </span>
+
+                    <strong>
+                        {{ $trainingStats['late'] }}
+                    </strong>
+
+                </article>
 
 
-        </section>
+                <article class="history-stat permission">
+
+                    <span>
+                        IZIN
+                    </span>
+
+                    <strong>
+                        {{ $trainingStats['permission'] }}
+                    </strong>
+
+                </article>
 
 
-    @else
+                <article class="history-stat sick">
+
+                    <span>
+                        SAKIT
+                    </span>
+
+                    <strong>
+                        {{ $trainingStats['sick'] }}
+                    </strong>
+
+                </article>
 
 
-        <div class="history-empty">
+                <article class="history-stat absent">
 
-            <span class="material-symbols-outlined">
-                history
-            </span>
+                    <span>
+                        ALFA
+                    </span>
 
-            <strong>
-                Belum ada riwayat presensi
-            </strong>
+                    <strong>
+                        {{ $trainingStats['absent'] }}
+                    </strong>
 
-            <p>
-                Tidak ditemukan data presensi untuk bulan ini.
-            </p>
+                </article>
 
-        </div>
+
+                <article class="history-stat percentage">
+
+                    <span>
+                        KEHADIRAN
+                    </span>
+
+                    <strong>
+
+                        {{
+                            number_format(
+                                $trainingStats['percentage'],
+                                1,
+                                ',',
+                                '.'
+                            )
+                        }}%
+
+                    </strong>
+
+                </article>
+
+            </section>
+
+
+            <section class="list-heading">
+
+                <div>
+
+                    <h2>
+                        Riwayat Sesi Latihan
+                    </h2>
+
+                    <p>
+
+                        {{ $sport }}
+
+                        ·
+
+                        {{
+                            $selectedMonth
+                                ->copy()
+                                ->locale('id')
+                                ->translatedFormat(
+                                    'F Y'
+                                )
+                        }}
+
+                    </p>
+
+                </div>
+
+                <span class="history-total">
+
+                    {{ $trainingStats['sessions'] }}
+                    sesi latihan
+
+                </span>
+
+            </section>
+
+
+            @if($trainingHistory->isNotEmpty())
+
+
+                <div class="training-table-wrapper">
+
+                    <table class="training-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    TANGGAL
+                                </th>
+
+                                <th>
+                                    JADWAL
+                                </th>
+
+                                <th>
+                                    LOKASI
+                                </th>
+
+                                <th>
+                                    STATUS
+                                </th>
+
+                                <th>
+                                    CHECK-IN
+                                </th>
+
+                                <th>
+                                    CATATAN
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            @foreach(
+                                $trainingHistory
+                                as $item
+                            )
+
+                                @php
+
+                                    $session =
+                                        $item['session'];
+
+
+                                    $status =
+                                        $item['status'];
+
+
+                                    $statusLabel =
+                                        match ($status) {
+
+                                            'present' =>
+                                                'Hadir',
+
+                                            'late' =>
+                                                'Terlambat',
+
+                                            'permission' =>
+                                                'Izin',
+
+                                            'sick' =>
+                                                'Sakit',
+
+                                            'absent' =>
+                                                'Alfa',
+
+                                            default =>
+                                                'Belum Tercatat',
+
+                                        };
+
+
+                                    $statusClass =
+                                        match ($status) {
+
+                                            'present' =>
+                                                'status-present',
+
+                                            'late' =>
+                                                'status-late',
+
+                                            'permission' =>
+                                                'status-permission',
+
+                                            'sick' =>
+                                                'status-sick',
+
+                                            'absent' =>
+                                                'status-absent',
+
+                                            default =>
+                                                'status-empty',
+
+                                        };
+
+
+                                    $trainingDate =
+                                        \Carbon\Carbon::parse(
+                                            $session
+                                                ->training_date
+                                        )
+                                            ->locale('id');
+
+
+                                    $startTime =
+                                        $session->start_time
+                                            ? \Carbon\Carbon::parse(
+                                                $session
+                                                    ->start_time
+                                            )
+                                                ->format(
+                                                    'H:i'
+                                                )
+                                            : '-';
+
+
+                                    $endTime =
+                                        $session->end_time
+                                            ? \Carbon\Carbon::parse(
+                                                $session
+                                                    ->end_time
+                                            )
+                                                ->format(
+                                                    'H:i'
+                                                )
+                                            : '-';
+
+
+                                    $checkIn =
+                                        $item['checked_in_at']
+                                            ? \Carbon\Carbon::parse(
+                                                $item[
+                                                    'checked_in_at'
+                                                ]
+                                            )
+                                                ->timezone(
+                                                    'Asia/Jakarta'
+                                                )
+                                                ->format(
+                                                    'H:i:s'
+                                                )
+                                            : '-';
+
+                                @endphp
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="training-date">
+
+                                            <strong>
+
+                                                {{
+                                                    $trainingDate
+                                                        ->translatedFormat(
+                                                            'd F Y'
+                                                        )
+                                                }}
+
+                                            </strong>
+
+                                            <span>
+
+                                                {{
+                                                    $trainingDate
+                                                        ->translatedFormat(
+                                                            'l'
+                                                        )
+                                                }}
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="mono">
+
+                                            {{ $startTime }}
+
+                                            -
+
+                                            {{ $endTime }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{
+                                            $session->location
+                                            ?? '-'
+                                        }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span
+                                            class="status-badge {{ $statusClass }}"
+                                        >
+
+                                            {{ $statusLabel }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="mono">
+
+                                            {{ $checkIn }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="notes">
+
+                                            {{
+                                                $item['notes']
+                                                ?? '-'
+                                            }}
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                            @endforeach
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            @else
+
+
+                <div class="history-empty">
+
+                    <span class="material-symbols-outlined">
+                        event_busy
+                    </span>
+
+                    <strong>
+                        Belum ada riwayat latihan
+                    </strong>
+
+                    <p>
+
+                        Belum ada sesi latihan {{ $sport }}
+                        yang dapat ditampilkan pada bulan ini.
+
+                    </p>
+
+                </div>
+
+
+            @endif
+
+
+        @endif
 
 
     @endif
@@ -1401,13 +2156,7 @@
 </main>
 
 
-
-<!-- =====================================================
-     MOBILE NAVIGATION
-===================================================== -->
-
 <nav class="mobile-bottom-nav">
-
 
     <a href="{{ route('siswa.dashboard') }}">
 
@@ -1421,6 +2170,18 @@
 
     </a>
 
+
+    <a href="{{ route('siswa.training.index') }}">
+
+        <span class="material-symbols-outlined">
+            event
+        </span>
+
+        <span>
+            Latihan
+        </span>
+
+    </a>
 
 
     <a href="{{ route('siswa.leave.create') }}">
@@ -1436,7 +2197,6 @@
     </a>
 
 
-
     <a
         href="{{ route('siswa.attendance.history') }}"
         class="mobile-nav-active"
@@ -1447,25 +2207,10 @@
         </span>
 
         <span>
-            History
+            Riwayat
         </span>
 
     </a>
-
-
-
-    <a href="#">
-
-        <span class="material-symbols-outlined">
-            person
-        </span>
-
-        <span>
-            Profile
-        </span>
-
-    </a>
-
 
 </nav>
 

@@ -73,29 +73,40 @@ Route::get('/', function () {
 Route::middleware('auth')
     ->get('/dashboard', function () {
 
-        $user = auth()->user();
+        $user =
+            auth()->user();
 
         return match ($user->role) {
 
             'guru' =>
                 redirect()
-                    ->route('guru.dashboard'),
+                    ->route(
+                        'guru.dashboard'
+                    ),
 
             'siswa' =>
                 redirect()
-                    ->route('siswa.dashboard'),
+                    ->route(
+                        'siswa.dashboard'
+                    ),
 
             'pelatih' =>
                 redirect()
-                    ->route('pelatih.dashboard'),
+                    ->route(
+                        'pelatih.dashboard'
+                    ),
 
             default =>
-                abort(403),
+                abort(
+                    403
+                ),
 
         };
 
     })
-    ->name('dashboard');
+    ->name(
+        'dashboard'
+    );
 
 
 /*
@@ -108,8 +119,12 @@ Route::middleware([
         'auth',
         'role:guru',
     ])
-    ->prefix('guru')
-    ->name('guru.')
+    ->prefix(
+        'guru'
+    )
+    ->name(
+        'guru.'
+    )
     ->group(function () {
 
         /*
@@ -125,7 +140,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('dashboard');
+        ->name(
+            'dashboard'
+        );
 
 
         /*
@@ -141,7 +158,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('attendance.manual');
+        ->name(
+            'attendance.manual'
+        );
 
 
         Route::post(
@@ -151,7 +170,9 @@ Route::middleware([
                 'store',
             ]
         )
-        ->name('attendance.manual.store');
+        ->name(
+            'attendance.manual.store'
+        );
 
 
         /*
@@ -167,7 +188,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('attendance.recap');
+        ->name(
+            'attendance.recap'
+        );
 
 
         /*
@@ -183,7 +206,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('attendance.monthly');
+        ->name(
+            'attendance.monthly'
+        );
 
 
         /*
@@ -199,7 +224,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('leave.index');
+        ->name(
+            'leave.index'
+        );
 
 
         Route::post(
@@ -209,7 +236,9 @@ Route::middleware([
                 'approve',
             ]
         )
-        ->name('leave.approve');
+        ->name(
+            'leave.approve'
+        );
 
 
         Route::post(
@@ -219,7 +248,9 @@ Route::middleware([
                 'reject',
             ]
         )
-        ->name('leave.reject');
+        ->name(
+            'leave.reject'
+        );
 
     });
 
@@ -234,8 +265,12 @@ Route::middleware([
         'auth',
         'role:siswa',
     ])
-    ->prefix('siswa')
-    ->name('siswa.')
+    ->prefix(
+        'siswa'
+    )
+    ->name(
+        'siswa.'
+    )
     ->group(function () {
 
         /*
@@ -251,7 +286,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('dashboard');
+        ->name(
+            'dashboard'
+        );
 
 
         /*
@@ -267,7 +304,9 @@ Route::middleware([
                 'scanner',
             ]
         )
-        ->name('presensi.scan');
+        ->name(
+            'presensi.scan'
+        );
 
 
         Route::post(
@@ -277,7 +316,9 @@ Route::middleware([
                 'store',
             ]
         )
-        ->name('presensi.store');
+        ->name(
+            'presensi.store'
+        );
 
 
         /*
@@ -285,8 +326,7 @@ Route::middleware([
         | JADWAL LATIHAN KKO
         |--------------------------------------------------------------------------
         |
-        | Controller hanya menampilkan sesi sesuai cabang
-        | olahraga siswa.
+        | Menampilkan sesi latihan sesuai cabang olahraga siswa.
         |
         */
 
@@ -297,7 +337,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('training.index');
+        ->name(
+            'training.index'
+        );
 
 
         /*
@@ -313,7 +355,9 @@ Route::middleware([
                 'scanner',
             ]
         )
-        ->name('training.scan');
+        ->name(
+            'training.scan'
+        );
 
 
         /*
@@ -329,13 +373,35 @@ Route::middleware([
                 'store',
             ]
         )
-        ->name('training.store');
+        ->name(
+            'training.store'
+        );
 
 
         /*
         |--------------------------------------------------------------------------
-        | RIWAYAT PRESENSI SEKOLAH
+        | RIWAYAT PRESENSI SISWA
         |--------------------------------------------------------------------------
+        |
+        | Satu halaman untuk:
+        |
+        | - Presensi Sekolah
+        | - Presensi Latihan KKO
+        |
+        | Contoh:
+        |
+        | Presensi Sekolah:
+        |
+        | /siswa/riwayat-presensi?type=school
+        |
+        | Presensi Latihan:
+        |
+        | /siswa/riwayat-presensi?type=training
+        |
+        | Controller:
+        |
+        | AttendanceHistoryController
+        |
         */
 
         Route::get(
@@ -345,12 +411,14 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('attendance.history');
+        ->name(
+            'attendance.history'
+        );
 
 
         /*
         |--------------------------------------------------------------------------
-        | IZIN / SAKIT SEKOLAH
+        | IZIN / SAKIT
         |--------------------------------------------------------------------------
         */
 
@@ -361,7 +429,9 @@ Route::middleware([
                 'create',
             ]
         )
-        ->name('leave.create');
+        ->name(
+            'leave.create'
+        );
 
 
         Route::post(
@@ -371,7 +441,9 @@ Route::middleware([
                 'store',
             ]
         )
-        ->name('leave.store');
+        ->name(
+            'leave.store'
+        );
 
     });
 
@@ -386,8 +458,12 @@ Route::middleware([
         'auth',
         'role:pelatih',
     ])
-    ->prefix('pelatih')
-    ->name('pelatih.')
+    ->prefix(
+        'pelatih'
+    )
+    ->name(
+        'pelatih.'
+    )
     ->group(function () {
 
         /*
@@ -403,7 +479,9 @@ Route::middleware([
                 'index',
             ]
         )
-        ->name('dashboard');
+        ->name(
+            'dashboard'
+        );
 
     });
 
@@ -415,12 +493,14 @@ Route::middleware([
 |
 | Digunakan oleh Guru dan Pelatih.
 |
-| TrainingController dan TrainingBarcodeController melakukan
-| pengecekan role Guru / Pelatih.
+| TrainingController dan TrainingBarcodeController
+| melakukan pengecekan role Guru / Pelatih.
 |
 */
 
-Route::middleware('auth')
+Route::middleware(
+    'auth'
+)
     ->group(function () {
 
         /*
@@ -436,7 +516,9 @@ Route::middleware('auth')
                 'index',
             ]
         )
-        ->name('training.index');
+        ->name(
+            'training.index'
+        );
 
 
         /*
@@ -444,7 +526,7 @@ Route::middleware('auth')
         | BUAT SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Route ini harus berada sebelum:
+        | Harus berada sebelum:
         |
         | /latihan/{trainingSession}
         |
@@ -457,7 +539,9 @@ Route::middleware('auth')
                 'create',
             ]
         )
-        ->name('training.create');
+        ->name(
+            'training.create'
+        );
 
 
         /*
@@ -473,7 +557,9 @@ Route::middleware('auth')
                 'store',
             ]
         )
-        ->name('training.store');
+        ->name(
+            'training.store'
+        );
 
 
         /*
@@ -489,7 +575,9 @@ Route::middleware('auth')
                 'edit',
             ]
         )
-        ->name('training.edit');
+        ->name(
+            'training.edit'
+        );
 
 
         /*
@@ -505,7 +593,9 @@ Route::middleware('auth')
                 'update',
             ]
         )
-        ->name('training.update');
+        ->name(
+            'training.update'
+        );
 
 
         /*
@@ -521,7 +611,9 @@ Route::middleware('auth')
                 'destroy',
             ]
         )
-        ->name('training.destroy');
+        ->name(
+            'training.destroy'
+        );
 
 
         /*
@@ -537,7 +629,9 @@ Route::middleware('auth')
                 'show',
             ]
         )
-        ->name('training.barcode.display');
+        ->name(
+            'training.barcode.display'
+        );
 
 
         /*
@@ -553,7 +647,9 @@ Route::middleware('auth')
                 'current',
             ]
         )
-        ->name('training.barcode.current');
+        ->name(
+            'training.barcode.current'
+        );
 
 
         /*
@@ -569,7 +665,9 @@ Route::middleware('auth')
                 'updateStudentStatus',
             ]
         )
-        ->name('training.student.status');
+        ->name(
+            'training.student.status'
+        );
 
 
         /*
@@ -585,7 +683,9 @@ Route::middleware('auth')
                 'clearStudentStatus',
             ]
         )
-        ->name('training.student.status.clear');
+        ->name(
+            'training.student.status.clear'
+        );
 
 
         /*
@@ -593,7 +693,7 @@ Route::middleware('auth')
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Route parameter umum ini harus berada paling bawah.
+        | Route parameter umum harus berada paling bawah.
         |
         */
 
@@ -604,7 +704,9 @@ Route::middleware('auth')
                 'show',
             ]
         )
-        ->name('training.show');
+        ->name(
+            'training.show'
+        );
 
     });
 
@@ -619,15 +721,16 @@ Route::middleware('auth')
 | - melihat cabang olahraga siswa
 | - menentukan cabang olahraga siswa
 | - mengganti cabang olahraga siswa
-| - memfilter siswa berdasarkan cabang olahraga
 | - melihat rekap presensi latihan
-| - melihat detail riwayat presensi per siswa
+| - melihat detail riwayat presensi siswa
 |
 | StudentSportController melakukan pengecekan role.
 |
 */
 
-Route::middleware('auth')
+Route::middleware(
+    'auth'
+)
     ->group(function () {
 
         /*
@@ -643,22 +746,15 @@ Route::middleware('auth')
                 'index',
             ]
         )
-        ->name('students.sports.index');
+        ->name(
+            'students.sports.index'
+        );
 
 
         /*
         |--------------------------------------------------------------------------
         | DETAIL RIWAYAT PRESENSI SISWA
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | /data-cabang-siswa/4/riwayat-presensi
-        |
-        | Query parameter:
-        |
-        | ?month=8&year=2026
-        |
         */
 
         Route::get(
@@ -668,7 +764,9 @@ Route::middleware('auth')
                 'attendanceDetail',
             ]
         )
-        ->name('students.sports.attendance-detail');
+        ->name(
+            'students.sports.attendance-detail'
+        );
 
 
         /*
@@ -684,7 +782,9 @@ Route::middleware('auth')
                 'update',
             ]
         )
-        ->name('students.sports.update');
+        ->name(
+            'students.sports.update'
+        );
 
     });
 
@@ -694,12 +794,14 @@ Route::middleware('auth')
 | BARCODE PRESENSI MASUK SEKOLAH
 |--------------------------------------------------------------------------
 |
-| Barcode khusus presensi masuk sekolah.
+| Barcode ini khusus untuk presensi sekolah.
 | Tidak digunakan untuk presensi latihan.
 |
 */
 
-Route::middleware('auth')
+Route::middleware(
+    'auth'
+)
     ->group(function () {
 
         /*
@@ -715,7 +817,9 @@ Route::middleware('auth')
                 'index',
             ]
         )
-        ->name('barcode.display');
+        ->name(
+            'barcode.display'
+        );
 
 
         /*
@@ -731,7 +835,9 @@ Route::middleware('auth')
                 'current',
             ]
         )
-        ->name('barcode.current');
+        ->name(
+            'barcode.current'
+        );
 
     });
 
