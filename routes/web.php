@@ -14,6 +14,8 @@ use App\Http\Controllers\Guru\LeaveRequestController as GuruLeaveRequestControll
 use App\Http\Controllers\Guru\AttendanceRecapController;
 use App\Http\Controllers\Guru\MonthlyAttendanceRecapController;
 use App\Http\Controllers\Guru\ManualAttendanceController;
+use App\Http\Controllers\Guru\SchoolAttendanceRecapExportController;
+use App\Http\Controllers\Guru\SchoolAttendanceRecapPrintController;
 
 
 /*
@@ -179,7 +181,7 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | REKAP PRESENSI HARIAN
+        | REKAP PRESENSI HARIAN SEKOLAH
         |--------------------------------------------------------------------------
         */
 
@@ -192,6 +194,46 @@ Route::middleware([
         )
         ->name(
             'attendance.recap'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EXPORT EXCEL REKAP PRESENSI SEKOLAH
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | /guru/rekap-presensi/export?date=2026-08-26
+        |
+        */
+
+        Route::get(
+            '/rekap-presensi/export',
+            SchoolAttendanceRecapExportController::class
+        )
+        ->name(
+            'attendance.recap.export'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CETAK / PDF REKAP PRESENSI SEKOLAH
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | /guru/rekap-presensi/cetak?date=2026-08-26
+        |
+        */
+
+        Route::get(
+            '/rekap-presensi/cetak',
+            SchoolAttendanceRecapPrintController::class
+        )
+        ->name(
+            'attendance.recap.print'
         );
 
 
@@ -677,9 +719,6 @@ Route::middleware(
         |--------------------------------------------------------------------------
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Route parameter umum diletakkan paling bawah.
-        |
         */
 
         Route::get(
@@ -739,16 +778,6 @@ Route::middleware(
         |--------------------------------------------------------------------------
         | EXPORT REKAP PRESENSI LATIHAN KE EXCEL
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | /data-cabang-siswa/export
-        | ?sport=Atletik
-        | &month=8
-        | &year=2026
-        |
-        | Route ini harus berada sebelum route {student}.
-        |
         */
 
         Route::get(
@@ -764,24 +793,6 @@ Route::middleware(
         |--------------------------------------------------------------------------
         | CETAK / SIMPAN PDF REKAP PRESENSI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | /data-cabang-siswa/cetak
-        | ?sport=Atletik
-        | &month=8
-        | &year=2026
-        |
-        | Halaman ini membuka tampilan khusus cetak.
-        |
-        | Pengguna dapat:
-        |
-        | Ctrl + P
-        | → Print
-        | → Save as PDF
-        |
-        | Route ini harus berada sebelum route {student}.
-        |
         */
 
         Route::get(

@@ -9,56 +9,61 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class AttendanceRecapController extends Controller
+class SchoolAttendanceRecapPrintController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | HALAMAN REKAP PRESENSI SEKOLAH
+    | HALAMAN CETAK / PDF REKAP PRESENSI SEKOLAH
     |--------------------------------------------------------------------------
     */
 
-    public function index(
+    public function __invoke(
         Request $request
     ): View {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI ROLE
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            auth()->check()
+            && auth()->user()->role === 'guru',
+            403
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI TANGGAL
+        |--------------------------------------------------------------------------
+        */
+
+        $validated =
+            $request->validate([
+                'date' => [
+                    'required',
+                    'date_format:Y-m-d',
+                ],
+            ]);
+
+
         /*
         |--------------------------------------------------------------------------
         | TANGGAL REKAP
         |--------------------------------------------------------------------------
         */
 
-        $dateInput =
-            $request->query(
-                'date'
-            );
-
-
-        try {
-
-            $selectedDate =
-                $dateInput
-                    ? Carbon::createFromFormat(
-                        'Y-m-d',
-                        $dateInput,
-                        'Asia/Jakarta'
-                    )
-                    : Carbon::now(
-                        'Asia/Jakarta'
-                    );
-
-        } catch (\Throwable $e) {
-
-            $selectedDate =
-                Carbon::now(
-                    'Asia/Jakarta'
-                );
-        }
-
-
         $date =
-            $selectedDate
-                ->format(
-                    'Y-m-d'
-                );
+            $validated['date'];
+
+
+        $selectedDate =
+            Carbon::createFromFormat(
+                'Y-m-d',
+                $date,
+                'Asia/Jakarta'
+            );
 
 
         /*
@@ -93,7 +98,7 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | PRESENSI PADA TANGGAL TERPILIH
+        | PRESENSI TANGGAL TERPILIH
         |--------------------------------------------------------------------------
         */
 
@@ -111,7 +116,7 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | DATA REKAP PER SISWA
+        | REKAP PER SISWA
         |--------------------------------------------------------------------------
         */
 
@@ -125,7 +130,7 @@ class AttendanceRecapController extends Controller
                     ) {
                         /*
                         |--------------------------------------------------------------------------
-                        | DATA PRESENSI SISWA
+                        | DATA ATTENDANCE
                         |--------------------------------------------------------------------------
                         */
 
@@ -172,36 +177,6 @@ class AttendanceRecapController extends Controller
 
                         /*
                         |--------------------------------------------------------------------------
-                        | CLASS STATUS
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $statusClass =
-                            match (
-                                $status
-                            ) {
-                                'present' =>
-                                    'present',
-
-                                'late' =>
-                                    'late',
-
-                                'permission' =>
-                                    'permission',
-
-                                'sick' =>
-                                    'sick',
-
-                                'absent' =>
-                                    'absent',
-
-                                default =>
-                                    'not-yet',
-                            };
-
-
-                        /*
-                        |--------------------------------------------------------------------------
                         | JAM MASUK
                         |--------------------------------------------------------------------------
                         */
@@ -214,12 +189,12 @@ class AttendanceRecapController extends Controller
                                 )->format(
                                     'H:i'
                                 )
-                                : null;
+                                : '-';
 
 
                         /*
                         |--------------------------------------------------------------------------
-                        | RETURN DATA SISWA
+                        | RETURN
                         |--------------------------------------------------------------------------
                         */
 
@@ -236,11 +211,12 @@ class AttendanceRecapController extends Controller
                             'status_label' =>
                                 $statusLabel,
 
-                            'status_class' =>
-                                $statusClass,
-
                             'check_in_time' =>
                                 $checkInTime,
+
+                            'notes' =>
+                                $attendance?->notes
+                                ?? '-',
                         ];
                     }
                 )
@@ -262,12 +238,6 @@ class AttendanceRecapController extends Controller
         |--------------------------------------------------------------------------
         | HADIR
         |--------------------------------------------------------------------------
-        |
-        | Hanya status present.
-        |
-        | Terlambat dihitung secara terpisah agar konsisten dengan
-        | rekap presensi latihan.
-        |
         */
 
         $hadir =
@@ -298,11 +268,6 @@ class AttendanceRecapController extends Controller
         |--------------------------------------------------------------------------
         | TOTAL DATANG
         |--------------------------------------------------------------------------
-        |
-        | Untuk perhitungan persentase:
-        |
-        | Hadir + Terlambat
-        |
         */
 
         $datang =
@@ -374,13 +339,6 @@ class AttendanceRecapController extends Controller
         |--------------------------------------------------------------------------
         | PERSENTASE KEHADIRAN
         |--------------------------------------------------------------------------
-        |
-        | Rumus:
-        |
-        | (Hadir + Terlambat)
-        | ------------------- x 100
-        | Total Siswa Aktif
-        |
         */
 
         $persentaseHadir =
@@ -400,15 +358,11 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | STATISTIK REKAP
+        | STATISTIK
         |--------------------------------------------------------------------------
-        |
-        | Dibuat dengan struktur mirip rekap latihan agar Blade,
-        | Excel, dan PDF nantinya lebih mudah dibuat konsisten.
-        |
         */
 
-        $recapStats = [
+        $stats = [
             'total' =>
                 $totalSiswa,
 
@@ -440,28 +394,18 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | KIRIM KE VIEW
+        | VIEW
         |--------------------------------------------------------------------------
         */
 
         return view(
-            'guru.attendance-recap.index',
+            'guru.attendance-recap.print',
             compact(
                 'date',
                 'selectedDate',
                 'students',
-                'attendances',
                 'recaps',
-                'totalSiswa',
-                'hadir',
-                'terlambat',
-                'datang',
-                'izin',
-                'sakit',
-                'alfa',
-                'belumPresensi',
-                'persentaseHadir',
-                'recapStats'
+                'stats'
             )
         );
     }
