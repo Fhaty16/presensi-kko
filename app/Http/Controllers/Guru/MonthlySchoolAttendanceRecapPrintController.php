@@ -9,37 +9,104 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class AttendanceRecapController extends Controller
+class MonthlySchoolAttendanceRecapPrintController extends Controller
 {
-    public function index(
+    /*
+    |--------------------------------------------------------------------------
+    | CETAK / PDF REKAP PRESENSI SEKOLAH BULANAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function __invoke(
         Request $request
     ): View {
         /*
         |--------------------------------------------------------------------------
-        | TAB
+        | VALIDASI ROLE
         |--------------------------------------------------------------------------
         */
 
-        $activeTab =
-            $request->query(
-                'tab',
-                'harian'
-            );
+        abort_unless(
+            auth()->check()
+            && auth()->user()->role === 'guru',
+            403
+        );
 
 
-        if (
-            !in_array(
-                $activeTab,
-                [
-                    'harian',
-                    'bulanan',
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI PARAMETER
+        |--------------------------------------------------------------------------
+        */
+
+        $validated =
+            $request->validate([
+                'month' => [
+                    'required',
+                    'integer',
+                    'between:1,12',
                 ],
-                true
-            )
-        ) {
-            $activeTab =
-                'harian';
-        }
+
+                'year' => [
+                    'required',
+                    'integer',
+                    'between:2020,2100',
+                ],
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BULAN & TAHUN
+        |--------------------------------------------------------------------------
+        */
+
+        $selectedMonth =
+            (int) $validated['month'];
+
+
+        $selectedYear =
+            (int) $validated['year'];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NAMA BULAN
+        |--------------------------------------------------------------------------
+        */
+
+        $monthNames = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERIODE
+        |--------------------------------------------------------------------------
+        */
+
+        $period =
+            Carbon::create(
+                $selectedYear,
+                $selectedMonth,
+                1,
+                0,
+                0,
+                0,
+                'Asia/Jakarta'
+            );
 
 
         /*
@@ -74,323 +141,7 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | DATA DASAR
-        |--------------------------------------------------------------------------
-        */
-
-        $now =
-            Carbon::now(
-                'Asia/Jakarta'
-            );
-
-
-        $monthNames = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
-        ];
-
-
-        $availableYears =
-            range(
-                $now->year + 1,
-                $now->year - 4
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | DEFAULT DATA HARIAN
-        |--------------------------------------------------------------------------
-        */
-
-        $dateInput =
-            $request->query(
-                'date'
-            );
-
-
-        try {
-
-            $selectedDate =
-                $dateInput
-                    ? Carbon::createFromFormat(
-                        'Y-m-d',
-                        $dateInput,
-                        'Asia/Jakarta'
-                    )
-                    : $now->copy();
-
-        } catch (\Throwable $e) {
-
-            $selectedDate =
-                $now->copy();
-        }
-
-
-        $date =
-            $selectedDate
-                ->format(
-                    'Y-m-d'
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | DEFAULT DATA BULANAN
-        |--------------------------------------------------------------------------
-        */
-
-        $selectedMonth =
-            (int) $request->query(
-                'month',
-                $selectedDate->month
-            );
-
-
-        if (
-            $selectedMonth < 1
-            ||
-            $selectedMonth > 12
-        ) {
-            $selectedMonth =
-                $selectedDate->month;
-        }
-
-
-        $selectedYear =
-            (int) $request->query(
-                'year',
-                $selectedDate->year
-            );
-
-
-        if (
-            $selectedYear < 2020
-            ||
-            $selectedYear > 2100
-        ) {
-            $selectedYear =
-                $selectedDate->year;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | DATA HARIAN
-        |--------------------------------------------------------------------------
-        */
-
-        $attendances =
-            Attendance::query()
-                ->whereDate(
-                    'attendance_date',
-                    $date
-                )
-                ->get()
-                ->keyBy(
-                    'student_id'
-                );
-
-
-        $recaps =
-            $students
-                ->map(
-                    function (
-                        Student $student
-                    ) use (
-                        $attendances
-                    ) {
-                        $attendance =
-                            $attendances
-                                ->get(
-                                    $student->id
-                                );
-
-
-                        $status =
-                            $attendance?->status;
-
-
-                        $statusLabel =
-                            match (
-                                $status
-                            ) {
-                                'present' =>
-                                    'Hadir',
-
-                                'late' =>
-                                    'Terlambat',
-
-                                'permission' =>
-                                    'Izin',
-
-                                'sick' =>
-                                    'Sakit',
-
-                                'absent' =>
-                                    'Alfa',
-
-                                default =>
-                                    'Belum Presensi',
-                            };
-
-
-                        $statusClass =
-                            match (
-                                $status
-                            ) {
-                                'present' =>
-                                    'present',
-
-                                'late' =>
-                                    'late',
-
-                                'permission' =>
-                                    'permission',
-
-                                'sick' =>
-                                    'sick',
-
-                                'absent' =>
-                                    'absent',
-
-                                default =>
-                                    'not-yet',
-                            };
-
-
-                        $checkInTime =
-                            $attendance?->check_in_time
-                                ? Carbon::parse(
-                                    $attendance->check_in_time,
-                                    'Asia/Jakarta'
-                                )->format(
-                                    'H:i'
-                                )
-                                : null;
-
-
-                        return [
-                            'student' =>
-                                $student,
-
-                            'attendance' =>
-                                $attendance,
-
-                            'status' =>
-                                $status,
-
-                            'status_label' =>
-                                $statusLabel,
-
-                            'status_class' =>
-                                $statusClass,
-
-                            'check_in_time' =>
-                                $checkInTime,
-                        ];
-                    }
-                )
-                ->values();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | STATISTIK HARIAN
-        |--------------------------------------------------------------------------
-        */
-
-        $totalSiswa =
-            $students->count();
-
-
-        $hadir =
-            $recaps
-                ->where(
-                    'status',
-                    'present'
-                )
-                ->count();
-
-
-        $terlambat =
-            $recaps
-                ->where(
-                    'status',
-                    'late'
-                )
-                ->count();
-
-
-        $datang =
-            $hadir
-            +
-            $terlambat;
-
-
-        $izin =
-            $recaps
-                ->where(
-                    'status',
-                    'permission'
-                )
-                ->count();
-
-
-        $sakit =
-            $recaps
-                ->where(
-                    'status',
-                    'sick'
-                )
-                ->count();
-
-
-        $alfa =
-            $recaps
-                ->where(
-                    'status',
-                    'absent'
-                )
-                ->count();
-
-
-        $belumPresensi =
-            $recaps
-                ->whereNull(
-                    'status'
-                )
-                ->count();
-
-
-        $persentaseHadir =
-            $totalSiswa > 0
-                ? round(
-                    (
-                        $datang
-                        /
-                        $totalSiswa
-                    )
-                    *
-                    100,
-                    1
-                )
-                : 0;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | DATA BULANAN
+        | SEMUA PRESENSI BULAN TERPILIH
         |--------------------------------------------------------------------------
         */
 
@@ -412,7 +163,7 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | TOTAL HARI PRESENSI BULANAN
+        | TANGGAL PRESENSI UNIK
         |--------------------------------------------------------------------------
         */
 
@@ -422,9 +173,9 @@ class AttendanceRecapController extends Controller
                     'attendance_date'
                 )
                 ->map(
-                    function ($attendanceDate) {
+                    function ($date) {
                         return Carbon::parse(
-                            $attendanceDate,
+                            $date,
                             'Asia/Jakarta'
                         )->format(
                             'Y-m-d'
@@ -436,6 +187,12 @@ class AttendanceRecapController extends Controller
                 ->values();
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL HARI PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
         $totalAttendanceDays =
             $attendanceDates
                 ->count();
@@ -443,7 +200,7 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | KELOMPOKKAN BERDASARKAN SISWA
+        | KELOMPOKKAN PRESENSI PER SISWA
         |--------------------------------------------------------------------------
         */
 
@@ -456,11 +213,11 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | REKAP BULANAN PER SISWA
+        | REKAP PER SISWA
         |--------------------------------------------------------------------------
         */
 
-        $monthlyRecaps =
+        $recaps =
             $students
                 ->map(
                     function (
@@ -469,6 +226,12 @@ class AttendanceRecapController extends Controller
                         $attendancesByStudent,
                         $totalAttendanceDays
                     ) {
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PRESENSI SISWA
+                        |--------------------------------------------------------------------------
+                        */
+
                         $studentAttendances =
                             $attendancesByStudent
                                 ->get(
@@ -476,6 +239,12 @@ class AttendanceRecapController extends Controller
                                     collect()
                                 );
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | HADIR
+                        |--------------------------------------------------------------------------
+                        */
 
                         $present =
                             $studentAttendances
@@ -486,6 +255,12 @@ class AttendanceRecapController extends Controller
                                 ->count();
 
 
+                        /*
+                        |--------------------------------------------------------------------------
+                        | TERLAMBAT
+                        |--------------------------------------------------------------------------
+                        */
+
                         $late =
                             $studentAttendances
                                 ->where(
@@ -494,6 +269,12 @@ class AttendanceRecapController extends Controller
                                 )
                                 ->count();
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | IZIN
+                        |--------------------------------------------------------------------------
+                        */
 
                         $permission =
                             $studentAttendances
@@ -504,6 +285,12 @@ class AttendanceRecapController extends Controller
                                 ->count();
 
 
+                        /*
+                        |--------------------------------------------------------------------------
+                        | SAKIT
+                        |--------------------------------------------------------------------------
+                        */
+
                         $sick =
                             $studentAttendances
                                 ->where(
@@ -512,6 +299,12 @@ class AttendanceRecapController extends Controller
                                 )
                                 ->count();
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | ALFA
+                        |--------------------------------------------------------------------------
+                        */
 
                         $absent =
                             $studentAttendances
@@ -522,16 +315,34 @@ class AttendanceRecapController extends Controller
                                 ->count();
 
 
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DATANG
+                        |--------------------------------------------------------------------------
+                        */
+
                         $attended =
                             $present
                             +
                             $late;
 
 
+                        /*
+                        |--------------------------------------------------------------------------
+                        | JUMLAH RECORD SISWA
+                        |--------------------------------------------------------------------------
+                        */
+
                         $recorded =
                             $studentAttendances
                                 ->count();
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | BELUM TERCATAT
+                        |--------------------------------------------------------------------------
+                        */
 
                         $notRecorded =
                             max(
@@ -541,6 +352,12 @@ class AttendanceRecapController extends Controller
                                 $recorded
                             );
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PERSENTASE KEHADIRAN SISWA
+                        |--------------------------------------------------------------------------
+                        */
 
                         $attendanceRate =
                             $totalAttendanceDays > 0
@@ -556,6 +373,12 @@ class AttendanceRecapController extends Controller
                                 )
                                 : 0;
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | RETURN
+                        |--------------------------------------------------------------------------
+                        */
 
                         return [
                             'student' =>
@@ -598,69 +421,128 @@ class AttendanceRecapController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | SUMMARY BULANAN
+        | TOTAL SISWA
         |--------------------------------------------------------------------------
         */
 
-        $monthlyPresent =
-            $monthlyRecaps
+        $totalStudents =
+            $students
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        $totalPresent =
+            $recaps
                 ->sum(
                     'present'
                 );
 
 
-        $monthlyLate =
-            $monthlyRecaps
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL TERLAMBAT
+        |--------------------------------------------------------------------------
+        */
+
+        $totalLate =
+            $recaps
                 ->sum(
                     'late'
                 );
 
 
-        $monthlyPermission =
-            $monthlyRecaps
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL IZIN
+        |--------------------------------------------------------------------------
+        */
+
+        $totalPermission =
+            $recaps
                 ->sum(
                     'permission'
                 );
 
 
-        $monthlySick =
-            $monthlyRecaps
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL SAKIT
+        |--------------------------------------------------------------------------
+        */
+
+        $totalSick =
+            $recaps
                 ->sum(
                     'sick'
                 );
 
 
-        $monthlyAbsent =
-            $monthlyRecaps
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        $totalAbsent =
+            $recaps
                 ->sum(
                     'absent'
                 );
 
 
-        $monthlyAttended =
-            $monthlyPresent
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL DATANG
+        |--------------------------------------------------------------------------
+        */
+
+        $totalAttended =
+            $totalPresent
             +
-            $monthlyLate;
+            $totalLate;
 
 
-        $monthlyNotRecorded =
-            $monthlyRecaps
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL BELUM TERCATAT
+        |--------------------------------------------------------------------------
+        */
+
+        $totalNotRecorded =
+            $recaps
                 ->sum(
                     'not_recorded'
                 );
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL KESEMPATAN PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
         $totalOpportunities =
             $totalAttendanceDays
             *
-            $totalSiswa;
+            $totalStudents;
 
 
-        $monthlyPercentage =
+        /*
+        |--------------------------------------------------------------------------
+        | PERSENTASE KESELURUHAN
+        |--------------------------------------------------------------------------
+        */
+
+        $overallPercentage =
             $totalOpportunities > 0
                 ? round(
                     (
-                        $monthlyAttended
+                        $totalAttended
                         /
                         $totalOpportunities
                     )
@@ -671,75 +553,64 @@ class AttendanceRecapController extends Controller
                 : 0;
 
 
-        $monthlySummary = [
+        /*
+        |--------------------------------------------------------------------------
+        | SUMMARY
+        |--------------------------------------------------------------------------
+        */
+
+        $summary = [
             'students' =>
-                $totalSiswa,
+                $totalStudents,
 
             'days' =>
                 $totalAttendanceDays,
 
             'present' =>
-                $monthlyPresent,
+                $totalPresent,
 
             'late' =>
-                $monthlyLate,
+                $totalLate,
 
             'permission' =>
-                $monthlyPermission,
+                $totalPermission,
 
             'sick' =>
-                $monthlySick,
+                $totalSick,
 
             'absent' =>
-                $monthlyAbsent,
+                $totalAbsent,
 
             'attended' =>
-                $monthlyAttended,
+                $totalAttended,
 
             'not_recorded' =>
-                $monthlyNotRecorded,
+                $totalNotRecorded,
 
             'opportunities' =>
                 $totalOpportunities,
 
             'percentage' =>
-                $monthlyPercentage,
+                $overallPercentage,
         ];
 
 
         /*
         |--------------------------------------------------------------------------
-        | VIEW SATU MODUL
+        | VIEW PDF / PRINT
         |--------------------------------------------------------------------------
         */
 
         return view(
-            'guru.attendance-recap.index',
+            'guru.attendance-recap.monthly-print',
             compact(
-                'activeTab',
-                'date',
-                'selectedDate',
+                'period',
                 'selectedMonth',
                 'selectedYear',
-                'availableYears',
                 'monthNames',
-
-                'students',
-
-                'recaps',
-                'totalSiswa',
-                'hadir',
-                'terlambat',
-                'datang',
-                'izin',
-                'sakit',
-                'alfa',
-                'belumPresensi',
-                'persentaseHadir',
-
                 'attendanceDates',
-                'monthlyRecaps',
-                'monthlySummary'
+                'recaps',
+                'summary'
             )
         );
     }

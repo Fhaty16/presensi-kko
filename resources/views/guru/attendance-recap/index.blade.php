@@ -28,7 +28,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         rel="stylesheet"
     >
 
@@ -48,20 +48,39 @@
             box-sizing: border-box;
         }
 
+        body {
+            margin: 0;
+
+            color: #ffffff;
+            background: #101415;
+
+            font-family:
+                'Hanken Grotesk',
+                sans-serif;
+        }
+
         .material-symbols-outlined {
-            font-family: 'Material Symbols Outlined' !important;
-            font-weight: normal;
+            font-family:
+                'Material Symbols Outlined'
+                !important;
+
+            font-weight: normal !important;
             font-style: normal;
-            font-size: 20px;
+
             line-height: 1;
+
             letter-spacing: normal;
             text-transform: none;
+
             white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
+
             font-feature-settings: 'liga';
-            -webkit-font-feature-settings: 'liga';
-            -webkit-font-smoothing: antialiased;
+
+            -webkit-font-feature-settings:
+                'liga';
+
+            -webkit-font-smoothing:
+                antialiased;
         }
 
         .recap-container {
@@ -72,7 +91,10 @@
 
             margin: 0 auto;
 
-            padding: 38px 0 90px;
+            padding:
+                38px
+                0
+                100px;
         }
 
 
@@ -94,18 +116,20 @@
 
             text-decoration: none;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 10px;
             font-weight: 700;
-
-            transition: .18s ease;
         }
 
         .recap-back:hover {
             color: #ffffff;
         }
 
-        .recap-back .material-symbols-outlined {
+        .recap-back
+        .material-symbols-outlined {
             font-size: 18px;
         }
 
@@ -117,13 +141,7 @@
         */
 
         .recap-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-
-            gap: 20px;
-
-            margin-bottom: 26px;
+            margin-bottom: 20px;
         }
 
         .recap-label {
@@ -133,7 +151,10 @@
 
             color: #9dcaff;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 10px;
             font-weight: 800;
 
@@ -145,13 +166,19 @@
 
             color: #e0e3e5;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 32px;
             font-weight: 800;
         }
 
         .recap-heading p {
-            margin: 7px 0 0;
+            margin:
+                7px
+                0
+                0;
 
             color: #8a919c;
 
@@ -161,30 +188,113 @@
 
         /*
         =====================================================
-        DATE FILTER
+        TABS
         =====================================================
         */
 
-        .recap-date-card {
+        .recap-tabs {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-bottom: 22px;
+
+            padding: 5px;
+
+            background: #151b20;
+
+            border:
+                1px
+                solid
+                #303c48;
+
+            border-radius: 10px;
+        }
+
+        .recap-tab {
+            min-height: 36px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            padding:
+                0
+                14px;
+
+            color: #7d8c97;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 9px;
+            font-weight: 700;
+
+            transition:
+                color .18s ease,
+                background .18s ease;
+        }
+
+        .recap-tab:hover {
+            color: #dce7ef;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .05
+                );
+        }
+
+        .recap-tab.active {
+            color: #101415;
+
+            background: #9dcaff;
+        }
+
+        .recap-tab
+        .material-symbols-outlined {
+            font-size: 16px;
+        }
+
+
+        /*
+        =====================================================
+        CONTROL PANEL
+        =====================================================
+        */
+
+        .control-panel {
             position: relative;
+
             z-index: 30;
 
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
 
-            gap: 18px;
+            gap: 20px;
 
             margin-bottom: 20px;
+
             padding: 18px;
 
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 15px;
         }
 
-        .recap-date-info {
+        .control-info {
             display: flex;
             align-items: center;
 
@@ -193,43 +303,80 @@
             min-width: 0;
         }
 
-        .recap-date-icon {
+        .control-icon {
             width: 43px;
             height: 43px;
+
+            flex:
+                0
+                0
+                43px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            flex: 0 0 43px;
-
             color: #9dcaff;
-            background: rgba(157, 202, 255, .10);
 
-            border: 1px solid rgba(157, 202, 255, .16);
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .16
+                );
+
             border-radius: 11px;
         }
 
-        .recap-date-info small {
+        .control-info small {
             display: block;
 
             margin-bottom: 4px;
 
             color: #747d88;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 700;
         }
 
-        .recap-date-info strong {
+        .control-info strong {
+            display: block;
+
             color: #e0e3e5;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 14px;
         }
 
-        .recap-date-actions {
+        .control-description {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #75838e;
+
+            font-size: 8px;
+        }
+
+        .control-actions {
             display: flex;
             align-items: flex-end;
 
@@ -238,37 +385,74 @@
             flex-shrink: 0;
         }
 
-        .recap-date-form {
+        .control-form {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
 
             gap: 8px;
         }
 
-        .recap-date-input {
+        .control-field label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: #71808b;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+            font-weight: 800;
+        }
+
+        .control-input,
+        .control-select {
             height: 40px;
 
-            padding: 0 12px;
+            padding:
+                0
+                12px;
 
             color: #e0e3e5;
+
             background: #151b20;
 
-            border: 1px solid #404751;
+            border:
+                1px
+                solid
+                #404751;
+
             border-radius: 9px;
 
             outline: none;
 
-            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
+        }
+
+        .control-input {
+            font-family:
+                'JetBrains Mono',
+                monospace;
 
             color-scheme: dark;
         }
 
-        .recap-date-input:focus {
+        .control-select {
+            min-width: 145px;
+
+            font-family:
+                'Hanken Grotesk',
+                sans-serif;
+        }
+
+        .control-input:focus,
+        .control-select:focus {
             border-color: #9dcaff;
         }
 
-        .recap-date-button {
+        .control-button {
             height: 40px;
 
             display: inline-flex;
@@ -277,37 +461,50 @@
 
             gap: 6px;
 
-            padding: 0 15px;
+            padding:
+                0
+                15px;
 
             color: #101415;
+
             background: #9dcaff;
 
-            border: 1px solid #9dcaff;
+            border:
+                1px
+                solid
+                #9dcaff;
+
             border-radius: 9px;
 
             cursor: pointer;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 10px;
             font-weight: 700;
 
             white-space: nowrap;
 
-            transition: .18s ease;
+            transition:
+                background
+                .18s ease;
         }
 
-        .recap-date-button:hover {
+        .control-button:hover {
             background: #b5d8ff;
         }
 
-        .recap-date-button .material-symbols-outlined {
+        .control-button
+        .material-symbols-outlined {
             font-size: 16px;
         }
 
 
         /*
         =====================================================
-        DOWNLOAD DROPDOWN
+        DOWNLOAD
         =====================================================
         */
 
@@ -326,22 +523,40 @@
 
             gap: 6px;
 
-            padding: 0 14px;
+            padding:
+                0
+                14px;
 
             color: #8ce8c3;
-            background: rgba(54, 211, 153, .08);
 
-            border: 1px solid rgba(54, 211, 153, .35);
+            background:
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .08
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .35
+                );
+
             border-radius: 9px;
 
             cursor: pointer;
 
             list-style: none;
+
             user-select: none;
 
             white-space: nowrap;
 
-            font-family: 'Hanken Grotesk', sans-serif;
             font-size: 10px;
             font-weight: 800;
 
@@ -360,33 +575,46 @@
         }
 
         .download-toggle:hover,
-        .download-dropdown[open] .download-toggle {
+        .download-dropdown[open]
+        .download-toggle {
             color: #101415;
+
             background: #8ce8c3;
 
             border-color: #8ce8c3;
         }
 
-        .download-toggle .material-symbols-outlined {
+        .download-toggle
+        .material-symbols-outlined {
             font-size: 17px;
         }
 
-        .download-toggle .download-arrow {
-            font-size: 15px;
+        .download-arrow {
+            font-size: 15px !important;
 
-            transition: transform .18s ease;
+            transition:
+                transform
+                .18s ease;
         }
 
         .download-dropdown[open]
-        .download-toggle
         .download-arrow {
-            transform: rotate(180deg);
+            transform:
+                rotate(
+                    180deg
+                );
         }
 
         .download-menu {
             position: absolute;
 
-            top: calc(100% + 7px);
+            top:
+                calc(
+                    100%
+                    +
+                    7px
+                );
+
             right: 0;
 
             z-index: 999;
@@ -397,12 +625,23 @@
 
             background: #151d25;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 10px;
 
             box-shadow:
-                0 12px 30px
-                rgba(0, 0, 0, .30);
+                0
+                12px
+                30px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .30
+                );
         }
 
         .download-option {
@@ -413,7 +652,9 @@
 
             width: 100%;
 
-            padding: 10px 11px;
+            padding:
+                10px
+                11px;
 
             color: #cbd6dd;
 
@@ -431,10 +672,12 @@
 
         .download-option:hover {
             color: #ffffff;
+
             background: #1f2b36;
         }
 
-        .download-option .material-symbols-outlined {
+        .download-option
+        .material-symbols-outlined {
             width: 19px;
 
             flex-shrink: 0;
@@ -482,27 +725,48 @@
         =====================================================
         */
 
-        .recap-stats {
+        .stats-grid {
             display: grid;
 
             grid-template-columns:
-                repeat(7, minmax(0, 1fr));
+                repeat(
+                    4,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
 
             gap: 10px;
 
             margin-bottom: 15px;
         }
 
-        .recap-stat {
+        .stats-grid.daily {
+            grid-template-columns:
+                repeat(
+                    7,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+        }
+
+        .stat-card {
             padding: 15px;
 
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 13px;
         }
 
-        .recap-stat-label {
+        .stat-label {
             display: flex;
             align-items: center;
 
@@ -512,7 +776,10 @@
 
             color: #7e8792;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
             font-weight: 700;
 
@@ -521,45 +788,60 @@
             white-space: nowrap;
         }
 
-        .recap-stat-label .material-symbols-outlined {
+        .stat-label
+        .material-symbols-outlined {
             font-size: 15px;
         }
 
-        .recap-stat strong {
+        .stat-card strong {
             display: block;
 
             color: #ffffff;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 23px;
             font-weight: 800;
         }
 
-        .recap-stat.total .recap-stat-label {
+        .stat-card.total
+        .stat-label,
+        .stat-card.days
+        .stat-label,
+        .stat-card.students
+        .stat-label {
             color: #9dcaff;
         }
 
-        .recap-stat.present .recap-stat-label {
+        .stat-card.present
+        .stat-label {
             color: #8ce8c3;
         }
 
-        .recap-stat.late .recap-stat-label {
+        .stat-card.late
+        .stat-label {
             color: #ffb866;
         }
 
-        .recap-stat.permission .recap-stat-label {
+        .stat-card.permission
+        .stat-label {
             color: #eacb84;
         }
 
-        .recap-stat.sick .recap-stat-label {
+        .stat-card.sick
+        .stat-label {
             color: #9dcaff;
         }
 
-        .recap-stat.absent .recap-stat-label {
+        .stat-card.absent
+        .stat-label {
             color: #ffaaa5;
         }
 
-        .recap-stat.not-yet .recap-stat-label {
+        .stat-card.not-yet
+        .stat-label {
             color: #9da5af;
         }
 
@@ -570,7 +852,7 @@
         =====================================================
         */
 
-        .recap-percentage {
+        .percentage-panel {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -579,15 +861,32 @@
 
             margin-bottom: 28px;
 
-            padding: 15px 17px;
+            padding:
+                15px
+                17px;
 
-            background: rgba(0, 114, 188, .08);
+            background:
+                rgba(
+                    0,
+                    114,
+                    188,
+                    .08
+                );
 
-            border: 1px solid rgba(157, 202, 255, .18);
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .18
+                );
+
             border-radius: 13px;
         }
 
-        .recap-percentage-info strong {
+        .percentage-info strong {
             display: block;
 
             color: #e6edf3;
@@ -595,7 +894,7 @@
             font-size: 11px;
         }
 
-        .recap-percentage-info span {
+        .percentage-info span {
             display: block;
 
             margin-top: 4px;
@@ -605,12 +904,15 @@
             font-size: 9px;
         }
 
-        .recap-percentage-value {
+        .percentage-value {
             flex-shrink: 0;
 
             color: #9dcaff;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 27px;
             font-weight: 800;
         }
@@ -637,34 +939,47 @@
 
             color: #e0e3e5;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 21px;
         }
 
         .recap-toolbar-title p {
-            margin: 4px 0 0;
+            margin:
+                4px
+                0
+                0;
 
             color: #8a919c;
 
             font-size: 10px;
         }
 
-        .recap-toolbar-controls {
+        .toolbar-controls {
             display: flex;
 
             gap: 8px;
         }
 
-        .recap-search {
+        .search-input {
             width: 245px;
             height: 40px;
 
-            padding: 0 13px;
+            padding:
+                0
+                13px;
 
             color: #e0e3e5;
+
             background: #1a1e21;
 
-            border: 1px solid #404751;
+            border:
+                1px
+                solid
+                #404751;
+
             border-radius: 9px;
 
             outline: none;
@@ -672,19 +987,26 @@
             font-size: 11px;
         }
 
-        .recap-search:focus {
+        .search-input:focus {
             border-color: #9dcaff;
         }
 
-        .recap-filter {
+        .status-filter {
             height: 40px;
 
-            padding: 0 12px;
+            padding:
+                0
+                12px;
 
             color: #e0e3e5;
+
             background: #1a1e21;
 
-            border: 1px solid #404751;
+            border:
+                1px
+                solid
+                #404751;
+
             border-radius: 9px;
 
             outline: none;
@@ -699,63 +1021,110 @@
         =====================================================
         */
 
-        .recap-table-wrapper {
+        .table-wrapper {
             overflow-x: auto;
 
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 15px;
         }
 
         .recap-table {
             width: 100%;
-            min-width: 900px;
+
+            min-width: 950px;
 
             border-collapse: collapse;
         }
 
+        .monthly-table {
+            min-width: 1000px;
+        }
+
         .recap-table thead {
-            background: rgba(11, 17, 22, .35);
+            background:
+                rgba(
+                    11,
+                    17,
+                    22,
+                    .35
+                );
         }
 
         .recap-table th {
-            padding: 13px 16px;
+            padding:
+                13px
+                16px;
 
             color: #747d88;
 
             text-align: left;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 700;
 
             letter-spacing: .5px;
 
-            border-bottom: 1px solid #34485d;
+            border-bottom:
+                1px
+                solid
+                #34485d;
         }
 
         .recap-table td {
-            padding: 14px 16px;
+            padding:
+                14px
+                16px;
 
             color: #c1c7ce;
 
             font-size: 10px;
 
             border-bottom:
-                1px solid rgba(64, 71, 81, .38);
+                1px
+                solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .38
+                );
         }
 
-        .recap-table tbody tr:last-child td {
+        .recap-table
+        tbody
+        tr:last-child
+        td {
             border-bottom: 0;
         }
 
-        .recap-table tbody tr {
-            transition: .16s ease;
+        .recap-table
+        tbody
+        tr {
+            transition:
+                background
+                .16s ease;
         }
 
-        .recap-table tbody tr:hover {
-            background: rgba(157, 202, 255, .025);
+        .recap-table
+        tbody
+        tr:hover {
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .025
+                );
         }
 
 
@@ -765,7 +1134,7 @@
         =====================================================
         */
 
-        .recap-student {
+        .student-cell {
             display: flex;
             align-items: center;
 
@@ -774,28 +1143,34 @@
             min-width: 220px;
         }
 
-        .recap-avatar {
+        .student-avatar {
             width: 38px;
             height: 38px;
 
-            flex: 0 0 38px;
+            flex:
+                0
+                0
+                38px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            color: #9dcaff;
-            background: rgba(0, 114, 188, .16);
+            color: #101415;
 
-            border: 1px solid rgba(157, 202, 255, .16);
-            border-radius: 10px;
+            background: #9dcaff;
 
-            font-family: 'Anybody', sans-serif;
+            border-radius: 50%;
+
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 13px;
             font-weight: 800;
         }
 
-        .recap-student strong {
+        .student-data strong {
             display: block;
 
             color: #e0e3e5;
@@ -804,14 +1179,17 @@
             font-weight: 700;
         }
 
-        .recap-student span {
+        .student-data span {
             display: block;
 
             margin-top: 3px;
 
             color: #747d88;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
         }
 
@@ -822,101 +1200,227 @@
         =====================================================
         */
 
-        .recap-status {
+        .status-badge {
             display: inline-flex;
             align-items: center;
 
             gap: 5px;
 
-            padding: 6px 9px;
+            padding:
+                6px
+                9px;
 
             border-radius: 20px;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 700;
         }
 
-        .recap-status .material-symbols-outlined {
+        .status-badge
+        .material-symbols-outlined {
             font-size: 13px;
         }
 
-        .recap-status.present {
+        .status-badge.present {
             color: #8ce8c3;
-            background: rgba(54, 211, 153, .10);
+
+            background:
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .10
+                );
         }
 
-        .recap-status.late {
+        .status-badge.late {
             color: #ffb866;
-            background: rgba(245, 158, 11, .11);
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    .11
+                );
         }
 
-        .recap-status.sick {
-            color: #9dcaff;
-            background: rgba(157, 202, 255, .10);
-        }
-
-        .recap-status.permission {
+        .status-badge.permission {
             color: #eacb84;
-            background: rgba(199, 160, 80, .11);
+
+            background:
+                rgba(
+                    199,
+                    160,
+                    80,
+                    .11
+                );
         }
 
-        .recap-status.absent {
+        .status-badge.sick {
+            color: #9dcaff;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
+        }
+
+        .status-badge.absent {
             color: #ffaaa5;
-            background: rgba(231, 70, 70, .10);
+
+            background:
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .10
+                );
         }
 
-        .recap-status.not-yet {
+        .status-badge.not-yet {
             color: #9da5af;
-            background: rgba(138, 145, 156, .10);
+
+            background:
+                rgba(
+                    138,
+                    145,
+                    156,
+                    .10
+                );
         }
 
 
         /*
         =====================================================
-        TIME / NOTES
+        VALUES
         =====================================================
         */
 
-        .recap-time {
-            color: #d7dce1;
+        .value {
+            font-family:
+                'JetBrains Mono',
+                monospace;
 
-            font-family: 'JetBrains Mono', monospace;
             font-size: 9px;
+            font-weight: 700;
         }
 
-        .recap-muted {
+        .value.present {
+            color: #8ce8c3;
+        }
+
+        .value.late {
+            color: #ffb866;
+        }
+
+        .value.permission {
+            color: #eacb84;
+        }
+
+        .value.sick {
+            color: #9dcaff;
+        }
+
+        .value.absent {
+            color: #ffaaa5;
+        }
+
+        .value.not-yet {
+            color: #9da5af;
+        }
+
+        .muted {
             color: #68717c;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
         }
 
-        .recap-notes {
+        .notes {
             max-width: 300px;
 
             color: #9ca5af;
 
             font-size: 9px;
+
             line-height: 1.45;
+        }
+
+        .percentage-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-width: 64px;
+
+            padding:
+                6px
+                9px;
+
+            color: #9dcaff;
+
+            background:
+                rgba(
+                    0,
+                    114,
+                    188,
+                    .10
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .15
+                );
+
+            border-radius: 20px;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 8px;
+            font-weight: 800;
         }
 
 
         /*
         =====================================================
-        EMPTY FILTER
+        EMPTY
         =====================================================
         */
 
-        .recap-filter-empty {
+        .empty-state {
             display: none;
 
-            padding: 40px 20px;
+            padding:
+                40px
+                20px;
 
             color: #8a919c;
+
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 15px;
 
             text-align: center;
@@ -924,7 +1428,8 @@
             font-size: 10px;
         }
 
-        .recap-filter-empty .material-symbols-outlined {
+        .empty-state
+        .material-symbols-outlined {
             display: block;
 
             margin-bottom: 8px;
@@ -942,80 +1447,109 @@
         */
 
         @media (max-width: 1150px) {
-            .recap-stats {
+
+            .stats-grid.daily {
                 grid-template-columns:
-                    repeat(4, minmax(0, 1fr));
+                    repeat(
+                        4,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
             }
+
         }
 
 
-        @media (max-width: 850px) {
-            .recap-date-card {
+        @media (max-width: 900px) {
+
+            .control-panel {
                 align-items: stretch;
 
                 flex-direction: column;
             }
 
-            .recap-date-actions {
+            .control-actions {
                 width: 100%;
             }
 
-            .recap-date-form {
-                flex: 1;
-            }
-
-            .recap-date-input {
-                flex: 1;
-            }
         }
 
 
         @media (max-width: 720px) {
+
             .recap-container {
-                width: calc(100% - 28px);
+                width:
+                    calc(
+                        100%
+                        -
+                        28px
+                    );
 
-                padding: 25px 0 90px;
-            }
-
-            .recap-heading {
-                align-items: flex-start;
-
-                flex-direction: column;
+                padding:
+                    25px
+                    0
+                    90px;
             }
 
             .recap-heading h1 {
                 font-size: 25px;
             }
 
-            .recap-date-actions {
+            .recap-tabs {
+                display: flex;
+
+                width: 100%;
+            }
+
+            .recap-tab {
+                flex: 1;
+
+                padding:
+                    0
+                    8px;
+            }
+
+            .control-actions,
+            .control-form {
                 align-items: stretch;
 
                 flex-direction: column;
+
+                width: 100%;
             }
 
-            .recap-date-form {
-                align-items: stretch;
-
-                flex-direction: column;
-            }
-
-            .recap-date-input,
-            .recap-date-button,
+            .control-field,
+            .control-input,
+            .control-select,
+            .control-button,
             .download-dropdown,
             .download-toggle {
                 width: 100%;
+            }
+
+            .control-select {
+                min-width: 0;
             }
 
             .download-menu {
                 width: 100%;
             }
 
-            .recap-stats {
+            .stats-grid,
+            .stats-grid.daily {
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
             }
 
-            .recap-percentage {
+            .percentage-panel {
                 align-items: flex-start;
 
                 flex-direction: column;
@@ -1027,14 +1561,15 @@
                 flex-direction: column;
             }
 
-            .recap-toolbar-controls {
+            .toolbar-controls {
                 flex-direction: column;
             }
 
-            .recap-search,
-            .recap-filter {
+            .search-input,
+            .status-filter {
                 width: 100%;
             }
+
         }
     </style>
 
@@ -1162,761 +1697,1509 @@
 
     <section class="recap-heading">
 
-        <div>
+        <span class="recap-label">
+            MONITORING KEHADIRAN
+        </span>
 
-            <span class="recap-label">
-                MONITORING KEHADIRAN
-            </span>
+        <h1>
+            Rekap Presensi Sekolah
+        </h1>
 
-            <h1>
-                Rekap Presensi Sekolah
-            </h1>
-
-            <p>
+        <p>
+            @if($activeTab === 'harian')
                 Pantau status kehadiran seluruh siswa KKO berdasarkan tanggal.
-            </p>
-
-        </div>
+            @else
+                Pantau ringkasan presensi seluruh siswa KKO berdasarkan bulan.
+            @endif
+        </p>
 
     </section>
 
 
     <!-- =================================================
-         DATE + DOWNLOAD
+         NAVIGATION
     ================================================== -->
 
-    <section class="recap-date-card">
+    <nav class="recap-tabs">
 
-        <div class="recap-date-info">
+        <a
+            href="{{
+                route(
+                    'guru.attendance.recap',
+                    [
+                        'tab' => 'harian',
+                        'date' => $date,
+                    ]
+                )
+            }}"
+            class="recap-tab {{ $activeTab === 'harian' ? 'active' : '' }}"
+        >
 
-            <div class="recap-date-icon">
+            <span class="material-symbols-outlined">
+                today
+            </span>
 
-                <span class="material-symbols-outlined">
-                    calendar_month
-                </span>
+            Presensi Harian
 
-            </div>
-
-
-            <div>
-
-                <small>
-                    TANGGAL REKAP
-                </small>
-
-                <strong>
-                    {{
-                        $selectedDate
-                            ->copy()
-                            ->locale('id')
-                            ->translatedFormat('l, d F Y')
-                    }}
-                </strong>
-
-            </div>
-
-        </div>
+        </a>
 
 
-        <div class="recap-date-actions">
+        <a
+            href="{{
+                route(
+                    'guru.attendance.recap',
+                    [
+                        'tab' => 'bulanan',
+                        'month' => $selectedMonth,
+                        'year' => $selectedYear,
+                    ]
+                )
+            }}"
+            class="recap-tab {{ $activeTab === 'bulanan' ? 'active' : '' }}"
+        >
 
-            <form
-                method="GET"
-                action="{{ route('guru.attendance.recap') }}"
-                class="recap-date-form"
-            >
+            <span class="material-symbols-outlined">
+                calendar_month
+            </span>
 
-                <input
-                    type="date"
-                    name="date"
-                    value="{{ $date }}"
-                    class="recap-date-input"
-                    required
-                >
+            Presensi Bulanan
 
+        </a>
 
-                <button
-                    type="submit"
-                    class="recap-date-button"
-                >
-
-                    <span class="material-symbols-outlined">
-                        filter_alt
-                    </span>
-
-                    Tampilkan
-
-                </button>
-
-            </form>
+    </nav>
 
 
-            <!-- =========================================
-                 DOWNLOAD
-            ========================================== -->
+    <!-- =================================================
+         HARIAN
+    ================================================== -->
 
-            <details class="download-dropdown">
+    @if($activeTab === 'harian')
 
-                <summary class="download-toggle">
+
+        <!-- =============================================
+             CONTROL HARIAN
+        ============================================== -->
+
+        <section class="control-panel">
+
+            <div class="control-info">
+
+                <div class="control-icon">
 
                     <span class="material-symbols-outlined">
-                        download
+                        calendar_month
                     </span>
-
-                    Download
-
-                    <span class="material-symbols-outlined download-arrow">
-                        expand_more
-                    </span>
-
-                </summary>
-
-
-                <div class="download-menu">
-
-
-                    <!-- EXCEL -->
-
-                    <a
-                        href="{{
-                            route(
-                                'guru.attendance.recap.export',
-                                [
-                                    'date' => $date,
-                                ]
-                            )
-                        }}"
-                        class="download-option excel"
-                    >
-
-                        <span class="material-symbols-outlined">
-                            table_view
-                        </span>
-
-
-                        <div class="download-option-text">
-
-                            <strong>
-                                Excel
-                            </strong>
-
-                            <span>
-                                Download file .xlsx
-                            </span>
-
-                        </div>
-
-                    </a>
-
-
-                    <!-- PDF -->
-
-                    <a
-                        href="{{
-                            route(
-                                'guru.attendance.recap.print',
-                                [
-                                    'date' => $date,
-                                ]
-                            )
-                        }}"
-                        class="download-option pdf"
-                        target="_blank"
-                        rel="noopener"
-                    >
-
-                        <span class="material-symbols-outlined">
-                            picture_as_pdf
-                        </span>
-
-
-                        <div class="download-option-text">
-
-                            <strong>
-                                PDF
-                            </strong>
-
-                            <span>
-                                Cetak atau simpan PDF
-                            </span>
-
-                        </div>
-
-                    </a>
 
                 </div>
 
-            </details>
 
-        </div>
+                <div>
 
-    </section>
+                    <small>
+                        TANGGAL REKAP
+                    </small>
 
+                    <strong>
+                        {{
+                            $selectedDate
+                                ->copy()
+                                ->locale('id')
+                                ->translatedFormat('l, d F Y')
+                        }}
+                    </strong>
 
-    <!-- =================================================
-         STATS
-    ================================================== -->
-
-    <section class="recap-stats">
-
-
-        <!-- TOTAL -->
-
-        <article class="recap-stat total">
-
-            <div class="recap-stat-label">
-
-                <span class="material-symbols-outlined">
-                    groups
-                </span>
-
-                TOTAL SISWA
+                </div>
 
             </div>
 
-            <strong>
-                {{ $totalSiswa }}
-            </strong>
 
-        </article>
-
-
-        <!-- HADIR -->
-
-        <article class="recap-stat present">
-
-            <div class="recap-stat-label">
-
-                <span class="material-symbols-outlined">
-                    check_circle
-                </span>
-
-                HADIR
-
-            </div>
-
-            <strong>
-                {{ $hadir }}
-            </strong>
-
-        </article>
-
-
-        <!-- TERLAMBAT -->
-
-        <article class="recap-stat late">
-
-            <div class="recap-stat-label">
-
-                <span class="material-symbols-outlined">
-                    schedule
-                </span>
-
-                TERLAMBAT
-
-            </div>
-
-            <strong>
-                {{ $terlambat }}
-            </strong>
-
-        </article>
-
-
-        <!-- IZIN -->
-
-        <article class="recap-stat permission">
-
-            <div class="recap-stat-label">
-
-                <span class="material-symbols-outlined">
-                    assignment
-                </span>
-
-                IZIN
-
-            </div>
-
-            <strong>
-                {{ $izin }}
-            </strong>
-
-        </article>
-
-
-        <!-- SAKIT -->
-
-        <article class="recap-stat sick">
-
-            <div class="recap-stat-label">
-
-                <span class="material-symbols-outlined">
-                    medical_services
-                </span>
-
-                SAKIT
-
-            </div>
-
-            <strong>
-                {{ $sakit }}
-            </strong>
-
-        </article>
-
-
-        <!-- ALFA -->
-
-        <article class="recap-stat absent">
-
-            <div class="recap-stat-label">
-
-                <span class="material-symbols-outlined">
-                    cancel
-                </span>
-
-                ALFA
-
-            </div>
-
-            <strong>
-                {{ $alfa }}
-            </strong>
-
-        </article>
-
-
-        <!-- BELUM -->
-
-        <article class="recap-stat not-yet">
-
-            <div class="recap-stat-label">
-
-                <span class="material-symbols-outlined">
-                    hourglass_empty
-                </span>
-
-                BELUM
-
-            </div>
-
-            <strong>
-                {{ $belumPresensi }}
-            </strong>
-
-        </article>
-
-    </section>
-
-
-    <!-- =================================================
-         PERCENTAGE
-    ================================================== -->
-
-    <section class="recap-percentage">
-
-        <div class="recap-percentage-info">
-
-            <strong>
-                Persentase Kehadiran Sekolah
-            </strong>
-
-            <span>
-                Hadir + Terlambat dibanding seluruh siswa aktif.
-            </span>
-
-        </div>
-
-
-        <div class="recap-percentage-value">
-
-            {{
-                number_format(
-                    $persentaseHadir,
-                    1,
-                    ',',
-                    '.'
-                )
-            }}%
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         TOOLBAR
-    ================================================== -->
-
-    <section class="recap-toolbar">
-
-        <div class="recap-toolbar-title">
-
-            <h2>
-                Daftar Presensi Siswa
-            </h2>
-
-            <p>
-                {{ $datang }}
-                dari
-                {{ $totalSiswa }}
-                siswa tercatat hadir atau terlambat.
-            </p>
-
-        </div>
-
-
-        <div class="recap-toolbar-controls">
-
-            <input
-                type="search"
-                id="recapSearch"
-                class="recap-search"
-                placeholder="Cari nama atau NIS..."
-            >
-
-
-            <select
-                id="recapStatusFilter"
-                class="recap-filter"
-            >
-
-                <option value="all">
-                    Semua Status
-                </option>
-
-                <option value="present">
-                    Hadir
-                </option>
-
-                <option value="late">
-                    Terlambat
-                </option>
-
-                <option value="permission">
-                    Izin
-                </option>
-
-                <option value="sick">
-                    Sakit
-                </option>
-
-                <option value="absent">
-                    Alfa
-                </option>
-
-                <option value="not-yet">
-                    Belum Presensi
-                </option>
-
-            </select>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         TABLE
-    ================================================== -->
-
-    <div
-        class="recap-table-wrapper"
-        id="recapTableWrapper"
-    >
-
-        <table class="recap-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>
-                        SISWA
-                    </th>
-
-                    <th>
-                        NIS
-                    </th>
-
-                    <th>
-                        KELAS
-                    </th>
-
-                    <th>
-                        JAM MASUK
-                    </th>
-
-                    <th>
-                        STATUS
-                    </th>
-
-                    <th>
-                        CATATAN
-                    </th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody>
-
-                @foreach($recaps as $recap)
-
-                    @php
-                        $student =
-                            $recap['student'];
-
-                        $attendance =
-                            $recap['attendance'];
-
-                        $status =
-                            $recap['status'];
-
-                        $statusClass =
-                            $recap['status_class'];
-
-                        $statusLabel =
-                            $recap['status_label'];
-
-                        $icon =
-                            match ($status) {
-                                'present' =>
-                                    'check_circle',
-
-                                'late' =>
-                                    'schedule',
-
-                                'sick' =>
-                                    'medical_services',
-
-                                'permission' =>
-                                    'assignment',
-
-                                'absent' =>
-                                    'cancel',
-
-                                default =>
-                                    'hourglass_empty',
-                            };
-                    @endphp
-
-
-                    <tr
-                        class="recap-row"
-                        data-name="{{ strtolower($student->user?->name ?? '') }}"
-                        data-nis="{{ strtolower($student->nis ?? '') }}"
-                        data-status="{{ $statusClass }}"
+            <div class="control-actions">
+
+                <form
+                    method="GET"
+                    action="{{ route('guru.attendance.recap') }}"
+                    class="control-form"
+                >
+
+                    <input
+                        type="hidden"
+                        name="tab"
+                        value="harian"
+                    >
+
+                    <input
+                        type="date"
+                        name="date"
+                        value="{{ $date }}"
+                        class="control-input"
+                        required
                     >
 
 
-                        <!-- SISWA -->
+                    <button
+                        type="submit"
+                        class="control-button"
+                    >
 
-                        <td>
+                        <span class="material-symbols-outlined">
+                            filter_alt
+                        </span>
 
-                            <div class="recap-student">
+                        Tampilkan
 
-                                <div class="recap-avatar">
+                    </button>
 
-                                    {{
-                                        strtoupper(
-                                            substr(
-                                                $student->user?->name
-                                                ?? 'S',
-                                                0,
-                                                1
-                                            )
-                                        )
-                                    }}
-
-                                </div>
+                </form>
 
 
-                                <div>
+                <!-- =====================================
+                     DOWNLOAD HARIAN
+                ====================================== -->
 
-                                    <strong>
-                                        {{
-                                            $student->user?->name
-                                            ?? '-'
-                                        }}
-                                    </strong>
+                <details class="download-dropdown">
 
-                                    <span>
-                                        SISWA KKO
-                                    </span>
+                    <summary class="download-toggle">
 
-                                </div>
+                        <span class="material-symbols-outlined">
+                            download
+                        </span>
+
+                        Download
+
+                        <span class="material-symbols-outlined download-arrow">
+                            expand_more
+                        </span>
+
+                    </summary>
+
+
+                    <div class="download-menu">
+
+
+                        <!-- EXCEL HARIAN -->
+
+                        <a
+                            href="{{
+                                route(
+                                    'guru.attendance.recap.export',
+                                    [
+                                        'date' => $date,
+                                    ]
+                                )
+                            }}"
+                            class="download-option excel"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                table_view
+                            </span>
+
+
+                            <div class="download-option-text">
+
+                                <strong>
+                                    Excel
+                                </strong>
+
+                                <span>
+                                    Download file .xlsx
+                                </span>
 
                             </div>
 
-                        </td>
+                        </a>
 
 
-                        <!-- NIS -->
+                        <!-- PDF HARIAN -->
 
-                        <td>
+                        <a
+                            href="{{
+                                route(
+                                    'guru.attendance.recap.print',
+                                    [
+                                        'date' => $date,
+                                    ]
+                                )
+                            }}"
+                            class="download-option pdf"
+                            target="_blank"
+                            rel="noopener"
+                        >
 
-                            <span class="recap-time">
-                                {{ $student->nis ?? '-' }}
+                            <span class="material-symbols-outlined">
+                                picture_as_pdf
                             </span>
 
-                        </td>
 
+                            <div class="download-option-text">
 
-                        <!-- KELAS -->
+                                <strong>
+                                    PDF
+                                </strong>
 
-                        <td>
-
-                            {{
-                                $student->class?->name
-                                ?? '-'
-                            }}
-
-                        </td>
-
-
-                        <!-- JAM MASUK -->
-
-                        <td>
-
-                            @if($recap['check_in_time'])
-
-                                <span class="recap-time">
-                                    {{ $recap['check_in_time'] }}
+                                <span>
+                                    Cetak atau simpan PDF
                                 </span>
 
-                                <span class="recap-muted">
-                                    WIB
-                                </span>
+                            </div>
 
-                            @else
+                        </a>
 
-                                <span class="recap-muted">
-                                    -
-                                </span>
+                    </div>
 
-                            @endif
+                </details>
 
-                        </td>
+            </div>
+
+        </section>
 
 
-                        <!-- STATUS -->
+        <!-- =============================================
+             STATS HARIAN
+        ============================================== -->
 
-                        <td>
-
-                            <span class="recap-status {{ $statusClass }}">
-
-                                <span class="material-symbols-outlined">
-                                    {{ $icon }}
-                                </span>
-
-                                {{ $statusLabel }}
-
-                            </span>
-
-                        </td>
+        <section class="stats-grid daily">
 
 
-                        <!-- CATATAN -->
+            <article class="stat-card total">
 
-                        <td>
+                <div class="stat-label">
 
-                            @if($attendance?->notes)
+                    <span class="material-symbols-outlined">
+                        groups
+                    </span>
 
-                                <div class="recap-notes">
-                                    {{ $attendance->notes }}
-                                </div>
+                    TOTAL SISWA
 
-                            @else
+                </div>
 
-                                <span class="recap-muted">
-                                    -
-                                </span>
+                <strong>
+                    {{ $totalSiswa }}
+                </strong>
 
-                            @endif
+            </article>
 
-                        </td>
+
+            <article class="stat-card present">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        check_circle
+                    </span>
+
+                    HADIR
+
+                </div>
+
+                <strong>
+                    {{ $hadir }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card late">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        schedule
+                    </span>
+
+                    TERLAMBAT
+
+                </div>
+
+                <strong>
+                    {{ $terlambat }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card permission">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        assignment
+                    </span>
+
+                    IZIN
+
+                </div>
+
+                <strong>
+                    {{ $izin }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card sick">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        medical_services
+                    </span>
+
+                    SAKIT
+
+                </div>
+
+                <strong>
+                    {{ $sakit }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card absent">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        cancel
+                    </span>
+
+                    ALFA
+
+                </div>
+
+                <strong>
+                    {{ $alfa }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card not-yet">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        hourglass_empty
+                    </span>
+
+                    BELUM
+
+                </div>
+
+                <strong>
+                    {{ $belumPresensi }}
+                </strong>
+
+            </article>
+
+        </section>
+
+
+        <!-- =============================================
+             PERCENTAGE HARIAN
+        ============================================== -->
+
+        <section class="percentage-panel">
+
+            <div class="percentage-info">
+
+                <strong>
+                    Persentase Kehadiran Sekolah
+                </strong>
+
+                <span>
+                    Hadir + Terlambat dibanding seluruh siswa aktif.
+                </span>
+
+            </div>
+
+
+            <div class="percentage-value">
+
+                {{
+                    number_format(
+                        $persentaseHadir,
+                        1,
+                        ',',
+                        '.'
+                    )
+                }}%
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             TOOLBAR HARIAN
+        ============================================== -->
+
+        <section class="recap-toolbar">
+
+            <div class="recap-toolbar-title">
+
+                <h2>
+                    Daftar Presensi Siswa
+                </h2>
+
+                <p>
+                    {{ $datang }}
+                    dari
+                    {{ $totalSiswa }}
+                    siswa tercatat hadir atau terlambat.
+                </p>
+
+            </div>
+
+
+            <div class="toolbar-controls">
+
+                <input
+                    type="search"
+                    id="dailySearch"
+                    class="search-input"
+                    placeholder="Cari nama atau NIS..."
+                >
+
+
+                <select
+                    id="dailyStatusFilter"
+                    class="status-filter"
+                >
+
+                    <option value="all">
+                        Semua Status
+                    </option>
+
+                    <option value="present">
+                        Hadir
+                    </option>
+
+                    <option value="late">
+                        Terlambat
+                    </option>
+
+                    <option value="permission">
+                        Izin
+                    </option>
+
+                    <option value="sick">
+                        Sakit
+                    </option>
+
+                    <option value="absent">
+                        Alfa
+                    </option>
+
+                    <option value="not-yet">
+                        Belum Presensi
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             TABLE HARIAN
+        ============================================== -->
+
+        <div
+            class="table-wrapper"
+            id="dailyTableWrapper"
+        >
+
+            <table class="recap-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            SISWA
+                        </th>
+
+                        <th>
+                            NIS
+                        </th>
+
+                        <th>
+                            KELAS
+                        </th>
+
+                        <th>
+                            JAM MASUK
+                        </th>
+
+                        <th>
+                            STATUS
+                        </th>
+
+                        <th>
+                            CATATAN
+                        </th>
 
                     </tr>
 
-                @endforeach
+                </thead>
 
-            </tbody>
 
-        </table>
+                <tbody>
 
-    </div>
+                    @foreach($recaps as $recap)
+
+                        @php
+                            $student = $recap['student'];
+                            $attendance = $recap['attendance'];
+                            $status = $recap['status'];
+                            $statusClass = $recap['status_class'];
+                            $statusLabel = $recap['status_label'];
+
+                            $statusIcon = match ($status) {
+                                'present' => 'check_circle',
+                                'late' => 'schedule',
+                                'permission' => 'assignment',
+                                'sick' => 'medical_services',
+                                'absent' => 'cancel',
+                                default => 'hourglass_empty',
+                            };
+                        @endphp
+
+
+                        <tr
+                            class="daily-row"
+                            data-name="{{ strtolower($student->user?->name ?? '') }}"
+                            data-nis="{{ strtolower($student->nis ?? '') }}"
+                            data-status="{{ $statusClass }}"
+                        >
+
+
+                            <!-- SISWA -->
+
+                            <td>
+
+                                <div class="student-cell">
+
+                                    <div class="student-avatar">
+
+                                        {{
+                                            strtoupper(
+                                                substr(
+                                                    $student->user?->name
+                                                    ?? 'S',
+                                                    0,
+                                                    1
+                                                )
+                                            )
+                                        }}
+
+                                    </div>
+
+
+                                    <div class="student-data">
+
+                                        <strong>
+                                            {{
+                                                $student->user?->name
+                                                ?? 'Siswa KKO'
+                                            }}
+                                        </strong>
+
+                                        <span>
+                                            SISWA KKO
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- NIS -->
+
+                            <td>
+
+                                <span class="value">
+                                    {{ $student->nis ?? '-' }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- KELAS -->
+
+                            <td>
+
+                                {{
+                                    $student->class?->name
+                                    ?? '-'
+                                }}
+
+                            </td>
+
+
+                            <!-- JAM MASUK -->
+
+                            <td>
+
+                                @if($recap['check_in_time'])
+
+                                    <span class="value">
+                                        {{ $recap['check_in_time'] }}
+                                    </span>
+
+                                    <span class="muted">
+                                        WIB
+                                    </span>
+
+                                @else
+
+                                    <span class="muted">
+                                        -
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                <span class="status-badge {{ $statusClass }}">
+
+                                    <span class="material-symbols-outlined">
+                                        {{ $statusIcon }}
+                                    </span>
+
+                                    {{ $statusLabel }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- CATATAN -->
+
+                            <td>
+
+                                @if($attendance?->notes)
+
+                                    <div class="notes">
+                                        {{ $attendance->notes }}
+                                    </div>
+
+                                @else
+
+                                    <span class="muted">
+                                        -
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- =============================================
+             EMPTY HARIAN
+        ============================================== -->
+
+        <div
+            class="empty-state"
+            id="dailyEmpty"
+        >
+
+            <span class="material-symbols-outlined">
+                search_off
+            </span>
+
+            Tidak ada siswa yang sesuai dengan pencarian atau filter.
+
+        </div>
+
+    @endif
 
 
     <!-- =================================================
-         FILTER EMPTY
+         BULANAN
     ================================================== -->
 
-    <div
-        class="recap-filter-empty"
-        id="recapFilterEmpty"
-    >
+    @if($activeTab === 'bulanan')
 
-        <span class="material-symbols-outlined">
-            search_off
-        </span>
 
-        Tidak ada siswa yang sesuai dengan pencarian atau filter.
+        <!-- =============================================
+             CONTROL BULANAN
+        ============================================== -->
 
-    </div>
+        <section class="control-panel">
+
+            <div class="control-info">
+
+                <div class="control-icon">
+
+                    <span class="material-symbols-outlined">
+                        date_range
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        PERIODE REKAP
+                    </small>
+
+                    <strong>
+                        {{ $monthNames[$selectedMonth] ?? '-' }}
+                        {{ $selectedYear }}
+                    </strong>
+
+                    <span class="control-description">
+                        Pilih bulan dan tahun presensi sekolah.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="control-actions">
+
+
+                <!-- =====================================
+                     FILTER BULANAN
+                ====================================== -->
+
+                <form
+                    method="GET"
+                    action="{{ route('guru.attendance.recap') }}"
+                    class="control-form"
+                >
+
+                    <input
+                        type="hidden"
+                        name="tab"
+                        value="bulanan"
+                    >
+
+
+                    <div class="control-field">
+
+                        <label>
+                            BULAN
+                        </label>
+
+                        <select
+                            name="month"
+                            class="control-select"
+                        >
+
+                            @foreach($monthNames as $monthNumber => $monthName)
+
+                                <option
+                                    value="{{ $monthNumber }}"
+                                    @selected((int) $selectedMonth === (int) $monthNumber)
+                                >
+                                    {{ $monthName }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="control-field">
+
+                        <label>
+                            TAHUN
+                        </label>
+
+                        <select
+                            name="year"
+                            class="control-select"
+                        >
+
+                            @foreach($availableYears as $year)
+
+                                <option
+                                    value="{{ $year }}"
+                                    @selected((int) $selectedYear === (int) $year)
+                                >
+                                    {{ $year }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="control-button"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            filter_alt
+                        </span>
+
+                        Tampilkan
+
+                    </button>
+
+                </form>
+
+
+                <!-- =====================================
+                     DOWNLOAD BULANAN
+                ====================================== -->
+
+                <details class="download-dropdown">
+
+                    <summary class="download-toggle">
+
+                        <span class="material-symbols-outlined">
+                            download
+                        </span>
+
+                        Download
+
+                        <span class="material-symbols-outlined download-arrow">
+                            expand_more
+                        </span>
+
+                    </summary>
+
+
+                    <div class="download-menu">
+
+
+                        <!-- EXCEL BULANAN -->
+
+                        <a
+                            href="{{
+                                route(
+                                    'guru.attendance.monthly.export',
+                                    [
+                                        'month' => $selectedMonth,
+                                        'year' => $selectedYear,
+                                    ]
+                                )
+                            }}"
+                            class="download-option excel"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                table_view
+                            </span>
+
+
+                            <div class="download-option-text">
+
+                                <strong>
+                                    Excel
+                                </strong>
+
+                                <span>
+                                    Download file .xlsx
+                                </span>
+
+                            </div>
+
+                        </a>
+
+
+                        <!-- PDF BULANAN -->
+
+                        <a
+                            href="{{
+                                route(
+                                    'guru.attendance.monthly.print',
+                                    [
+                                        'month' => $selectedMonth,
+                                        'year' => $selectedYear,
+                                    ]
+                                )
+                            }}"
+                            class="download-option pdf"
+                            target="_blank"
+                            rel="noopener"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                picture_as_pdf
+                            </span>
+
+
+                            <div class="download-option-text">
+
+                                <strong>
+                                    PDF
+                                </strong>
+
+                                <span>
+                                    Cetak atau simpan PDF
+                                </span>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                </details>
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             STATS BULANAN
+        ============================================== -->
+
+        <section class="stats-grid">
+
+
+            <article class="stat-card days">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        calendar_month
+                    </span>
+
+                    TOTAL HARI
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['days'] }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card students">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        groups
+                    </span>
+
+                    TOTAL SISWA
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['students'] }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card present">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        check_circle
+                    </span>
+
+                    HADIR
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['present'] }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card late">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        schedule
+                    </span>
+
+                    TERLAMBAT
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['late'] }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card permission">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        assignment
+                    </span>
+
+                    IZIN
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['permission'] }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card sick">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        medical_services
+                    </span>
+
+                    SAKIT
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['sick'] }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card absent">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        cancel
+                    </span>
+
+                    ALFA
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['absent'] }}
+                </strong>
+
+            </article>
+
+
+            <article class="stat-card not-yet">
+
+                <div class="stat-label">
+
+                    <span class="material-symbols-outlined">
+                        hourglass_empty
+                    </span>
+
+                    BELUM TERCATAT
+
+                </div>
+
+                <strong>
+                    {{ $monthlySummary['not_recorded'] }}
+                </strong>
+
+            </article>
+
+        </section>
+
+
+        <!-- =============================================
+             PERCENTAGE BULANAN
+        ============================================== -->
+
+        <section class="percentage-panel">
+
+            <div class="percentage-info">
+
+                <strong>
+                    Persentase Kehadiran Sekolah Bulanan
+                </strong>
+
+                <span>
+                    Hadir + Terlambat dibanding seluruh kesempatan presensi.
+                </span>
+
+            </div>
+
+
+            <div class="percentage-value">
+
+                {{
+                    number_format(
+                        $monthlySummary['percentage'],
+                        1,
+                        ',',
+                        '.'
+                    )
+                }}%
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             TOOLBAR BULANAN
+        ============================================== -->
+
+        <section class="recap-toolbar">
+
+            <div class="recap-toolbar-title">
+
+                <h2>
+                    Rekap Per Siswa
+                </h2>
+
+                <p>
+                    Periode
+                    {{ $monthNames[$selectedMonth] ?? '-' }}
+                    {{ $selectedYear }}.
+                </p>
+
+            </div>
+
+
+            <div class="toolbar-controls">
+
+                <input
+                    type="search"
+                    id="monthlySearch"
+                    class="search-input"
+                    placeholder="Cari nama atau NIS..."
+                >
+
+            </div>
+
+        </section>
+
+
+        <!-- =============================================
+             TABLE BULANAN
+        ============================================== -->
+
+        <div
+            class="table-wrapper"
+            id="monthlyTableWrapper"
+        >
+
+            <table class="recap-table monthly-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            SISWA
+                        </th>
+
+                        <th>
+                            HADIR
+                        </th>
+
+                        <th>
+                            TERLAMBAT
+                        </th>
+
+                        <th>
+                            IZIN
+                        </th>
+
+                        <th>
+                            SAKIT
+                        </th>
+
+                        <th>
+                            ALFA
+                        </th>
+
+                        <th>
+                            BELUM
+                        </th>
+
+                        <th>
+                            KEHADIRAN
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @foreach($monthlyRecaps as $recap)
+
+                        @php
+                            $student = $recap['student'];
+                        @endphp
+
+
+                        <tr
+                            class="monthly-row"
+                            data-name="{{ strtolower($student->user?->name ?? '') }}"
+                            data-nis="{{ strtolower($student->nis ?? '') }}"
+                        >
+
+
+                            <!-- SISWA -->
+
+                            <td>
+
+                                <div class="student-cell">
+
+                                    <div class="student-avatar">
+
+                                        {{
+                                            strtoupper(
+                                                substr(
+                                                    $student->user?->name
+                                                    ?? 'S',
+                                                    0,
+                                                    1
+                                                )
+                                            )
+                                        }}
+
+                                    </div>
+
+
+                                    <div class="student-data">
+
+                                        <strong>
+                                            {{
+                                                $student->user?->name
+                                                ?? 'Siswa KKO'
+                                            }}
+                                        </strong>
+
+                                        <span>
+                                            NIS {{ $student->nis }}
+
+                                            ·
+
+                                            {{
+                                                $student->class?->name
+                                                ?? '-'
+                                            }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- HADIR -->
+
+                            <td>
+
+                                <span class="value present">
+                                    {{ $recap['present'] }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- TERLAMBAT -->
+
+                            <td>
+
+                                <span class="value late">
+                                    {{ $recap['late'] }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- IZIN -->
+
+                            <td>
+
+                                <span class="value permission">
+                                    {{ $recap['permission'] }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- SAKIT -->
+
+                            <td>
+
+                                <span class="value sick">
+                                    {{ $recap['sick'] }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- ALFA -->
+
+                            <td>
+
+                                <span class="value absent">
+                                    {{ $recap['absent'] }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- BELUM -->
+
+                            <td>
+
+                                <span class="value not-yet">
+                                    {{ $recap['not_recorded'] }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- KEHADIRAN -->
+
+                            <td>
+
+                                <span class="percentage-badge">
+
+                                    {{
+                                        number_format(
+                                            $recap['attendance_rate'],
+                                            1,
+                                            ',',
+                                            '.'
+                                        )
+                                    }}%
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- =============================================
+             EMPTY BULANAN
+        ============================================== -->
+
+        <div
+            class="empty-state"
+            id="monthlyEmpty"
+        >
+
+            <span class="material-symbols-outlined">
+                search_off
+            </span>
+
+            Tidak ada siswa yang sesuai dengan pencarian.
+
+        </div>
+
+    @endif
 
 </main>
 
 
 <!-- =====================================================
-     SEARCH + FILTER + DOWNLOAD
+     SCRIPT
 ===================================================== -->
 
 <script>
-    const recapSearch =
+    /*
+    =====================================================
+    DAILY SEARCH + FILTER
+    =====================================================
+    */
+
+    const dailySearch =
         document.getElementById(
-            'recapSearch'
+            'dailySearch'
         );
 
-    const recapStatusFilter =
+    const dailyStatusFilter =
         document.getElementById(
-            'recapStatusFilter'
+            'dailyStatusFilter'
         );
 
-    const recapRows =
+    const dailyRows =
         document.querySelectorAll(
-            '.recap-row'
+            '.daily-row'
         );
 
-    const recapTableWrapper =
+    const dailyTableWrapper =
         document.getElementById(
-            'recapTableWrapper'
+            'dailyTableWrapper'
         );
 
-    const recapFilterEmpty =
+    const dailyEmpty =
         document.getElementById(
-            'recapFilterEmpty'
+            'dailyEmpty'
         );
 
 
-    function filterRecap() {
+    function filterDaily() {
+        if (!dailyTableWrapper) {
+            return;
+        }
+
+
         const keyword =
-            recapSearch
-                ? recapSearch.value
+            dailySearch
+                ? dailySearch.value
                     .toLowerCase()
                     .trim()
                 : '';
 
+
         const selectedStatus =
-            recapStatusFilter
-                ? recapStatusFilter.value
+            dailyStatusFilter
+                ? dailyStatusFilter.value
                 : 'all';
+
 
         let visibleCount = 0;
 
 
-        recapRows.forEach(
+        dailyRows.forEach(
             function (row) {
                 const name =
                     row.dataset.name
@@ -1930,6 +3213,7 @@
                     row.dataset.status
                     || '';
 
+
                 const matchesSearch =
                     name.includes(
                         keyword
@@ -1939,10 +3223,12 @@
                         keyword
                     );
 
+
                 const matchesStatus =
                     selectedStatus === 'all'
                     ||
-                    selectedStatus === status;
+                    status === selectedStatus;
+
 
                 const visible =
                     matchesSearch
@@ -1963,37 +3249,143 @@
         );
 
 
-        if (visibleCount === 0) {
-            recapTableWrapper.style.display =
-                'none';
+        dailyTableWrapper.style.display =
+            visibleCount > 0
+                ? 'block'
+                : 'none';
 
-            recapFilterEmpty.style.display =
-                'block';
-        } else {
-            recapTableWrapper.style.display =
-                'block';
 
-            recapFilterEmpty.style.display =
-                'none';
+        if (dailyEmpty) {
+            dailyEmpty.style.display =
+                visibleCount > 0
+                    ? 'none'
+                    : 'block';
         }
     }
 
 
-    if (recapSearch) {
-        recapSearch.addEventListener(
+    if (dailySearch) {
+        dailySearch.addEventListener(
             'input',
-            filterRecap
+            filterDaily
         );
     }
 
 
-    if (recapStatusFilter) {
-        recapStatusFilter.addEventListener(
+    if (dailyStatusFilter) {
+        dailyStatusFilter.addEventListener(
             'change',
-            filterRecap
+            filterDaily
         );
     }
 
+
+    /*
+    =====================================================
+    MONTHLY SEARCH
+    =====================================================
+    */
+
+    const monthlySearch =
+        document.getElementById(
+            'monthlySearch'
+        );
+
+    const monthlyRows =
+        document.querySelectorAll(
+            '.monthly-row'
+        );
+
+    const monthlyTableWrapper =
+        document.getElementById(
+            'monthlyTableWrapper'
+        );
+
+    const monthlyEmpty =
+        document.getElementById(
+            'monthlyEmpty'
+        );
+
+
+    function filterMonthly() {
+        if (!monthlyTableWrapper) {
+            return;
+        }
+
+
+        const keyword =
+            monthlySearch
+                ? monthlySearch.value
+                    .toLowerCase()
+                    .trim()
+                : '';
+
+
+        let visibleCount = 0;
+
+
+        monthlyRows.forEach(
+            function (row) {
+                const name =
+                    row.dataset.name
+                    || '';
+
+                const nis =
+                    row.dataset.nis
+                    || '';
+
+
+                const visible =
+                    name.includes(
+                        keyword
+                    )
+                    ||
+                    nis.includes(
+                        keyword
+                    );
+
+
+                row.style.display =
+                    visible
+                        ? ''
+                        : 'none';
+
+
+                if (visible) {
+                    visibleCount++;
+                }
+            }
+        );
+
+
+        monthlyTableWrapper.style.display =
+            visibleCount > 0
+                ? 'block'
+                : 'none';
+
+
+        if (monthlyEmpty) {
+            monthlyEmpty.style.display =
+                visibleCount > 0
+                    ? 'none'
+                    : 'block';
+        }
+    }
+
+
+    if (monthlySearch) {
+        monthlySearch.addEventListener(
+            'input',
+            filterMonthly
+        );
+    }
+
+
+    /*
+    =====================================================
+    DOWNLOAD DROPDOWN
+    =====================================================
+    */
 
     document.addEventListener(
         'click',

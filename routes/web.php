@@ -12,10 +12,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\LeaveRequestController as GuruLeaveRequestController;
 use App\Http\Controllers\Guru\AttendanceRecapController;
-use App\Http\Controllers\Guru\MonthlyAttendanceRecapController;
 use App\Http\Controllers\Guru\ManualAttendanceController;
 use App\Http\Controllers\Guru\SchoolAttendanceRecapExportController;
 use App\Http\Controllers\Guru\SchoolAttendanceRecapPrintController;
+use App\Http\Controllers\Guru\MonthlySchoolAttendanceRecapExportController;
+use App\Http\Controllers\Guru\MonthlySchoolAttendanceRecapPrintController;
 
 
 /*
@@ -181,8 +182,27 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | REKAP PRESENSI HARIAN SEKOLAH
+        | REKAP PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
+        |
+        | Satu halaman untuk:
+        |
+        | - Presensi Harian
+        | - Presensi Bulanan
+        |
+        | Harian:
+        |
+        | /guru/rekap-presensi
+        | ?tab=harian
+        | &date=2026-08-26
+        |
+        | Bulanan:
+        |
+        | /guru/rekap-presensi
+        | ?tab=bulanan
+        | &month=8
+        | &year=2026
+        |
         */
 
         Route::get(
@@ -199,12 +219,13 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | EXPORT EXCEL REKAP PRESENSI SEKOLAH
+        | EXPORT EXCEL REKAP HARIAN SEKOLAH
         |--------------------------------------------------------------------------
         |
         | Contoh:
         |
-        | /guru/rekap-presensi/export?date=2026-08-26
+        | /guru/rekap-presensi/export
+        | ?date=2026-08-26
         |
         */
 
@@ -219,12 +240,13 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | CETAK / PDF REKAP PRESENSI SEKOLAH
+        | CETAK / PDF REKAP HARIAN SEKOLAH
         |--------------------------------------------------------------------------
         |
         | Contoh:
         |
-        | /guru/rekap-presensi/cetak?date=2026-08-26
+        | /guru/rekap-presensi/cetak
+        | ?date=2026-08-26
         |
         */
 
@@ -239,16 +261,121 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | REKAP PRESENSI BULANAN
+        | EXPORT EXCEL REKAP BULANAN SEKOLAH
         |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | /guru/rekap-presensi/bulanan/export
+        | ?month=8
+        | &year=2026
+        |
+        */
+
+        Route::get(
+            '/rekap-presensi/bulanan/export',
+            MonthlySchoolAttendanceRecapExportController::class
+        )
+        ->name(
+            'attendance.monthly.export'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CETAK / PDF REKAP BULANAN SEKOLAH
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | /guru/rekap-presensi/bulanan/cetak
+        | ?month=8
+        | &year=2026
+        |
+        */
+
+        Route::get(
+            '/rekap-presensi/bulanan/cetak',
+            MonthlySchoolAttendanceRecapPrintController::class
+        )
+        ->name(
+            'attendance.monthly.print'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ROUTE LAMA REKAP BULANAN
+        |--------------------------------------------------------------------------
+        |
+        | Route lama tetap dipertahankan agar link lama tidak rusak.
+        |
+        | Tetapi sekarang diarahkan ke satu halaman Rekap Presensi:
+        |
+        | /guru/rekap-presensi?tab=bulanan
+        |
         */
 
         Route::get(
             '/rekap-presensi/bulanan',
-            [
-                MonthlyAttendanceRecapController::class,
-                'index',
-            ]
+            function () {
+
+                $now =
+                    now(
+                        'Asia/Jakarta'
+                    );
+
+
+                $month =
+                    (int) request()->query(
+                        'month',
+                        $now->month
+                    );
+
+
+                $year =
+                    (int) request()->query(
+                        'year',
+                        $now->year
+                    );
+
+
+                if (
+                    $month < 1
+                    ||
+                    $month > 12
+                ) {
+                    $month =
+                        $now->month;
+                }
+
+
+                if (
+                    $year < 2020
+                    ||
+                    $year > 2100
+                ) {
+                    $year =
+                        $now->year;
+                }
+
+
+                return redirect()
+                    ->route(
+                        'guru.attendance.recap',
+                        [
+                            'tab' =>
+                                'bulanan',
+
+                            'month' =>
+                                $month,
+
+                            'year' =>
+                                $year,
+                        ]
+                    );
+
+            }
         )
         ->name(
             'attendance.monthly'
