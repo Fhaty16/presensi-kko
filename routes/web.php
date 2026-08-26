@@ -48,6 +48,7 @@ use App\Http\Controllers\BarcodeDisplayController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingBarcodeController;
 use App\Http\Controllers\StudentSportController;
+use App\Http\Controllers\TrainingAttendanceRecapExportController;
 
 
 /*
@@ -325,9 +326,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | JADWAL LATIHAN KKO
         |--------------------------------------------------------------------------
-        |
-        | Menampilkan sesi latihan sesuai cabang olahraga siswa.
-        |
         */
 
         Route::get(
@@ -388,19 +386,13 @@ Route::middleware([
         | - Presensi Sekolah
         | - Presensi Latihan KKO
         |
-        | Contoh:
-        |
-        | Presensi Sekolah:
+        | Sekolah:
         |
         | /siswa/riwayat-presensi?type=school
         |
-        | Presensi Latihan:
+        | Latihan:
         |
         | /siswa/riwayat-presensi?type=training
-        |
-        | Controller:
-        |
-        | AttendanceHistoryController
         |
         */
 
@@ -493,9 +485,6 @@ Route::middleware([
 |
 | Digunakan oleh Guru dan Pelatih.
 |
-| TrainingController dan TrainingBarcodeController
-| melakukan pengecekan role Guru / Pelatih.
-|
 */
 
 Route::middleware(
@@ -525,11 +514,6 @@ Route::middleware(
         |--------------------------------------------------------------------------
         | BUAT SESI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Harus berada sebelum:
-        |
-        | /latihan/{trainingSession}
-        |
         */
 
         Route::get(
@@ -693,7 +677,7 @@ Route::middleware(
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Route parameter umum harus berada paling bawah.
+        | Route parameter umum diletakkan paling bawah.
         |
         */
 
@@ -718,13 +702,11 @@ Route::middleware(
 |
 | Digunakan Guru dan Pelatih untuk:
 |
-| - melihat cabang olahraga siswa
-| - menentukan cabang olahraga siswa
-| - mengganti cabang olahraga siswa
-| - melihat rekap presensi latihan
-| - melihat detail riwayat presensi siswa
-|
-| StudentSportController melakukan pengecekan role.
+| - Melihat cabang olahraga siswa
+| - Mengubah cabang olahraga siswa
+| - Melihat rekap presensi latihan
+| - Melihat detail presensi siswa
+| - Export rekap presensi latihan ke Excel
 |
 */
 
@@ -748,6 +730,31 @@ Route::middleware(
         )
         ->name(
             'students.sports.index'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EXPORT REKAP PRESENSI LATIHAN KE EXCEL
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | /data-cabang-siswa/export
+        | ?sport=Atletik
+        | &month=8
+        | &year=2026
+        |
+        | Route ini HARUS berada sebelum route {student}.
+        |
+        */
+
+        Route::get(
+            '/data-cabang-siswa/export',
+            TrainingAttendanceRecapExportController::class
+        )
+        ->name(
+            'students.sports.export'
         );
 
 

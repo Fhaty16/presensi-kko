@@ -789,6 +789,61 @@
 
         /*
         =====================================================
+        EXPORT EXCEL BUTTON
+        =====================================================
+        */
+
+        .recap-export-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            height: 38px;
+
+            padding: 0 14px;
+
+            box-sizing: border-box;
+
+            color: #8ce8c3;
+            background: rgba(54, 211, 153, .08);
+
+            border: 1px solid rgba(54, 211, 153, .35);
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            white-space: nowrap;
+
+            transition:
+                color .18s ease,
+                background .18s ease,
+                border-color .18s ease,
+                transform .18s ease;
+        }
+
+
+        .recap-export-button:hover {
+            transform: translateY(-1px);
+
+            color: #101415;
+            background: #8ce8c3;
+
+            border-color: #8ce8c3;
+        }
+
+
+        .recap-export-button .material-symbols-outlined {
+            font-size: 16px;
+        }
+
+
+        /*
+        =====================================================
         REKAP STATS
         =====================================================
         */
@@ -1315,8 +1370,11 @@
             }
 
 
-            .recap-filter-button {
+            .recap-filter-button,
+            .recap-export-button {
                 grid-column: 1 / -1;
+
+                width: 100%;
             }
 
 
@@ -2079,7 +2137,7 @@
 
 
             <!-- =============================================
-                 FILTER
+                 FILTER + EXPORT
             ============================================== -->
 
             <div class="recap-filter-panel">
@@ -2200,6 +2258,35 @@
                         Tampilkan
 
                     </button>
+
+
+                    <a
+                        href="{{
+                            route(
+                                'students.sports.export',
+                                [
+                                    'sport' =>
+                                        $selectedSport,
+
+                                    'month' =>
+                                        $selectedMonth,
+
+                                    'year' =>
+                                        $selectedYear,
+                                ]
+                            )
+                        }}"
+                        class="recap-export-button"
+                        title="Download rekap presensi ke Excel"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            download
+                        </span>
+
+                        Download Excel
+
+                    </a>
 
                 </form>
 
