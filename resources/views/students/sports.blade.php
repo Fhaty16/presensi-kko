@@ -40,15 +40,28 @@
     >
 
     <style>
+        /*
+        =====================================================
+        GLOBAL
+        =====================================================
+        */
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
 
-            background: #101415;
             color: #ffffff;
+            background: #101415;
 
             font-family: 'Hanken Grotesk', sans-serif;
         }
 
+        a {
+            color: inherit;
+        }
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
@@ -69,11 +82,6 @@
 
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
-        }
-
-
-        a {
-            color: inherit;
         }
 
 
@@ -118,7 +126,6 @@
             font-weight: 700;
         }
 
-
         .back-link .material-symbols-outlined {
             font-size: 17px;
         }
@@ -140,7 +147,6 @@
             margin-bottom: 24px;
         }
 
-
         .page-label {
             display: block;
 
@@ -155,7 +161,6 @@
             letter-spacing: 1.4px;
         }
 
-
         .page-heading h1 {
             margin: 0;
 
@@ -164,7 +169,6 @@
             font-weight: 800;
         }
 
-
         .page-heading p {
             margin: 7px 0 0;
 
@@ -172,7 +176,6 @@
 
             font-size: 10px;
         }
-
 
         .role-badge {
             display: inline-flex;
@@ -191,6 +194,8 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
             font-weight: 800;
+
+            white-space: nowrap;
         }
 
 
@@ -207,6 +212,7 @@
             gap: 8px;
 
             margin-bottom: 16px;
+
             padding: 12px 14px;
 
             color: #8ce8c3;
@@ -217,7 +223,6 @@
 
             font-size: 9px;
         }
-
 
         .success-message .material-symbols-outlined {
             font-size: 18px;
@@ -240,7 +245,6 @@
             margin-bottom: 11px;
         }
 
-
         .filter-bar > span {
             color: #72808c;
 
@@ -248,7 +252,6 @@
             font-size: 8px;
             font-weight: 700;
         }
-
 
         .show-all-button {
             display: inline-flex;
@@ -271,12 +274,14 @@
             font-weight: 800;
         }
 
+        .show-all-button:hover {
+            background: rgba(0, 114, 188, .15);
+        }
 
         .show-all-button.active {
             color: #101415;
             background: #9dcaff;
         }
-
 
         .show-all-button .material-symbols-outlined {
             font-size: 15px;
@@ -285,7 +290,7 @@
 
         /*
         =====================================================
-        CARD CABANG
+        SPORT CARDS
         =====================================================
         */
 
@@ -299,7 +304,6 @@
 
             margin-bottom: 18px;
         }
-
 
         .stat-card {
             display: block;
@@ -319,20 +323,17 @@
                 background .18s ease;
         }
 
-
         .stat-card:hover {
             transform: translateY(-2px);
 
             border-color: rgba(157, 202, 255, .48);
         }
 
-
         .stat-card.active {
             background: rgba(0, 114, 188, .12);
 
             border-color: #9dcaff;
         }
-
 
         .stat-card span {
             display: block;
@@ -348,7 +349,6 @@
             line-height: 1.4;
         }
 
-
         .stat-card strong {
             display: block;
 
@@ -360,23 +360,19 @@
             font-size: 22px;
         }
 
-
         .stat-card.active span {
             color: #9dcaff;
         }
 
-
         .stat-card.unassigned {
             cursor: default;
         }
-
 
         .stat-card.unassigned:hover {
             transform: none;
 
             border-color: #34485d;
         }
-
 
         .stat-card.unassigned strong {
             color: #ffb866;
@@ -396,6 +392,7 @@
             gap: 5px;
 
             margin-bottom: 24px;
+
             padding: 5px;
 
             background: #151b20;
@@ -403,7 +400,6 @@
             border: 1px solid #303c48;
             border-radius: 10px;
         }
-
 
         .sport-tab {
             display: inline-flex;
@@ -426,17 +422,14 @@
             font-weight: 700;
         }
 
-
         .sport-tab:hover {
             color: #dce7ef;
         }
-
 
         .sport-tab.active {
             color: #101415;
             background: #9dcaff;
         }
-
 
         .sport-tab .material-symbols-outlined {
             font-size: 16px;
@@ -459,14 +452,12 @@
             margin-bottom: 13px;
         }
 
-
         .list-heading h2 {
             margin: 0;
 
             font-family: 'Anybody', sans-serif;
             font-size: 20px;
         }
-
 
         .list-heading p {
             margin: 5px 0 0;
@@ -475,7 +466,6 @@
 
             font-size: 9px;
         }
-
 
         .student-count {
             color: #82929e;
@@ -497,7 +487,6 @@
             gap: 10px;
         }
 
-
         .student-card {
             display: grid;
 
@@ -518,7 +507,6 @@
             border-radius: 12px;
         }
 
-
         .student-profile {
             display: flex;
             align-items: center;
@@ -527,7 +515,6 @@
 
             min-width: 0;
         }
-
 
         .student-avatar {
             width: 43px;
@@ -549,11 +536,9 @@
             font-weight: 800;
         }
 
-
         .student-data {
             min-width: 0;
         }
-
 
         .student-data strong {
             display: block;
@@ -568,7 +553,6 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
 
         .student-meta {
             display: flex;
@@ -603,11 +587,8 @@
             font-weight: 800;
         }
 
-
         .sport-field select {
             width: 100%;
-
-            box-sizing: border-box;
 
             padding: 10px 11px;
 
@@ -624,11 +605,9 @@
             font-weight: 600;
         }
 
-
         .sport-field select:focus {
             border-color: #9dcaff;
         }
-
 
         .save-button {
             display: inline-flex;
@@ -656,11 +635,9 @@
             white-space: nowrap;
         }
 
-
         .save-button:hover {
             filter: brightness(1.05);
         }
-
 
         .save-button .material-symbols-outlined {
             font-size: 16px;
@@ -681,14 +658,17 @@
             gap: 20px;
 
             margin-bottom: 16px;
+
             padding: 16px;
 
             background: #1b2531;
 
             border: 1px solid #34485d;
             border-radius: 12px;
-        }
 
+            position: relative;
+            z-index: 20;
+        }
 
         .recap-filter-info strong {
             display: block;
@@ -698,7 +678,6 @@
             font-family: 'Anybody', sans-serif;
             font-size: 14px;
         }
-
 
         .recap-filter-info span {
             display: block;
@@ -710,14 +689,12 @@
             font-size: 8px;
         }
 
-
         .recap-filter-form {
             display: flex;
             align-items: flex-end;
 
             gap: 8px;
         }
-
 
         .recap-filter-field label {
             display: block;
@@ -731,12 +708,9 @@
             font-weight: 800;
         }
 
-
         .recap-filter-field select {
             min-width: 130px;
             height: 38px;
-
-            box-sizing: border-box;
 
             padding: 0 10px;
 
@@ -752,11 +726,16 @@
             font-size: 9px;
         }
 
-
         .recap-filter-field select:focus {
             border-color: #9dcaff;
         }
 
+
+        /*
+        =====================================================
+        TAMPILKAN BUTTON
+        =====================================================
+        */
 
         .recap-filter-button {
             display: inline-flex;
@@ -777,10 +756,16 @@
 
             cursor: pointer;
 
+            font-family: 'Hanken Grotesk', sans-serif;
             font-size: 9px;
             font-weight: 800;
+
+            white-space: nowrap;
         }
 
+        .recap-filter-button:hover {
+            filter: brightness(1.05);
+        }
 
         .recap-filter-button .material-symbols-outlined {
             font-size: 16px;
@@ -789,11 +774,17 @@
 
         /*
         =====================================================
-        EXPORT EXCEL BUTTON
+        DOWNLOAD DROPDOWN
         =====================================================
         */
 
-        .recap-export-button {
+        .download-dropdown {
+            position: relative;
+
+            flex-shrink: 0;
+        }
+
+        .download-toggle {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -804,41 +795,152 @@
 
             padding: 0 14px;
 
-            box-sizing: border-box;
-
             color: #8ce8c3;
             background: rgba(54, 211, 153, .08);
 
             border: 1px solid rgba(54, 211, 153, .35);
             border-radius: 8px;
 
-            text-decoration: none;
+            cursor: pointer;
 
-            font-size: 9px;
-            font-weight: 800;
+            list-style: none;
+
+            user-select: none;
 
             white-space: nowrap;
+
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-size: 9px;
+            font-weight: 800;
 
             transition:
                 color .18s ease,
                 background .18s ease,
-                border-color .18s ease,
-                transform .18s ease;
+                border-color .18s ease;
         }
 
+        .download-toggle::-webkit-details-marker {
+            display: none;
+        }
 
-        .recap-export-button:hover {
-            transform: translateY(-1px);
+        .download-toggle::marker {
+            content: '';
+        }
 
+        .download-toggle:hover,
+        .download-dropdown[open] .download-toggle {
             color: #101415;
             background: #8ce8c3;
 
             border-color: #8ce8c3;
         }
 
-
-        .recap-export-button .material-symbols-outlined {
+        .download-toggle .material-symbols-outlined {
             font-size: 16px;
+        }
+
+        .download-toggle .dropdown-arrow {
+            font-size: 15px;
+
+            transition: transform .18s ease;
+        }
+
+        .download-dropdown[open]
+        .download-toggle
+        .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .download-menu {
+            position: absolute;
+
+            top: calc(100% + 7px);
+            right: 0;
+
+            z-index: 999;
+
+            width: 195px;
+
+            padding: 5px;
+
+            background: #151d25;
+
+            border: 1px solid #34485d;
+            border-radius: 10px;
+
+            box-shadow:
+                0 12px 30px
+                rgba(0, 0, 0, .30);
+        }
+
+        .download-option {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            width: 100%;
+
+            padding: 10px 11px;
+
+            color: #cbd6dd;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 9px;
+            font-weight: 700;
+
+            transition:
+                color .15s ease,
+                background .15s ease;
+        }
+
+        .download-option:hover {
+            color: #ffffff;
+            background: #1f2b36;
+        }
+
+        .download-option .material-symbols-outlined {
+            width: 19px;
+
+            flex-shrink: 0;
+
+            font-size: 18px;
+        }
+
+        .download-option.excel
+        .material-symbols-outlined {
+            color: #8ce8c3;
+        }
+
+        .download-option.pdf
+        .material-symbols-outlined {
+            color: #ffaaa5;
+        }
+
+        .download-option-text {
+            min-width: 0;
+        }
+
+        .download-option-text strong {
+            display: block;
+
+            color: inherit;
+
+            font-size: 9px;
+        }
+
+        .download-option-text span {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #71808b;
+
+            font-size: 7px;
+            font-weight: 500;
         }
 
 
@@ -859,7 +961,6 @@
             margin-bottom: 15px;
         }
 
-
         .recap-stat {
             padding: 13px;
 
@@ -868,7 +969,6 @@
             border: 1px solid #34485d;
             border-radius: 10px;
         }
-
 
         .recap-stat span {
             display: block;
@@ -882,7 +982,6 @@
             font-weight: 800;
         }
 
-
         .recap-stat strong {
             display: block;
 
@@ -892,26 +991,21 @@
             font-size: 22px;
         }
 
-
         .recap-stat.present strong {
             color: #8ce8c3;
         }
-
 
         .recap-stat.late strong {
             color: #ffb866;
         }
 
-
         .recap-stat.permission strong {
             color: #eacb84;
         }
 
-
         .recap-stat.sick strong {
             color: #9dcaff;
         }
-
 
         .recap-stat.absent strong {
             color: #ffaaa5;
@@ -920,7 +1014,7 @@
 
         /*
         =====================================================
-        OVERALL ATTENDANCE
+        OVERALL
         =====================================================
         */
 
@@ -932,6 +1026,7 @@
             gap: 20px;
 
             margin-bottom: 15px;
+
             padding: 14px 15px;
 
             background: rgba(0, 114, 188, .08);
@@ -940,7 +1035,6 @@
             border-radius: 11px;
         }
 
-
         .overall-attendance strong {
             display: block;
 
@@ -948,7 +1042,6 @@
 
             font-size: 10px;
         }
-
 
         .overall-attendance span {
             display: block;
@@ -959,7 +1052,6 @@
 
             font-size: 8px;
         }
-
 
         .overall-percentage {
             flex-shrink: 0;
@@ -984,7 +1076,6 @@
             border-radius: 13px;
         }
 
-
         .recap-table {
             min-width: 980px;
 
@@ -995,7 +1086,6 @@
             border: 1px solid #34485d;
             border-radius: 13px;
         }
-
 
         .recap-table-head,
         .recap-row {
@@ -1012,7 +1102,6 @@
             gap: 10px;
         }
 
-
         .recap-table-head {
             padding: 11px 14px;
 
@@ -1026,18 +1115,15 @@
             font-weight: 800;
         }
 
-
         .recap-row {
             padding: 13px 14px;
 
             border-bottom: 1px solid #2d3944;
         }
 
-
         .recap-row:last-child {
             border-bottom: 0;
         }
-
 
         .recap-student {
             display: flex;
@@ -1047,7 +1133,6 @@
 
             min-width: 0;
         }
-
 
         .recap-avatar {
             width: 37px;
@@ -1069,11 +1154,9 @@
             font-weight: 800;
         }
 
-
         .recap-student-data {
             min-width: 0;
         }
-
 
         .recap-student-data strong {
             display: block;
@@ -1088,7 +1171,6 @@
             white-space: nowrap;
         }
 
-
         .recap-student-data span {
             display: block;
 
@@ -1100,7 +1182,6 @@
             font-size: 7px;
         }
 
-
         .recap-value {
             color: #d3dce2;
 
@@ -1109,31 +1190,25 @@
             font-weight: 700;
         }
 
-
         .recap-value.present {
             color: #8ce8c3;
         }
-
 
         .recap-value.late {
             color: #ffb866;
         }
 
-
         .recap-value.permission {
             color: #eacb84;
         }
-
 
         .recap-value.sick {
             color: #9dcaff;
         }
 
-
         .recap-value.absent {
             color: #ffaaa5;
         }
-
 
         .percentage-badge {
             display: inline-flex;
@@ -1192,7 +1267,6 @@
                 transform .18s ease;
         }
 
-
         .detail-button:hover {
             transform: translateY(-1px);
 
@@ -1201,7 +1275,6 @@
 
             border-color: #9dcaff;
         }
-
 
         .detail-button .material-symbols-outlined {
             font-size: 14px;
@@ -1225,7 +1298,6 @@
             border-radius: 13px;
         }
 
-
         .empty-state .material-symbols-outlined {
             display: block;
 
@@ -1236,14 +1308,12 @@
             font-size: 40px;
         }
 
-
         .empty-state strong {
             display: block;
 
             font-family: 'Anybody', sans-serif;
             font-size: 14px;
         }
-
 
         .empty-state p {
             max-width: 500px;
@@ -1264,7 +1334,6 @@
         */
 
         @media (max-width: 950px) {
-
             .recap-stats {
                 grid-template-columns:
                     repeat(3, minmax(0, 1fr));
@@ -1273,24 +1342,18 @@
 
 
         @media (max-width: 850px) {
-
             .stats-grid {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
 
-
             .student-card {
                 grid-template-columns: 1fr;
             }
 
-
             .save-button {
                 width: 100%;
-
-                box-sizing: border-box;
             }
-
 
             .recap-filter-panel {
                 align-items: stretch;
@@ -1300,59 +1363,45 @@
 
 
         @media (max-width: 600px) {
-
             .sport-page {
                 width: calc(100% - 28px);
 
-                padding:
-                    24px
-                    0
-                    90px;
+                padding: 24px 0 90px;
             }
-
 
             .page-heading {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
-
             .page-heading h1 {
                 font-size: 26px;
             }
-
 
             .filter-bar {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
-
             .stats-grid {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
 
-
             .sport-tabs {
                 display: flex;
 
                 width: 100%;
-
-                box-sizing: border-box;
             }
-
 
             .sport-tab {
                 flex: 1;
             }
 
-
             .list-heading {
                 align-items: flex-start;
                 flex-direction: column;
             }
-
 
             .recap-filter-form {
                 display: grid;
@@ -1363,26 +1412,31 @@
                     repeat(2, minmax(0, 1fr));
             }
 
-
             .recap-filter-field select {
                 width: 100%;
                 min-width: 0;
             }
 
-
             .recap-filter-button,
-            .recap-export-button {
+            .download-dropdown {
                 grid-column: 1 / -1;
 
                 width: 100%;
             }
 
+            .recap-filter-button,
+            .download-toggle {
+                width: 100%;
+            }
+
+            .download-menu {
+                width: 100%;
+            }
 
             .recap-stats {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
-
 
             .overall-attendance {
                 align-items: flex-start;
@@ -1397,27 +1451,17 @@
 
 
 @php
-
-    /*
-    |--------------------------------------------------------------------------
-    | DEFAULT VARIABLE
-    |--------------------------------------------------------------------------
-    */
-
     $activeTab =
         $activeTab
         ?? 'data';
-
 
     $selectedMonth =
         $selectedMonth
         ?? now('Asia/Jakarta')->month;
 
-
     $selectedYear =
         $selectedYear
         ?? now('Asia/Jakarta')->year;
-
 
     $availableYears =
         $availableYears
@@ -1426,11 +1470,9 @@
             now('Asia/Jakarta')->year - 4
         );
 
-
     $studentRecaps =
         $studentRecaps
         ?? collect();
-
 
     $recapStats =
         $recapStats
@@ -1444,7 +1486,6 @@
             'attended' => 0,
             'percentage' => 0,
         ];
-
 
     $monthNames = [
         1 => 'Januari',
@@ -1460,9 +1501,12 @@
         11 => 'November',
         12 => 'Desember',
     ];
-
 @endphp
 
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
 
 <header class="kko-header">
 
@@ -1485,6 +1529,7 @@
                 <div class="kko-brand-title">
                     KKO SMANDA
                 </div>
+
 
                 <div class="kko-role-badge">
 
@@ -1569,12 +1614,16 @@
 </header>
 
 
+<!-- =====================================================
+     MAIN
+====================================================== -->
+
 <main class="sport-page">
 
 
-    <!-- =====================================================
+    <!-- =================================================
          BACK
-    ====================================================== -->
+    ================================================== -->
 
     <a
         href="{{
@@ -1594,9 +1643,9 @@
     </a>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          SUCCESS
-    ====================================================== -->
+    ================================================== -->
 
     @if(session('success'))
 
@@ -1613,9 +1662,9 @@
     @endif
 
 
-    <!-- =====================================================
+    <!-- =================================================
          HEADING
-    ====================================================== -->
+    ================================================== -->
 
     <section class="page-heading">
 
@@ -1624,6 +1673,7 @@
             <span class="page-label">
                 DATA SISWA KKO
             </span>
+
 
             <h1>
 
@@ -1672,9 +1722,9 @@
     </section>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          FILTER CABANG
-    ====================================================== -->
+    ================================================== -->
 
     <div class="filter-bar">
 
@@ -1699,25 +1749,20 @@
     </div>
 
 
-    <!-- =====================================================
-         CARD CABANG
-    ====================================================== -->
+    <!-- =================================================
+         SPORT CARDS
+    ================================================== -->
 
     <section class="stats-grid">
 
         @foreach($sports as $sport)
 
             @php
-
                 $sportRouteParameters = [
                     'sport' => $sport,
                 ];
 
-
-                if (
-                    $activeTab === 'rekap'
-                ) {
-
+                if ($activeTab === 'rekap') {
                     $sportRouteParameters['tab'] =
                         'rekap';
 
@@ -1727,7 +1772,6 @@
                     $sportRouteParameters['year'] =
                         $selectedYear;
                 }
-
             @endphp
 
 
@@ -1769,9 +1813,9 @@
     </section>
 
 
-    <!-- =====================================================
-         TAB DATA / REKAP
-    ====================================================== -->
+    <!-- =================================================
+         TAB
+    ================================================== -->
 
     @if($selectedSport)
 
@@ -1782,11 +1826,8 @@
                     route(
                         'students.sports.index',
                         [
-                            'sport' =>
-                                $selectedSport,
-
-                            'tab' =>
-                                'data',
+                            'sport' => $selectedSport,
+                            'tab' => 'data',
                         ]
                     )
                 }}"
@@ -1807,17 +1848,10 @@
                     route(
                         'students.sports.index',
                         [
-                            'sport' =>
-                                $selectedSport,
-
-                            'tab' =>
-                                'rekap',
-
-                            'month' =>
-                                $selectedMonth,
-
-                            'year' =>
-                                $selectedYear,
+                            'sport' => $selectedSport,
+                            'tab' => 'rekap',
+                            'month' => $selectedMonth,
+                            'year' => $selectedYear,
                         ]
                     )
                 }}"
@@ -1837,9 +1871,9 @@
     @endif
 
 
-    <!-- =====================================================
+    <!-- =================================================
          DATA SISWA
-    ====================================================== -->
+    ================================================== -->
 
     @if($activeTab === 'data')
 
@@ -1873,7 +1907,8 @@
 
                         @else
 
-                            Pilih cabang olahraga kemudian simpan perubahan.
+                            Pilih cabang olahraga kemudian
+                            simpan perubahan.
 
                         @endif
 
@@ -1967,8 +2002,7 @@
                                         <span>
 
                                             {{
-                                                $student
-                                                    ->class?->name
+                                                $student->class?->name
                                                 ?? 'Kelas belum ditentukan'
                                             }}
 
@@ -1996,11 +2030,7 @@
                                     <option
                                         value=""
                                         disabled
-                                        {{
-                                            !$student->sport
-                                                ? 'selected'
-                                                : ''
-                                        }}
+                                        {{ !$student->sport ? 'selected' : '' }}
                                     >
                                         Pilih Cabang Olahraga
                                     </option>
@@ -2010,11 +2040,7 @@
 
                                         <option
                                             value="{{ $sport }}"
-                                            {{
-                                                $student->sport === $sport
-                                                    ? 'selected'
-                                                    : ''
-                                            }}
+                                            {{ $student->sport === $sport ? 'selected' : '' }}
                                         >
                                             {{ $sport }}
                                         </option>
@@ -2072,8 +2098,8 @@
 
                         @if($selectedSport)
 
-                            Belum ada siswa aktif yang terdaftar pada
-                            cabang {{ $selectedSport }}.
+                            Belum ada siswa aktif yang terdaftar
+                            pada cabang {{ $selectedSport }}.
 
                         @else
 
@@ -2092,19 +2118,17 @@
     @endif
 
 
-    <!-- =====================================================
+    <!-- =================================================
          REKAP PRESENSI
-    ====================================================== -->
+    ================================================== -->
 
-    @if(
-        $selectedSport
-        && $activeTab === 'rekap'
-    )
+    @if($selectedSport && $activeTab === 'rekap')
 
         <section>
 
+
             <!-- =============================================
-                 HEADING REKAP
+                 HEADING
             ============================================== -->
 
             <div class="list-heading">
@@ -2137,7 +2161,7 @@
 
 
             <!-- =============================================
-                 FILTER + EXPORT
+                 FILTER + DOWNLOAD
             ============================================== -->
 
             <div class="recap-filter-panel">
@@ -2157,11 +2181,7 @@
 
                 <form
                     method="GET"
-                    action="{{
-                        route(
-                            'students.sports.index'
-                        )
-                    }}"
+                    action="{{ route('students.sports.index') }}"
                     class="recap-filter-form"
                 >
 
@@ -2178,31 +2198,23 @@
                     >
 
 
+                    <!-- BULAN -->
+
                     <div class="recap-filter-field">
 
                         <label>
                             BULAN
                         </label>
 
-                        <select
-                            name="month"
-                        >
+                        <select name="month">
 
-                            @foreach(
-                                $monthNames
-                                as $monthNumber => $monthName
-                            )
+                            @foreach($monthNames as $monthNumber => $monthName)
 
                                 <option
                                     value="{{ $monthNumber }}"
-                                    @selected(
-                                        $selectedMonth
-                                        === $monthNumber
-                                    )
+                                    @selected((int) $selectedMonth === (int) $monthNumber)
                                 >
-
                                     {{ $monthName }}
-
                                 </option>
 
                             @endforeach
@@ -2211,6 +2223,8 @@
 
                     </div>
 
+
+                    <!-- TAHUN -->
 
                     <div class="recap-filter-field">
 
@@ -2218,25 +2232,15 @@
                             TAHUN
                         </label>
 
-                        <select
-                            name="year"
-                        >
+                        <select name="year">
 
-                            @foreach(
-                                $availableYears
-                                as $year
-                            )
+                            @foreach($availableYears as $year)
 
                                 <option
                                     value="{{ $year }}"
-                                    @selected(
-                                        $selectedYear
-                                        === $year
-                                    )
+                                    @selected((int) $selectedYear === (int) $year)
                                 >
-
                                     {{ $year }}
-
                                 </option>
 
                             @endforeach
@@ -2245,6 +2249,8 @@
 
                     </div>
 
+
+                    <!-- TAMPILKAN -->
 
                     <button
                         type="submit"
@@ -2260,33 +2266,110 @@
                     </button>
 
 
-                    <a
-                        href="{{
-                            route(
-                                'students.sports.export',
-                                [
-                                    'sport' =>
-                                        $selectedSport,
+                    <!-- =========================================
+                         DOWNLOAD
+                    ========================================== -->
 
-                                    'month' =>
-                                        $selectedMonth,
+                    <details class="download-dropdown">
 
-                                    'year' =>
-                                        $selectedYear,
-                                ]
-                            )
-                        }}"
-                        class="recap-export-button"
-                        title="Download rekap presensi ke Excel"
-                    >
+                        <summary class="download-toggle">
 
-                        <span class="material-symbols-outlined">
-                            download
-                        </span>
+                            <span class="material-symbols-outlined">
+                                download
+                            </span>
 
-                        Download Excel
+                            Download
 
-                    </a>
+                            <span
+                                class="material-symbols-outlined dropdown-arrow"
+                            >
+                                expand_more
+                            </span>
+
+                        </summary>
+
+
+                        <div class="download-menu">
+
+
+                            <!-- EXCEL -->
+
+                            <a
+                                href="{{
+                                    route(
+                                        'students.sports.export',
+                                        [
+                                            'sport' => $selectedSport,
+                                            'month' => $selectedMonth,
+                                            'year' => $selectedYear,
+                                        ]
+                                    )
+                                }}"
+                                class="download-option excel"
+                                title="Download rekap dalam format Excel"
+                            >
+
+                                <span class="material-symbols-outlined">
+                                    table_view
+                                </span>
+
+
+                                <div class="download-option-text">
+
+                                    <strong>
+                                        Excel
+                                    </strong>
+
+                                    <span>
+                                        Download file .xlsx
+                                    </span>
+
+                                </div>
+
+                            </a>
+
+
+                            <!-- PDF -->
+
+                            <a
+                                href="{{
+                                    route(
+                                        'students.sports.print',
+                                        [
+                                            'sport' => $selectedSport,
+                                            'month' => $selectedMonth,
+                                            'year' => $selectedYear,
+                                        ]
+                                    )
+                                }}"
+                                class="download-option pdf"
+                                title="Cetak atau simpan sebagai PDF"
+                                target="_blank"
+                                rel="noopener"
+                            >
+
+                                <span class="material-symbols-outlined">
+                                    picture_as_pdf
+                                </span>
+
+
+                                <div class="download-option-text">
+
+                                    <strong>
+                                        PDF
+                                    </strong>
+
+                                    <span>
+                                        Cetak atau simpan PDF
+                                    </span>
+
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    </details>
 
                 </form>
 
@@ -2294,7 +2377,7 @@
 
 
             <!-- =============================================
-                 REKAP STATS
+                 STATS
             ============================================== -->
 
             <div class="recap-stats">
@@ -2380,7 +2463,7 @@
 
 
             <!-- =============================================
-                 PERSENTASE KESELURUHAN
+                 OVERALL
             ============================================== -->
 
             <div class="overall-attendance">
@@ -2392,7 +2475,8 @@
                     </strong>
 
                     <span>
-                        Hadir + Terlambat dibanding total kesempatan presensi.
+                        Hadir + Terlambat dibanding total
+                        kesempatan presensi.
                     </span>
 
                 </div>
@@ -2464,22 +2548,16 @@
                         </div>
 
 
-                        @foreach(
-                            $studentRecaps
-                            as $recap
-                        )
+                        @foreach($studentRecaps as $recap)
 
                             @php
-
                                 $recapStudent =
-                                    $recap[
-                                        'student'
-                                    ];
-
+                                    $recap['student'];
                             @endphp
 
 
                             <div class="recap-row">
+
 
                                 <!-- SISWA -->
 
@@ -2490,8 +2568,7 @@
                                         {{
                                             strtoupper(
                                                 substr(
-                                                    $recapStudent
-                                                        ->user?->name
+                                                    $recapStudent->user?->name
                                                     ?? 'S',
                                                     0,
                                                     1
@@ -2507,8 +2584,7 @@
                                         <strong>
 
                                             {{
-                                                $recapStudent
-                                                    ->user?->name
+                                                $recapStudent->user?->name
                                                 ?? 'Siswa KKO'
                                             }}
 
@@ -2522,8 +2598,7 @@
                                             ·
 
                                             {{
-                                                $recapStudent
-                                                    ->class?->name
+                                                $recapStudent->class?->name
                                                 ?? '-'
                                             }}
 
@@ -2598,14 +2673,9 @@
                                             route(
                                                 'students.sports.attendance-detail',
                                                 [
-                                                    'student' =>
-                                                        $recapStudent->id,
-
-                                                    'month' =>
-                                                        $selectedMonth,
-
-                                                    'year' =>
-                                                        $selectedYear,
+                                                    'student' => $recapStudent->id,
+                                                    'month' => $selectedMonth,
+                                                    'year' => $selectedYear,
                                                 ]
                                             )
                                         }}"
@@ -2662,6 +2732,40 @@
 
 
 </main>
+
+
+<!-- =====================================================
+     DROPDOWN SCRIPT
+====================================================== -->
+
+<script>
+    document.addEventListener(
+        'click',
+        function (event) {
+
+            document
+                .querySelectorAll(
+                    '.download-dropdown[open]'
+                )
+                .forEach(
+                    function (dropdown) {
+
+                        if (
+                            !dropdown.contains(
+                                event.target
+                            )
+                        ) {
+                            dropdown.removeAttribute(
+                                'open'
+                            );
+                        }
+
+                    }
+                );
+
+        }
+    );
+</script>
 
 
 </body>

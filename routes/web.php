@@ -49,6 +49,7 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingBarcodeController;
 use App\Http\Controllers\StudentSportController;
 use App\Http\Controllers\TrainingAttendanceRecapExportController;
+use App\Http\Controllers\TrainingAttendanceRecapPrintController;
 
 
 /*
@@ -707,6 +708,7 @@ Route::middleware(
 | - Melihat rekap presensi latihan
 | - Melihat detail presensi siswa
 | - Export rekap presensi latihan ke Excel
+| - Cetak / Simpan PDF rekap presensi latihan
 |
 */
 
@@ -745,7 +747,7 @@ Route::middleware(
         | &month=8
         | &year=2026
         |
-        | Route ini HARUS berada sebelum route {student}.
+        | Route ini harus berada sebelum route {student}.
         |
         */
 
@@ -755,6 +757,39 @@ Route::middleware(
         )
         ->name(
             'students.sports.export'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CETAK / SIMPAN PDF REKAP PRESENSI LATIHAN
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | /data-cabang-siswa/cetak
+        | ?sport=Atletik
+        | &month=8
+        | &year=2026
+        |
+        | Halaman ini membuka tampilan khusus cetak.
+        |
+        | Pengguna dapat:
+        |
+        | Ctrl + P
+        | → Print
+        | → Save as PDF
+        |
+        | Route ini harus berada sebelum route {student}.
+        |
+        */
+
+        Route::get(
+            '/data-cabang-siswa/cetak',
+            TrainingAttendanceRecapPrintController::class
+        )
+        ->name(
+            'students.sports.print'
         );
 
 
