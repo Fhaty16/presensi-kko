@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,9 +10,18 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Dashboard Siswa - KKO SMANDA</title>
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
+
+    <title>
+        Dashboard Siswa - KKO SMANDA
+    </title>
+
 
     <!-- FONT -->
+
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com"
@@ -28,19 +38,25 @@
         rel="stylesheet"
     >
 
+
     <!-- MATERIAL ICON -->
+
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet"
     >
 
+
     <!-- CSS KKO -->
+
     <link
         rel="stylesheet"
         href="{{ asset('css/kko.css') }}"
     >
 
+
     <style>
+
         /*
         |--------------------------------------------------------------------------
         | MATERIAL SYMBOLS
@@ -48,7 +64,10 @@
         */
 
         .material-symbols-outlined {
-            font-family: 'Material Symbols Outlined' !important;
+            font-family:
+                'Material Symbols Outlined'
+                !important;
+
             font-weight: normal !important;
             font-style: normal;
 
@@ -62,10 +81,14 @@
 
             direction: ltr;
 
-            font-feature-settings: 'liga';
+            font-feature-settings:
+                'liga';
 
-            -webkit-font-feature-settings: 'liga';
-            -webkit-font-smoothing: antialiased;
+            -webkit-font-feature-settings:
+                'liga';
+
+            -webkit-font-smoothing:
+                antialiased;
         }
 
 
@@ -77,6 +100,7 @@
 
         a.student-mini-card {
             color: inherit;
+
             text-decoration: none;
         }
 
@@ -86,6 +110,7 @@
 
         a.student-scan-card {
             color: inherit;
+
             text-decoration: none;
         }
 
@@ -98,18 +123,20 @@
         |--------------------------------------------------------------------------
         | SIDE ACTIONS
         |--------------------------------------------------------------------------
-        |
-        | Sekarang terdapat 3 menu:
-        |
-        | - Pengajuan Izin / Sakit
-        | - Riwayat Presensi
-        | - Jadwal Latihan KKO
-        |
         */
 
         .student-side-actions {
             display: grid;
-            grid-template-rows: repeat(3, minmax(0, 1fr));
+
+            grid-template-rows:
+                repeat(
+                    3,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
             gap: 14px;
         }
 
@@ -124,9 +151,17 @@
             position: relative;
         }
 
-        .training-menu-card .student-mini-icon {
-            background: rgba(157, 202, 255, 0.10);
+        .training-menu-card
+        .student-mini-icon {
             color: #9dcaff;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
         }
 
         .training-menu-card::after {
@@ -145,11 +180,573 @@
             border-radius: 10px;
 
             opacity: 0;
-            transition: opacity .2s ease;
+
+            transition:
+                opacity
+                .2s ease;
         }
 
         .training-menu-card:hover::after {
             opacity: 1;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION WRAPPER
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-wrapper {
+            position: relative;
+
+            z-index: 2000;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION BUTTON
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-button {
+            position: relative;
+        }
+
+        .student-notification-count {
+            position: absolute;
+
+            top: -4px;
+            right: -4px;
+
+            min-width: 17px;
+            height: 17px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding:
+                0
+                4px;
+
+            color: #ffffff;
+
+            background: #e74646;
+
+            border:
+                2px
+                solid
+                #101415;
+
+            border-radius: 20px;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+            font-weight: 800;
+
+            line-height: 1;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION DROPDOWN
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-dropdown {
+            position: absolute;
+
+            top:
+                calc(
+                    100%
+                    +
+                    12px
+                );
+
+            right: 0;
+
+            z-index: 3000;
+
+            width: 370px;
+
+            overflow: hidden;
+
+            color: #ffffff;
+
+            background: #151d25;
+
+            border:
+                1px
+                solid
+                #34485d;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0
+                24px
+                60px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .45
+                );
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transform:
+                translateY(
+                    -7px
+                );
+
+            pointer-events: none;
+
+            transition:
+                opacity .18s ease,
+                visibility .18s ease,
+                transform .18s ease;
+        }
+
+        .student-notification-dropdown.active {
+            opacity: 1;
+
+            visibility: visible;
+
+            transform:
+                translateY(
+                    0
+                );
+
+            pointer-events: auto;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION HEADER
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            padding:
+                15px
+                16px;
+
+            background:
+                rgba(
+                    11,
+                    17,
+                    22,
+                    .45
+                );
+
+            border-bottom:
+                1px
+                solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .55
+                );
+        }
+
+        .student-notification-header-text {
+            min-width: 0;
+        }
+
+        .student-notification-header-text strong {
+            display: block;
+
+            color: #edf3f7;
+
+            font-family:
+                'Anybody',
+                sans-serif;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .student-notification-header-text span {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #788793;
+
+            font-size: 8px;
+        }
+
+        .student-notification-header-badge {
+            flex-shrink: 0;
+
+            padding:
+                5px
+                8px;
+
+            color: #9dcaff;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .08
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .18
+                );
+
+            border-radius: 20px;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+            font-weight: 800;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION LIST
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-list {
+            max-height: 390px;
+
+            overflow-y: auto;
+
+            scrollbar-width: thin;
+
+            scrollbar-color:
+                #34485d
+                #151d25;
+        }
+
+        .student-notification-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .student-notification-list::-webkit-scrollbar-track {
+            background: #151d25;
+        }
+
+        .student-notification-list::-webkit-scrollbar-thumb {
+            background: #34485d;
+
+            border-radius: 20px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION ITEM
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-item {
+            position: relative;
+
+            display: flex;
+            align-items: flex-start;
+
+            gap: 11px;
+
+            padding:
+                13px
+                15px;
+
+            border-bottom:
+                1px
+                solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .38
+                );
+
+            transition:
+                background
+                .16s ease;
+        }
+
+        .student-notification-item:last-child {
+            border-bottom: 0;
+        }
+
+        .student-notification-item:hover {
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .025
+                );
+        }
+
+        .student-notification-item.unread {
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .035
+                );
+        }
+
+        .student-notification-item.unread::before {
+            content: '';
+
+            position: absolute;
+
+            left: 0;
+            top: 12px;
+            bottom: 12px;
+
+            width: 2px;
+
+            background: #9dcaff;
+
+            border-radius:
+                0
+                10px
+                10px
+                0;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION ICON
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-icon {
+            width: 38px;
+            height: 38px;
+
+            flex:
+                0
+                0
+                38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+        }
+
+        .student-notification-icon
+        .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        .student-notification-icon.approved {
+            color: #8ce8c3;
+
+            background:
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .10
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .16
+                );
+        }
+
+        .student-notification-icon.rejected {
+            color: #ffaaa5;
+
+            background:
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .10
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .16
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFICATION CONTENT
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-content {
+            min-width: 0;
+
+            flex: 1;
+        }
+
+        .student-notification-content strong {
+            display: block;
+
+            color: #e6edf3;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .student-notification-content p {
+            margin:
+                5px
+                0
+                0;
+
+            color: #9aa7b1;
+
+            font-size: 9px;
+
+            line-height: 1.45;
+        }
+
+        .student-notification-meta {
+            display: flex;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: 7px;
+
+            color: #687783;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+        }
+
+        .student-notification-meta
+        .material-symbols-outlined {
+            font-size: 12px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EMPTY NOTIFICATION
+        |--------------------------------------------------------------------------
+        */
+
+        .student-notification-empty {
+            padding:
+                30px
+                18px;
+
+            text-align: center;
+        }
+
+        .student-notification-empty-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin:
+                0
+                auto
+                12px;
+
+            color: #70808c;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .05
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
+
+            border-radius: 50%;
+        }
+
+        .student-notification-empty-icon
+        .material-symbols-outlined {
+            font-size: 23px;
+        }
+
+        .student-notification-empty strong {
+            display: block;
+
+            color: #d5dde3;
+
+            font-size: 10px;
+        }
+
+        .student-notification-empty p {
+            max-width: 230px;
+
+            margin:
+                5px
+                auto
+                0;
+
+            color: #70808c;
+
+            font-size: 8px;
+
+            line-height: 1.45;
         }
 
 
@@ -162,6 +759,65 @@
         .mobile-bottom-nav a {
             text-decoration: none;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MOBILE NOTIFICATION
+        |--------------------------------------------------------------------------
+        */
+
+        @media (max-width: 720px) {
+
+            .student-notification-dropdown {
+                position: fixed;
+
+                top: 74px;
+                right: 12px;
+                left: 12px;
+
+                width: auto;
+
+                max-height:
+                    calc(
+                        100vh
+                        -
+                        100px
+                    );
+            }
+
+            .student-notification-list {
+                max-height:
+                    calc(
+                        100vh
+                        -
+                        190px
+                    );
+            }
+
+        }
+
+
+        @media (max-width: 450px) {
+
+            .student-notification-header {
+                padding:
+                    13px
+                    14px;
+            }
+
+            .student-notification-item {
+                padding:
+                    12px
+                    13px;
+            }
+
+            .student-notification-content p {
+                font-size: 8px;
+            }
+
+        }
+
     </style>
 
 </head>
@@ -178,64 +834,80 @@
     |--------------------------------------------------------------------------
     */
 
-    $status = $todayAttendance?->status;
+    $status =
+        $todayAttendance?->status;
 
 
-    $statusText = match ($status) {
+    $statusText =
+        match ($status) {
 
-        'present' => 'HADIR',
+            'present' =>
+                'HADIR',
 
-        'late' => 'TERLAMBAT',
+            'late' =>
+                'TERLAMBAT',
 
-        'permission' => 'IZIN',
+            'permission' =>
+                'IZIN',
 
-        'sick' => 'SAKIT',
+            'sick' =>
+                'SAKIT',
 
-        'absent' => 'ALFA',
+            'absent' =>
+                'ALFA',
 
-        default => 'BELUM PRESENSI',
+            default =>
+                'BELUM PRESENSI',
 
-    };
-
-
-    $statusClass = match ($status) {
-
-        'present' => 'student-status-present',
-
-        'late' => 'student-status-late',
-
-        'permission' => 'student-status-permission',
-
-        'sick' => 'student-status-sick',
-
-        'absent' => 'student-status-absent',
-
-        default => 'student-status-empty',
-
-    };
+        };
 
 
-    $statusDescription = match ($status) {
+    $statusClass =
+        match ($status) {
 
-        'present' =>
-            'Presensi berhasil tercatat hari ini',
+            'present' =>
+                'student-status-present',
 
-        'late' =>
-            'Presensi tercatat sebagai terlambat',
+            'late' =>
+                'student-status-late',
 
-        'permission' =>
-            'Kehadiran hari ini tercatat sebagai izin',
+            'permission' =>
+                'student-status-permission',
 
-        'sick' =>
-            'Kehadiran hari ini tercatat sebagai sakit',
+            'sick' =>
+                'student-status-sick',
 
-        'absent' =>
-            'Kehadiran hari ini tercatat sebagai alfa',
+            'absent' =>
+                'student-status-absent',
 
-        default =>
-            'Kamu belum melakukan presensi hari ini',
+            default =>
+                'student-status-empty',
 
-    };
+        };
+
+
+    $statusDescription =
+        match ($status) {
+
+            'present' =>
+                'Presensi berhasil tercatat hari ini',
+
+            'late' =>
+                'Presensi tercatat sebagai terlambat',
+
+            'permission' =>
+                'Kehadiran hari ini tercatat sebagai izin',
+
+            'sick' =>
+                'Kehadiran hari ini tercatat sebagai sakit',
+
+            'absent' =>
+                'Kehadiran hari ini tercatat sebagai alfa',
+
+            default =>
+                'Kamu belum melakukan presensi hari ini',
+
+        };
 
 
     /*
@@ -244,21 +916,28 @@
     |--------------------------------------------------------------------------
     */
 
-    $statusIcon = match ($status) {
+    $statusIcon =
+        match ($status) {
 
-        'present' => 'check_circle',
+            'present' =>
+                'check_circle',
 
-        'late' => 'schedule',
+            'late' =>
+                'schedule',
 
-        'permission' => 'assignment',
+            'permission' =>
+                'assignment',
 
-        'sick' => 'medical_services',
+            'sick' =>
+                'medical_services',
 
-        'absent' => 'cancel',
+            'absent' =>
+                'cancel',
 
-        default => 'pending',
+            default =>
+                'pending',
 
-    };
+        };
 
 @endphp
 
@@ -270,6 +949,7 @@
 <header class="kko-header">
 
     <div class="kko-header-inner">
+
 
         <!-- BRAND -->
 
@@ -300,40 +980,256 @@
         </div>
 
 
-        <!-- HEADER RIGHT -->
+        <!-- =================================================
+             HEADER RIGHT
+        ================================================== -->
 
         <div class="kko-header-actions">
 
-            <!-- NOTIFICATION -->
 
-            <button
-                type="button"
-                class="header-icon-button"
-                title="Notifikasi"
-            >
+            <!-- =================================================
+                 NOTIFICATION
+            ================================================== -->
 
-                <span class="material-symbols-outlined">
-                    notifications
-                </span>
+            <div class="student-notification-wrapper">
 
-                <span class="notification-dot"></span>
+                <button
+                    type="button"
+                    class="header-icon-button student-notification-button"
+                    id="studentNotificationButton"
+                    title="Notifikasi"
+                    aria-label="Buka notifikasi"
+                    aria-expanded="false"
+                >
 
-            </button>
+                    <span class="material-symbols-outlined">
+                        notifications
+                    </span>
 
 
-            <!-- PROFILE -->
+                    @if($unreadNotificationCount > 0)
+
+                        <span
+                            class="student-notification-count"
+                            id="studentNotificationCount"
+                        >
+
+                            {{
+                                $unreadNotificationCount > 99
+                                    ? '99+'
+                                    : $unreadNotificationCount
+                            }}
+
+                        </span>
+
+                    @endif
+
+                </button>
+
+
+                <!-- =================================================
+                     NOTIFICATION DROPDOWN
+                ================================================== -->
+
+                <div
+                    class="student-notification-dropdown"
+                    id="studentNotificationDropdown"
+                >
+
+
+                    <!-- HEADER -->
+
+                    <div class="student-notification-header">
+
+
+                        <div class="student-notification-header-text">
+
+                            <strong>
+                                Notifikasi
+                            </strong>
+
+                            <span>
+                                Informasi pengajuan izin dan sakit
+                            </span>
+
+                        </div>
+
+
+                        @if($unreadNotificationCount > 0)
+
+                            <span
+                                class="student-notification-header-badge"
+                                id="studentNotificationHeaderBadge"
+                            >
+
+                                {{ $unreadNotificationCount }}
+                                baru
+
+                            </span>
+
+                        @endif
+
+                    </div>
+
+
+                    <!-- =================================================
+                         LIST
+                    ================================================== -->
+
+                    <div class="student-notification-list">
+
+                        @forelse($notifications as $notification)
+
+                            @php
+
+                                $notificationData =
+                                    $notification->data;
+
+                                $notificationStatus =
+                                    $notificationData['status']
+                                    ?? 'approved';
+
+                                $isApproved =
+                                    $notificationStatus
+                                    === 'approved';
+
+                                $notificationTitle =
+                                    $notificationData['title']
+                                    ?? (
+                                        $isApproved
+                                            ? 'Pengajuan Disetujui'
+                                            : 'Pengajuan Ditolak'
+                                    );
+
+                                $notificationMessage =
+                                    $notificationData['message']
+                                    ?? 'Status pengajuan kamu telah diperbarui oleh Guru KKO.';
+
+                            @endphp
+
+
+                            <div
+                                class="student-notification-item {{ $notification->read_at ? '' : 'unread' }}"
+                            >
+
+
+                                <!-- ICON -->
+
+                                <div
+                                    class="student-notification-icon {{ $isApproved ? 'approved' : 'rejected' }}"
+                                >
+
+                                    <span class="material-symbols-outlined">
+
+                                        {{
+                                            $isApproved
+                                                ? 'check_circle'
+                                                : 'cancel'
+                                        }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- CONTENT -->
+
+                                <div class="student-notification-content">
+
+                                    <strong>
+                                        {{ $notificationTitle }}
+                                    </strong>
+
+
+                                    <p>
+                                        {{ $notificationMessage }}
+                                    </p>
+
+
+                                    <div class="student-notification-meta">
+
+                                        <span class="material-symbols-outlined">
+                                            schedule
+                                        </span>
+
+                                        <span>
+
+                                            {{
+                                                $notification
+                                                    ->created_at
+                                                    ->timezone(
+                                                        'Asia/Jakarta'
+                                                    )
+                                                    ->diffForHumans()
+                                            }}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        @empty
+
+
+                            <!-- =================================================
+                                 EMPTY
+                            ================================================== -->
+
+                            <div class="student-notification-empty">
+
+
+                                <div class="student-notification-empty-icon">
+
+                                    <span class="material-symbols-outlined">
+                                        notifications_none
+                                    </span>
+
+                                </div>
+
+
+                                <strong>
+                                    Belum ada notifikasi
+                                </strong>
+
+
+                                <p>
+
+                                    Keputusan pengajuan izin atau sakit
+                                    dari Guru KKO akan tampil di sini.
+
+                                </p>
+
+                            </div>
+
+                        @endforelse
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROFILE
+            ================================================== -->
 
             <div class="header-profile">
 
                 <div class="header-avatar">
 
-                    {{ strtoupper(
-                        substr(
-                            auth()->user()->name,
-                            0,
-                            1
+                    {{
+                        strtoupper(
+                            substr(
+                                auth()->user()->name,
+                                0,
+                                1
+                            )
                         )
-                    ) }}
+                    }}
 
                 </div>
 
@@ -353,7 +1249,9 @@
             </div>
 
 
-            <!-- LOGOUT -->
+            <!-- =================================================
+                 LOGOUT
+            ================================================== -->
 
             <form
                 method="POST"
@@ -361,6 +1259,7 @@
             >
 
                 @csrf
+
 
                 <button
                     type="submit"
@@ -410,9 +1309,14 @@
 
             <p>
 
-                {{ $student->class?->name ?? 'Kelas KKO' }}
+                {{
+                    $student->class?->name
+                    ?? 'Kelas KKO'
+                }}
 
-                <span>•</span>
+                <span>
+                    •
+                </span>
 
                 NIS {{ $student->nis }}
 
@@ -442,6 +1346,7 @@
 
     <section class="student-status-card {{ $statusClass }}">
 
+
         <div class="student-status-left">
 
             <span class="student-card-label">
@@ -450,6 +1355,7 @@
 
 
             <div class="student-status-content">
+
 
                 <div class="student-status-icon">
 
@@ -485,9 +1391,13 @@
 
                 <strong>
 
-                    {{ \Carbon\Carbon::parse(
-                        $todayAttendance->check_in_time
-                    )->format('H:i') }}
+                    {{
+                        \Carbon\Carbon::parse(
+                            $todayAttendance->check_in_time
+                        )->format(
+                            'H:i'
+                        )
+                    }}
 
                 </strong>
 
@@ -694,6 +1604,7 @@
 
     <section class="dashboard-section">
 
+
         <div class="section-heading">
 
             <div>
@@ -711,17 +1622,25 @@
 
             <span class="student-week-label">
 
-                {{ now()
-                    ->copy()
-                    ->startOfWeek()
-                    ->format('d M') }}
+                {{
+                    now()
+                        ->copy()
+                        ->startOfWeek()
+                        ->format(
+                            'd M'
+                        )
+                }}
 
                 -
 
-                {{ now()
-                    ->copy()
-                    ->endOfWeek()
-                    ->format('d M') }}
+                {{
+                    now()
+                        ->copy()
+                        ->endOfWeek()
+                        ->format(
+                            'd M'
+                        )
+                }}
 
             </span>
 
@@ -833,6 +1752,7 @@
 
     <section class="dashboard-section">
 
+
         <div class="section-heading">
 
             <div>
@@ -865,6 +1785,7 @@
 
 
         <div class="student-news-card">
+
 
             <div class="student-news-image">
 
@@ -941,7 +1862,9 @@
 
     <!-- LATIHAN -->
 
-    <a href="{{ route('siswa.training.index') }}">
+    <a
+        href="{{ route('siswa.training.index') }}"
+    >
 
         <span class="material-symbols-outlined">
             event
@@ -956,7 +1879,9 @@
 
     <!-- IZIN -->
 
-    <a href="{{ route('siswa.leave.create') }}">
+    <a
+        href="{{ route('siswa.leave.create') }}"
+    >
 
         <span class="material-symbols-outlined">
             assignment
@@ -971,7 +1896,9 @@
 
     <!-- RIWAYAT -->
 
-    <a href="{{ route('siswa.attendance.history') }}">
+    <a
+        href="{{ route('siswa.attendance.history') }}"
+    >
 
         <span class="material-symbols-outlined">
             history
@@ -986,5 +1913,361 @@
 </nav>
 
 
+<!-- =====================================================
+     JAVASCRIPT NOTIFICATION
+===================================================== -->
+
+<script>
+
+    /*
+    |--------------------------------------------------------------------------
+    | ELEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    const studentNotificationButton =
+        document.getElementById(
+            'studentNotificationButton'
+        );
+
+
+    const studentNotificationDropdown =
+        document.getElementById(
+            'studentNotificationDropdown'
+        );
+
+
+    const studentNotificationCount =
+        document.getElementById(
+            'studentNotificationCount'
+        );
+
+
+    const studentNotificationHeaderBadge =
+        document.getElementById(
+            'studentNotificationHeaderBadge'
+        );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS
+    |--------------------------------------------------------------------------
+    */
+
+    let notificationsMarkedRead =
+        false;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOGGLE NOTIFICATION
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        studentNotificationButton
+        &&
+        studentNotificationDropdown
+    ) {
+
+        studentNotificationButton
+            .addEventListener(
+                'click',
+                async function (event) {
+
+                    event.stopPropagation();
+
+
+                    const willOpen =
+                        !studentNotificationDropdown
+                            .classList
+                            .contains(
+                                'active'
+                            );
+
+
+                    studentNotificationDropdown
+                        .classList
+                        .toggle(
+                            'active'
+                        );
+
+
+                    studentNotificationButton
+                        .setAttribute(
+                            'aria-expanded',
+                            willOpen
+                                ? 'true'
+                                : 'false'
+                        );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SAAT DIBUKA -> TANDAI SUDAH DIBACA
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        willOpen
+                        &&
+                        !notificationsMarkedRead
+                        &&
+                        studentNotificationCount
+                    ) {
+
+                        await markNotificationsRead();
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MARK AS READ
+    |--------------------------------------------------------------------------
+    */
+
+    async function markNotificationsRead() {
+
+        try {
+
+            const csrfToken =
+                document
+                    .querySelector(
+                        'meta[name="csrf-token"]'
+                    )
+                    ?.getAttribute(
+                        'content'
+                    );
+
+
+            const response =
+                await fetch(
+                    "{{ route('siswa.notifications.read') }}",
+                    {
+
+                        method:
+                            'POST',
+
+                        credentials:
+                            'same-origin',
+
+                        headers: {
+
+                            'Accept':
+                                'application/json',
+
+                            'Content-Type':
+                                'application/json',
+
+                            'X-CSRF-TOKEN':
+                                csrfToken,
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                {}
+                            ),
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'Gagal menandai notifikasi.'
+                );
+
+            }
+
+
+            notificationsMarkedRead =
+                true;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | HAPUS BADGE DI BELL
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                studentNotificationCount
+            ) {
+
+                studentNotificationCount
+                    .remove();
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | HAPUS BADGE "BARU"
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                studentNotificationHeaderBadge
+            ) {
+
+                studentNotificationHeaderBadge
+                    .remove();
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | HAPUS STYLE UNREAD
+            |--------------------------------------------------------------------------
+            */
+
+            document
+                .querySelectorAll(
+                    '.student-notification-item.unread'
+                )
+                .forEach(
+                    function (item) {
+
+                        item.classList
+                            .remove(
+                                'unread'
+                            );
+
+                    }
+                );
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KLIK DI LUAR -> TUTUP
+    |--------------------------------------------------------------------------
+    */
+
+    document.addEventListener(
+        'click',
+        function (event) {
+
+            if (
+                !studentNotificationDropdown
+                ||
+                !studentNotificationButton
+            ) {
+
+                return;
+
+            }
+
+
+            const clickedInsideDropdown =
+                studentNotificationDropdown
+                    .contains(
+                        event.target
+                    );
+
+
+            const clickedButton =
+                studentNotificationButton
+                    .contains(
+                        event.target
+                    );
+
+
+            if (
+                !clickedInsideDropdown
+                &&
+                !clickedButton
+            ) {
+
+                studentNotificationDropdown
+                    .classList
+                    .remove(
+                        'active'
+                    );
+
+
+                studentNotificationButton
+                    .setAttribute(
+                        'aria-expanded',
+                        'false'
+                    );
+
+            }
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ESC -> TUTUP
+    |--------------------------------------------------------------------------
+    */
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key
+                !== 'Escape'
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                studentNotificationDropdown
+            ) {
+
+                studentNotificationDropdown
+                    .classList
+                    .remove(
+                        'active'
+                    );
+
+            }
+
+
+            if (
+                studentNotificationButton
+            ) {
+
+                studentNotificationButton
+                    .setAttribute(
+                        'aria-expanded',
+                        'false'
+                    );
+
+            }
+
+        }
+    );
+
+</script>
+
+
 </body>
+
 </html>

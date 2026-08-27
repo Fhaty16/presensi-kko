@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\LeaveRequest;
 use App\Models\TrainingAttendance;
+use App\Notifications\LeaveRequestDecisionNotification;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Throwable;
 
 class LeaveRequestController extends Controller
 {
@@ -102,6 +104,12 @@ class LeaveRequestController extends Controller
                 ->count();
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
+
         return view(
             'guru.leave-requests.index',
             compact(
@@ -127,7 +135,7 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | CEK STATUS
+        | VALIDASI STATUS
         |--------------------------------------------------------------------------
         */
 
@@ -146,25 +154,44 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | LOAD RELATIONSHIP
+        | LOAD RELASI
         |--------------------------------------------------------------------------
         */
 
         $leaveRequest->loadMissing([
-            'student',
+            'student.user',
+            'student.class',
             'trainingSession',
         ]);
 
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI PENGAJUAN LATIHAN
+        | VALIDASI SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$leaveRequest->student
+        ) {
+
+            return back()
+                ->with(
+                    'error',
+                    'Data siswa pada pengajuan tidak ditemukan.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI LATIHAN
         |--------------------------------------------------------------------------
         */
 
         if (
             $leaveRequest->attendance_scope
-                === 'training'
+            === 'training'
             &&
             !$leaveRequest->trainingSession
         ) {
@@ -176,6 +203,12 @@ class LeaveRequestController extends Controller
                 );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | TRANSACTION
+        |--------------------------------------------------------------------------
+        */
 
         DB::transaction(
             function () use (
@@ -194,20 +227,19 @@ class LeaveRequestController extends Controller
 
                 $attendanceStatus =
                     $leaveRequest->type
-                        === 'sick'
-                            ? 'sick'
-                            : 'permission';
+                    === 'sick'
+                        ? 'sick'
+                        : 'permission';
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | PRESENSI LATIHAN KKO
+                | PENGAJUAN LATIHAN
                 |--------------------------------------------------------------------------
                 */
 
                 if (
-                    $leaveRequest
-                        ->attendance_scope
+                    $leaveRequest->attendance_scope
                     === 'training'
                 ) {
 
@@ -221,7 +253,7 @@ class LeaveRequestController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
-                    | PRESENSI SEKOLAH
+                    | PENGAJUAN SEKOLAH
                     |--------------------------------------------------------------------------
                     */
 
@@ -235,11 +267,11 @@ class LeaveRequestController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | UBAH STATUS PENGAJUAN
+                | UPDATE STATUS PENGAJUAN
                 |--------------------------------------------------------------------------
                 |
-                | Dilakukan setelah proses presensi berhasil.
-                | Jika terjadi error, transaction akan rollback semuanya.
+                | reviewed_by TIDAK digunakan karena kolom tersebut
+                | belum tersedia pada database leave_requests.
                 |
                 */
 
@@ -258,15 +290,51 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | AMBIL DATA TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $processedRequest =
+            $leaveRequest
+                ->fresh([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KIRIM NOTIFIKASI
+        |--------------------------------------------------------------------------
+        |
+        | Dilakukan setelah transaction selesai.
+        |
+        | Jadi jika notifikasi gagal, data presensi dan status
+        | pengajuan yang sudah berhasil tidak ikut rollback.
+        |
+        */
+
+        if ($processedRequest) {
+
+            $this
+                ->sendDecisionNotification(
+                    $processedRequest
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
         | MESSAGE
         |--------------------------------------------------------------------------
         */
 
         $destination =
             $leaveRequest->attendance_scope
-                === 'training'
-                    ? 'latihan KKO'
-                    : 'presensi sekolah';
+            === 'training'
+                ? 'latihan KKO'
+                : 'presensi sekolah';
 
 
         return back()
@@ -292,7 +360,7 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | RENTANG TANGGAL
+        | TANGGAL MULAI
         |--------------------------------------------------------------------------
         */
 
@@ -303,12 +371,24 @@ class LeaveRequestController extends Controller
                 ->startOfDay();
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL SELESAI
+        |--------------------------------------------------------------------------
+        */
+
         $endDate =
             Carbon::parse(
                 $leaveRequest->end_date
             )
                 ->startOfDay();
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | LOOP TANGGAL
+        |--------------------------------------------------------------------------
+        */
 
         $currentDate =
             $startDate->copy();
@@ -329,6 +409,12 @@ class LeaveRequestController extends Controller
             if (
                 $currentDate->isWeekday()
             ) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | CARI PRESENSI SISWA
+                |--------------------------------------------------------------------------
+                */
 
                 $existingAttendance =
                     Attendance::query()
@@ -387,12 +473,11 @@ class LeaveRequestController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | SUDAH ALFA
+                | SUDAH TERLANJUR ALFA
                 |--------------------------------------------------------------------------
                 |
-                | Jika sistem Alfa otomatis sudah membuat absent,
-                | pengajuan yang disetujui mengoreksinya menjadi
-                | Izin / Sakit.
+                | Jika Auto-Alfa sudah berjalan sebelum Guru menyetujui
+                | surat izin/sakit, status Alfa akan dikoreksi.
                 |
                 */
 
@@ -433,13 +518,20 @@ class LeaveRequestController extends Controller
                 | permission
                 | sick
                 |
-                | tetap dipertahankan.
+                | Tetap dipertahankan.
                 |
                 */
             }
 
 
-            $currentDate->addDay();
+            /*
+            |--------------------------------------------------------------------------
+            | TANGGAL BERIKUTNYA
+            |--------------------------------------------------------------------------
+            */
+
+            $currentDate
+                ->addDay();
         }
     }
 
@@ -455,6 +547,12 @@ class LeaveRequestController extends Controller
         string $attendanceStatus
     ): void {
 
+        /*
+        |--------------------------------------------------------------------------
+        | SESI LATIHAN
+        |--------------------------------------------------------------------------
+        */
+
         $trainingSession =
             $leaveRequest
                 ->trainingSession;
@@ -462,7 +560,7 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | CARI PRESENSI LATIHAN SISWA
+        | CARI PRESENSI SISWA
         |--------------------------------------------------------------------------
         */
 
@@ -521,19 +619,6 @@ class LeaveRequestController extends Controller
         |--------------------------------------------------------------------------
         | SUDAH ALFA
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | siswa tidak scan
-        | ↓
-        | +30 menit
-        | ↓
-        | sistem membuat Alfa
-        | ↓
-        | Guru baru menyetujui surat izin
-        | ↓
-        | Alfa berubah menjadi Izin / Sakit
-        |
         */
 
         if (
@@ -565,16 +650,13 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | STATUS YANG SUDAH ADA TIDAK DITIMPA
+        | STATUS LAIN TIDAK DITIMPA
         |--------------------------------------------------------------------------
         |
         | present
         | late
         | permission
         | sick
-        |
-        | Misalnya siswa ternyata sudah melakukan scan,
-        | data kehadiran tersebut tetap dipertahankan.
         |
         */
     }
@@ -592,7 +674,7 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | CEK STATUS
+        | VALIDASI STATUS
         |--------------------------------------------------------------------------
         */
 
@@ -611,10 +693,43 @@ class LeaveRequestController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | TOLAK
+        | LOAD RELASI
+        |--------------------------------------------------------------------------
+        */
+
+        $leaveRequest->loadMissing([
+            'student.user',
+            'student.class',
+            'trainingSession',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$leaveRequest->student
+        ) {
+
+            return back()
+                ->with(
+                    'error',
+                    'Data siswa pada pengajuan tidak ditemukan.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE STATUS
         |--------------------------------------------------------------------------
         |
-        | Tidak membuat Attendance maupun TrainingAttendance.
+        | Pengajuan ditolak tidak membuat Attendance.
+        |
+        | reviewed_by TIDAK digunakan karena kolom belum tersedia.
         |
         */
 
@@ -629,11 +744,47 @@ class LeaveRequestController extends Controller
         ]);
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | DATA TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $processedRequest =
+            $leaveRequest
+                ->fresh([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KIRIM NOTIFIKASI
+        |--------------------------------------------------------------------------
+        */
+
+        if ($processedRequest) {
+
+            $this
+                ->sendDecisionNotification(
+                    $processedRequest
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MESSAGE
+        |--------------------------------------------------------------------------
+        */
+
         $destination =
             $leaveRequest->attendance_scope
-                === 'training'
-                    ? 'latihan KKO'
-                    : 'presensi sekolah';
+            === 'training'
+                ? 'latihan KKO'
+                : 'presensi sekolah';
 
 
         return back()
@@ -648,6 +799,88 @@ class LeaveRequestController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | KIRIM NOTIFIKASI KE SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    private function sendDecisionNotification(
+        LeaveRequest $leaveRequest
+    ): void {
+
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOAD RELASI
+            |--------------------------------------------------------------------------
+            */
+
+            $leaveRequest
+                ->loadMissing([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | USER SISWA
+            |--------------------------------------------------------------------------
+            */
+
+            $user =
+                $leaveRequest
+                    ->student
+                    ?->user;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | JIKA USER TIDAK ADA
+            |--------------------------------------------------------------------------
+            */
+
+            if (!$user) {
+
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATABASE NOTIFICATION
+            |--------------------------------------------------------------------------
+            */
+
+            $user
+                ->notify(
+                    new LeaveRequestDecisionNotification(
+                        $leaveRequest
+                    )
+                );
+
+        } catch (Throwable $exception) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOG ERROR
+            |--------------------------------------------------------------------------
+            |
+            | Notifikasi yang gagal tidak boleh membuat proses
+            | Setujui / Tolak ikut gagal.
+            |
+            */
+
+            report(
+                $exception
+            );
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | CATATAN PRESENSI SEKOLAH
     |--------------------------------------------------------------------------
     */
@@ -656,12 +889,24 @@ class LeaveRequestController extends Controller
         LeaveRequest $leaveRequest
     ): string {
 
+        /*
+        |--------------------------------------------------------------------------
+        | LABEL
+        |--------------------------------------------------------------------------
+        */
+
         $type =
             $leaveRequest->type
-                === 'sick'
-                    ? 'Sakit'
-                    : 'Izin';
+            === 'sick'
+                ? 'Sakit'
+                : 'Izin';
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | CATATAN
+        |--------------------------------------------------------------------------
+        */
 
         return
             $type
@@ -681,12 +926,24 @@ class LeaveRequestController extends Controller
         LeaveRequest $leaveRequest
     ): string {
 
+        /*
+        |--------------------------------------------------------------------------
+        | LABEL
+        |--------------------------------------------------------------------------
+        */
+
         $type =
             $leaveRequest->type
-                === 'sick'
-                    ? 'Sakit'
-                    : 'Izin';
+            === 'sick'
+                ? 'Sakit'
+                : 'Izin';
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | CATATAN
+        |--------------------------------------------------------------------------
+        */
 
         return
             $type

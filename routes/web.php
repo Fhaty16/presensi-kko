@@ -187,25 +187,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | REKAP PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
-        |
-        | Satu halaman untuk:
-        |
-        | - Presensi Harian
-        | - Presensi Bulanan
-        |
-        | Harian:
-        |
-        | /guru/rekap-presensi
-        | ?tab=harian
-        | &date=2026-08-26
-        |
-        | Bulanan:
-        |
-        | /guru/rekap-presensi
-        | ?tab=bulanan
-        | &month=8
-        | &year=2026
-        |
         */
 
         Route::get(
@@ -224,12 +205,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | EXPORT EXCEL REKAP HARIAN SEKOLAH
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | /guru/rekap-presensi/export
-        | ?date=2026-08-26
-        |
         */
 
         Route::get(
@@ -245,12 +220,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | CETAK / PDF REKAP HARIAN SEKOLAH
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | /guru/rekap-presensi/cetak
-        | ?date=2026-08-26
-        |
         */
 
         Route::get(
@@ -266,13 +235,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | EXPORT EXCEL REKAP BULANAN SEKOLAH
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | /guru/rekap-presensi/bulanan/export
-        | ?month=8
-        | &year=2026
-        |
         */
 
         Route::get(
@@ -288,13 +250,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | CETAK / PDF REKAP BULANAN SEKOLAH
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | /guru/rekap-presensi/bulanan/cetak
-        | ?month=8
-        | &year=2026
-        |
         */
 
         Route::get(
@@ -310,13 +265,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | ROUTE LAMA REKAP BULANAN
         |--------------------------------------------------------------------------
-        |
-        | Route lama tetap dipertahankan agar link lama tidak rusak.
-        |
-        | Tetapi sekarang diarahkan ke:
-        |
-        | /guru/rekap-presensi?tab=bulanan
-        |
         */
 
         Route::get(
@@ -343,43 +291,27 @@ Route::middleware([
                     );
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | VALIDASI BULAN
-                |--------------------------------------------------------------------------
-                */
-
                 if (
                     $month < 1
                     ||
                     $month > 12
                 ) {
+
                     $month =
                         $now->month;
                 }
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | VALIDASI TAHUN
-                |--------------------------------------------------------------------------
-                */
 
                 if (
                     $year < 2020
                     ||
                     $year > 2100
                 ) {
+
                     $year =
                         $now->year;
                 }
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | REDIRECT KE TAB BULANAN
-                |--------------------------------------------------------------------------
-                */
 
                 return redirect()
                     ->route(
@@ -407,15 +339,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | EXPORT EXCEL PRESENSI SEKOLAH PER SISWA
         |--------------------------------------------------------------------------
-        |
-        | Digunakan dari tabel Rekap Presensi Bulanan.
-        |
-        | Contoh:
-        |
-        | /guru/rekap-presensi/siswa/4/export
-        | ?month=8
-        | &year=2026
-        |
         */
 
         Route::get(
@@ -431,15 +354,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | CETAK / PDF PRESENSI SEKOLAH PER SISWA
         |--------------------------------------------------------------------------
-        |
-        | Digunakan dari tabel Rekap Presensi Bulanan.
-        |
-        | Contoh:
-        |
-        | /guru/rekap-presensi/siswa/4/cetak
-        | ?month=8
-        | &year=2026
-        |
         */
 
         Route::get(
@@ -455,15 +369,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | DETAIL RIWAYAT PRESENSI SEKOLAH PER SISWA
         |--------------------------------------------------------------------------
-        |
-        | Digunakan dari tabel Rekap Presensi Bulanan.
-        |
-        | Contoh:
-        |
-        | /guru/rekap-presensi/siswa/4
-        | ?month=8
-        | &year=2026
-        |
         */
 
         Route::get(
@@ -572,6 +477,35 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
+        | NOTIFIKASI SISWA - TANDAI SUDAH DIBACA
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan ketika siswa membuka dropdown notifikasi.
+        |
+        | URL:
+        |
+        | POST /siswa/notifikasi/baca
+        |
+        | Route name:
+        |
+        | siswa.notifications.read
+        |
+        */
+
+        Route::post(
+            '/notifikasi/baca',
+            [
+                SiswaDashboardController::class,
+                'markNotificationsRead',
+            ]
+        )
+        ->name(
+            'notifications.read'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
         | PRESENSI MASUK SEKOLAH
         |--------------------------------------------------------------------------
         */
@@ -658,20 +592,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | RIWAYAT PRESENSI SISWA
         |--------------------------------------------------------------------------
-        |
-        | Satu halaman untuk:
-        |
-        | - Presensi Sekolah
-        | - Presensi Latihan
-        |
-        | Sekolah:
-        |
-        | /siswa/riwayat-presensi?type=school
-        |
-        | Latihan:
-        |
-        | /siswa/riwayat-presensi?type=training
-        |
         */
 
         Route::get(
@@ -766,9 +686,6 @@ Route::middleware([
 |--------------------------------------------------------------------------
 | PENGELOLAAN KEHADIRAN LATIHAN
 |--------------------------------------------------------------------------
-|
-| Digunakan oleh Guru dan Pelatih.
-|
 */
 
 Route::middleware(
@@ -980,16 +897,6 @@ Route::middleware(
 |--------------------------------------------------------------------------
 | DATA CABANG OLAHRAGA SISWA
 |--------------------------------------------------------------------------
-|
-| Digunakan Guru dan Pelatih untuk:
-|
-| - Melihat cabang olahraga siswa
-| - Mengubah cabang olahraga siswa
-| - Melihat rekap presensi latihan
-| - Melihat detail presensi siswa
-| - Export rekap presensi latihan ke Excel
-| - Cetak / Simpan PDF rekap presensi latihan
-|
 */
 
 Route::middleware(
@@ -1087,10 +994,6 @@ Route::middleware(
 |--------------------------------------------------------------------------
 | BARCODE PRESENSI MASUK SEKOLAH
 |--------------------------------------------------------------------------
-|
-| Barcode ini khusus untuk presensi sekolah.
-| Tidak digunakan untuk presensi latihan.
-|
 */
 
 Route::middleware(
