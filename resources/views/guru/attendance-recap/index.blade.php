@@ -50,37 +50,22 @@
 
         body {
             margin: 0;
-
             color: #ffffff;
             background: #101415;
-
-            font-family:
-                'Hanken Grotesk',
-                sans-serif;
+            font-family: 'Hanken Grotesk', sans-serif;
         }
 
         .material-symbols-outlined {
-            font-family:
-                'Material Symbols Outlined'
-                !important;
-
+            font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
             font-style: normal;
-
             line-height: 1;
-
             letter-spacing: normal;
             text-transform: none;
-
             white-space: nowrap;
-
             font-feature-settings: 'liga';
-
-            -webkit-font-feature-settings:
-                'liga';
-
-            -webkit-font-smoothing:
-                antialiased;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
         }
 
         .recap-container {
@@ -90,11 +75,7 @@
             );
 
             margin: 0 auto;
-
-            padding:
-                38px
-                0
-                100px;
+            padding: 38px 0 100px;
         }
 
 
@@ -107,19 +88,14 @@
         .recap-back {
             display: inline-flex;
             align-items: center;
-
             gap: 7px;
 
             margin-bottom: 25px;
 
             color: #9dcaff;
-
             text-decoration: none;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 700;
         }
@@ -128,8 +104,7 @@
             color: #ffffff;
         }
 
-        .recap-back
-        .material-symbols-outlined {
+        .recap-back .material-symbols-outlined {
             font-size: 18px;
         }
 
@@ -151,13 +126,9 @@
 
             color: #9dcaff;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 800;
-
             letter-spacing: 1px;
         }
 
@@ -166,19 +137,13 @@
 
             color: #e0e3e5;
 
-            font-family:
-                'Anybody',
-                sans-serif;
-
+            font-family: 'Anybody', sans-serif;
             font-size: 32px;
             font-weight: 800;
         }
 
         .recap-heading p {
-            margin:
-                7px
-                0
-                0;
+            margin: 7px 0 0;
 
             color: #8a919c;
 
@@ -199,16 +164,11 @@
             gap: 5px;
 
             margin-bottom: 22px;
-
             padding: 5px;
 
             background: #151b20;
 
-            border:
-                1px
-                solid
-                #303c48;
-
+            border: 1px solid #303c48;
             border-radius: 10px;
         }
 
@@ -221,9 +181,7 @@
 
             gap: 6px;
 
-            padding:
-                0
-                14px;
+            padding: 0 14px;
 
             color: #7d8c97;
 
@@ -241,37 +199,27 @@
 
         .recap-tab:hover {
             color: #dce7ef;
-
-            background:
-                rgba(
-                    157,
-                    202,
-                    255,
-                    .05
-                );
+            background: rgba(157, 202, 255, .05);
         }
 
         .recap-tab.active {
             color: #101415;
-
             background: #9dcaff;
         }
 
-        .recap-tab
-        .material-symbols-outlined {
+        .recap-tab .material-symbols-outlined {
             font-size: 16px;
         }
 
 
         /*
         =====================================================
-        CONTROL PANEL
+        CONTROL
         =====================================================
         */
 
         .control-panel {
             position: relative;
-
             z-index: 30;
 
             display: flex;
@@ -281,16 +229,11 @@
             gap: 20px;
 
             margin-bottom: 20px;
-
             padding: 18px;
 
             background: #1b2531;
 
-            border:
-                1px
-                solid
-                #34485d;
-
+            border: 1px solid #34485d;
             border-radius: 15px;
         }
 
@@ -307,10 +250,7 @@
             width: 43px;
             height: 43px;
 
-            flex:
-                0
-                0
-                43px;
+            flex: 0 0 43px;
 
             display: flex;
             align-items: center;
@@ -318,24 +258,9 @@
 
             color: #9dcaff;
 
-            background:
-                rgba(
-                    157,
-                    202,
-                    255,
-                    .10
-                );
+            background: rgba(157, 202, 255, .10);
 
-            border:
-                1px
-                solid
-                rgba(
-                    157,
-                    202,
-                    255,
-                    .16
-                );
-
+            border: 1px solid rgba(157, 202, 255, .16);
             border-radius: 11px;
         }
 
@@ -346,10 +271,7 @@
 
             color: #747d88;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
             font-weight: 700;
         }
@@ -359,10 +281,7 @@
 
             color: #e0e3e5;
 
-            font-family:
-                'Anybody',
-                sans-serif;
-
+            font-family: 'Anybody', sans-serif;
             font-size: 14px;
         }
 
@@ -399,10 +318,7 @@
 
             color: #71808b;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 7px;
             font-weight: 800;
         }
@@ -411,19 +327,12 @@
         .control-select {
             height: 40px;
 
-            padding:
-                0
-                12px;
+            padding: 0 12px;
 
             color: #e0e3e5;
-
             background: #151b20;
 
-            border:
-                1px
-                solid
-                #404751;
-
+            border: 1px solid #404751;
             border-radius: 9px;
 
             outline: none;
@@ -432,19 +341,13 @@
         }
 
         .control-input {
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             color-scheme: dark;
         }
 
         .control-select {
             min-width: 145px;
-
-            font-family:
-                'Hanken Grotesk',
-                sans-serif;
+            font-family: 'Hanken Grotesk', sans-serif;
         }
 
         .control-input:focus,
@@ -461,43 +364,28 @@
 
             gap: 6px;
 
-            padding:
-                0
-                15px;
+            padding: 0 15px;
 
             color: #101415;
-
             background: #9dcaff;
 
-            border:
-                1px
-                solid
-                #9dcaff;
-
+            border: 1px solid #9dcaff;
             border-radius: 9px;
 
             cursor: pointer;
 
-            font-family:
-                'Anybody',
-                sans-serif;
-
+            font-family: 'Anybody', sans-serif;
             font-size: 10px;
             font-weight: 700;
 
             white-space: nowrap;
-
-            transition:
-                background
-                .18s ease;
         }
 
         .control-button:hover {
             background: #b5d8ff;
         }
 
-        .control-button
-        .material-symbols-outlined {
+        .control-button .material-symbols-outlined {
             font-size: 16px;
         }
 
@@ -510,7 +398,6 @@
 
         .download-dropdown {
             position: relative;
-
             flex-shrink: 0;
         }
 
@@ -523,47 +410,23 @@
 
             gap: 6px;
 
-            padding:
-                0
-                14px;
+            padding: 0 14px;
 
             color: #8ce8c3;
+            background: rgba(54, 211, 153, .08);
 
-            background:
-                rgba(
-                    54,
-                    211,
-                    153,
-                    .08
-                );
-
-            border:
-                1px
-                solid
-                rgba(
-                    54,
-                    211,
-                    153,
-                    .35
-                );
-
+            border: 1px solid rgba(54, 211, 153, .35);
             border-radius: 9px;
 
             cursor: pointer;
 
             list-style: none;
-
             user-select: none;
 
             white-space: nowrap;
 
             font-size: 10px;
             font-weight: 800;
-
-            transition:
-                color .18s ease,
-                background .18s ease,
-                border-color .18s ease;
         }
 
         .download-toggle::-webkit-details-marker {
@@ -575,46 +438,30 @@
         }
 
         .download-toggle:hover,
-        .download-dropdown[open]
-        .download-toggle {
+        .download-dropdown[open] .download-toggle {
             color: #101415;
-
             background: #8ce8c3;
-
             border-color: #8ce8c3;
         }
 
-        .download-toggle
-        .material-symbols-outlined {
+        .download-toggle .material-symbols-outlined {
             font-size: 17px;
         }
 
         .download-arrow {
             font-size: 15px !important;
 
-            transition:
-                transform
-                .18s ease;
+            transition: transform .18s ease;
         }
 
-        .download-dropdown[open]
-        .download-arrow {
-            transform:
-                rotate(
-                    180deg
-                );
+        .download-dropdown[open] .download-arrow {
+            transform: rotate(180deg);
         }
 
         .download-menu {
             position: absolute;
 
-            top:
-                calc(
-                    100%
-                    +
-                    7px
-                );
-
+            top: calc(100% + 7px);
             right: 0;
 
             z-index: 999;
@@ -625,23 +472,10 @@
 
             background: #151d25;
 
-            border:
-                1px
-                solid
-                #34485d;
-
+            border: 1px solid #34485d;
             border-radius: 10px;
 
-            box-shadow:
-                0
-                12px
-                30px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    .30
-                );
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .30);
         }
 
         .download-option {
@@ -652,9 +486,7 @@
 
             width: 100%;
 
-            padding:
-                10px
-                11px;
+            padding: 10px 11px;
 
             color: #cbd6dd;
 
@@ -664,20 +496,14 @@
 
             font-size: 9px;
             font-weight: 700;
-
-            transition:
-                color .15s ease,
-                background .15s ease;
         }
 
         .download-option:hover {
             color: #ffffff;
-
             background: #1f2b36;
         }
 
-        .download-option
-        .material-symbols-outlined {
+        .download-option .material-symbols-outlined {
             width: 19px;
 
             flex-shrink: 0;
@@ -685,13 +511,11 @@
             font-size: 18px;
         }
 
-        .download-option.excel
-        .material-symbols-outlined {
+        .download-option.excel .material-symbols-outlined {
             color: #8ce8c3;
         }
 
-        .download-option.pdf
-        .material-symbols-outlined {
+        .download-option.pdf .material-symbols-outlined {
             color: #ffaaa5;
         }
 
@@ -729,13 +553,7 @@
             display: grid;
 
             grid-template-columns:
-                repeat(
-                    4,
-                    minmax(
-                        0,
-                        1fr
-                    )
-                );
+                repeat(4, minmax(0, 1fr));
 
             gap: 10px;
 
@@ -744,13 +562,7 @@
 
         .stats-grid.daily {
             grid-template-columns:
-                repeat(
-                    7,
-                    minmax(
-                        0,
-                        1fr
-                    )
-                );
+                repeat(7, minmax(0, 1fr));
         }
 
         .stat-card {
@@ -758,11 +570,7 @@
 
             background: #1b2531;
 
-            border:
-                1px
-                solid
-                #34485d;
-
+            border: 1px solid #34485d;
             border-radius: 13px;
         }
 
@@ -776,10 +584,7 @@
 
             color: #7e8792;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 7px;
             font-weight: 700;
 
@@ -788,8 +593,7 @@
             white-space: nowrap;
         }
 
-        .stat-label
-        .material-symbols-outlined {
+        .stat-label .material-symbols-outlined {
             font-size: 15px;
         }
 
@@ -798,50 +602,38 @@
 
             color: #ffffff;
 
-            font-family:
-                'Anybody',
-                sans-serif;
-
+            font-family: 'Anybody', sans-serif;
             font-size: 23px;
             font-weight: 800;
         }
 
-        .stat-card.total
-        .stat-label,
-        .stat-card.days
-        .stat-label,
-        .stat-card.students
-        .stat-label {
+        .stat-card.total .stat-label,
+        .stat-card.days .stat-label,
+        .stat-card.students .stat-label {
             color: #9dcaff;
         }
 
-        .stat-card.present
-        .stat-label {
+        .stat-card.present .stat-label {
             color: #8ce8c3;
         }
 
-        .stat-card.late
-        .stat-label {
+        .stat-card.late .stat-label {
             color: #ffb866;
         }
 
-        .stat-card.permission
-        .stat-label {
+        .stat-card.permission .stat-label {
             color: #eacb84;
         }
 
-        .stat-card.sick
-        .stat-label {
+        .stat-card.sick .stat-label {
             color: #9dcaff;
         }
 
-        .stat-card.absent
-        .stat-label {
+        .stat-card.absent .stat-label {
             color: #ffaaa5;
         }
 
-        .stat-card.not-yet
-        .stat-label {
+        .stat-card.not-yet .stat-label {
             color: #9da5af;
         }
 
@@ -860,29 +652,11 @@
             gap: 20px;
 
             margin-bottom: 28px;
+            padding: 15px 17px;
 
-            padding:
-                15px
-                17px;
+            background: rgba(0, 114, 188, .08);
 
-            background:
-                rgba(
-                    0,
-                    114,
-                    188,
-                    .08
-                );
-
-            border:
-                1px
-                solid
-                rgba(
-                    157,
-                    202,
-                    255,
-                    .18
-                );
-
+            border: 1px solid rgba(157, 202, 255, .18);
             border-radius: 13px;
         }
 
@@ -909,10 +683,7 @@
 
             color: #9dcaff;
 
-            font-family:
-                'Anybody',
-                sans-serif;
-
+            font-family: 'Anybody', sans-serif;
             font-size: 27px;
             font-weight: 800;
         }
@@ -939,18 +710,12 @@
 
             color: #e0e3e5;
 
-            font-family:
-                'Anybody',
-                sans-serif;
-
+            font-family: 'Anybody', sans-serif;
             font-size: 21px;
         }
 
         .recap-toolbar-title p {
-            margin:
-                4px
-                0
-                0;
+            margin: 4px 0 0;
 
             color: #8a919c;
 
@@ -959,7 +724,6 @@
 
         .toolbar-controls {
             display: flex;
-
             gap: 8px;
         }
 
@@ -967,19 +731,12 @@
             width: 245px;
             height: 40px;
 
-            padding:
-                0
-                13px;
+            padding: 0 13px;
 
             color: #e0e3e5;
-
             background: #1a1e21;
 
-            border:
-                1px
-                solid
-                #404751;
-
+            border: 1px solid #404751;
             border-radius: 9px;
 
             outline: none;
@@ -994,19 +751,12 @@
         .status-filter {
             height: 40px;
 
-            padding:
-                0
-                12px;
+            padding: 0 12px;
 
             color: #e0e3e5;
-
             background: #1a1e21;
 
-            border:
-                1px
-                solid
-                #404751;
-
+            border: 1px solid #404751;
             border-radius: 9px;
 
             outline: none;
@@ -1026,11 +776,7 @@
 
             background: #1b2531;
 
-            border:
-                1px
-                solid
-                #34485d;
-
+            border: 1px solid #34485d;
             border-radius: 15px;
         }
 
@@ -1043,88 +789,49 @@
         }
 
         .monthly-table {
-            min-width: 1000px;
+            min-width: 1120px;
         }
 
         .recap-table thead {
-            background:
-                rgba(
-                    11,
-                    17,
-                    22,
-                    .35
-                );
+            background: rgba(11, 17, 22, .35);
         }
 
         .recap-table th {
-            padding:
-                13px
-                16px;
+            padding: 13px 16px;
 
             color: #747d88;
 
             text-align: left;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
             font-weight: 700;
 
             letter-spacing: .5px;
 
-            border-bottom:
-                1px
-                solid
-                #34485d;
+            border-bottom: 1px solid #34485d;
         }
 
         .recap-table td {
-            padding:
-                14px
-                16px;
+            padding: 14px 16px;
 
             color: #c1c7ce;
 
             font-size: 10px;
 
-            border-bottom:
-                1px
-                solid
-                rgba(
-                    64,
-                    71,
-                    81,
-                    .38
-                );
+            border-bottom: 1px solid rgba(64, 71, 81, .38);
         }
 
-        .recap-table
-        tbody
-        tr:last-child
-        td {
+        .recap-table tbody tr:last-child td {
             border-bottom: 0;
         }
 
-        .recap-table
-        tbody
-        tr {
-            transition:
-                background
-                .16s ease;
+        .recap-table tbody tr {
+            transition: background .16s ease;
         }
 
-        .recap-table
-        tbody
-        tr:hover {
-            background:
-                rgba(
-                    157,
-                    202,
-                    255,
-                    .025
-                );
+        .recap-table tbody tr:hover {
+            background: rgba(157, 202, 255, .025);
         }
 
 
@@ -1147,25 +854,18 @@
             width: 38px;
             height: 38px;
 
-            flex:
-                0
-                0
-                38px;
+            flex: 0 0 38px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
             color: #101415;
-
             background: #9dcaff;
 
             border-radius: 50%;
 
-            font-family:
-                'Anybody',
-                sans-serif;
-
+            font-family: 'Anybody', sans-serif;
             font-size: 13px;
             font-weight: 800;
         }
@@ -1186,10 +886,7 @@
 
             color: #747d88;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
 
@@ -1206,95 +903,47 @@
 
             gap: 5px;
 
-            padding:
-                6px
-                9px;
+            padding: 6px 9px;
 
             border-radius: 20px;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
             font-weight: 700;
         }
 
-        .status-badge
-        .material-symbols-outlined {
+        .status-badge .material-symbols-outlined {
             font-size: 13px;
         }
 
         .status-badge.present {
             color: #8ce8c3;
-
-            background:
-                rgba(
-                    54,
-                    211,
-                    153,
-                    .10
-                );
+            background: rgba(54, 211, 153, .10);
         }
 
         .status-badge.late {
             color: #ffb866;
-
-            background:
-                rgba(
-                    245,
-                    158,
-                    11,
-                    .11
-                );
+            background: rgba(245, 158, 11, .11);
         }
 
         .status-badge.permission {
             color: #eacb84;
-
-            background:
-                rgba(
-                    199,
-                    160,
-                    80,
-                    .11
-                );
+            background: rgba(199, 160, 80, .11);
         }
 
         .status-badge.sick {
             color: #9dcaff;
-
-            background:
-                rgba(
-                    157,
-                    202,
-                    255,
-                    .10
-                );
+            background: rgba(157, 202, 255, .10);
         }
 
         .status-badge.absent {
             color: #ffaaa5;
-
-            background:
-                rgba(
-                    231,
-                    70,
-                    70,
-                    .10
-                );
+            background: rgba(231, 70, 70, .10);
         }
 
         .status-badge.not-yet {
             color: #9da5af;
-
-            background:
-                rgba(
-                    138,
-                    145,
-                    156,
-                    .10
-                );
+            background: rgba(138, 145, 156, .10);
         }
 
 
@@ -1305,10 +954,7 @@
         */
 
         .value {
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 9px;
             font-weight: 700;
         }
@@ -1340,10 +986,7 @@
         .muted {
             color: #68717c;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
 
@@ -1353,7 +996,6 @@
             color: #9ca5af;
 
             font-size: 9px;
-
             line-height: 1.45;
         }
 
@@ -1364,38 +1006,70 @@
 
             min-width: 64px;
 
-            padding:
-                6px
-                9px;
+            padding: 6px 9px;
 
             color: #9dcaff;
+            background: rgba(0, 114, 188, .10);
 
-            background:
-                rgba(
-                    0,
-                    114,
-                    188,
-                    .10
-                );
-
-            border:
-                1px
-                solid
-                rgba(
-                    157,
-                    202,
-                    255,
-                    .15
-                );
-
+            border: 1px solid rgba(157, 202, 255, .15);
             border-radius: 20px;
 
-            font-family:
-                'JetBrains Mono',
-                monospace;
-
+            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
             font-weight: 800;
+        }
+
+
+        /*
+        =====================================================
+        DETAIL BUTTON
+        =====================================================
+        */
+
+        .detail-button {
+            height: 32px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+
+            padding: 0 11px;
+
+            color: #9dcaff;
+            background: rgba(157, 202, 255, .07);
+
+            border: 1px solid rgba(157, 202, 255, .24);
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 800;
+
+            white-space: nowrap;
+
+            transition:
+                color .18s ease,
+                background .18s ease,
+                border-color .18s ease;
+        }
+
+        .detail-button:hover {
+            color: #101415;
+            background: #9dcaff;
+            border-color: #9dcaff;
+        }
+
+        .detail-button .material-symbols-outlined {
+            font-size: 15px;
+        }
+
+        .action-cell {
+            width: 100px;
+            white-space: nowrap;
         }
 
 
@@ -1408,19 +1082,12 @@
         .empty-state {
             display: none;
 
-            padding:
-                40px
-                20px;
+            padding: 40px 20px;
 
             color: #8a919c;
-
             background: #1b2531;
 
-            border:
-                1px
-                solid
-                #34485d;
-
+            border: 1px solid #34485d;
             border-radius: 15px;
 
             text-align: center;
@@ -1428,8 +1095,7 @@
             font-size: 10px;
         }
 
-        .empty-state
-        .material-symbols-outlined {
+        .empty-state .material-symbols-outlined {
             display: block;
 
             margin-bottom: 8px;
@@ -1447,50 +1113,28 @@
         */
 
         @media (max-width: 1150px) {
-
             .stats-grid.daily {
                 grid-template-columns:
-                    repeat(
-                        4,
-                        minmax(
-                            0,
-                            1fr
-                        )
-                    );
+                    repeat(4, minmax(0, 1fr));
             }
-
         }
 
-
         @media (max-width: 900px) {
-
             .control-panel {
                 align-items: stretch;
-
                 flex-direction: column;
             }
 
             .control-actions {
                 width: 100%;
             }
-
         }
 
-
         @media (max-width: 720px) {
-
             .recap-container {
-                width:
-                    calc(
-                        100%
-                        -
-                        28px
-                    );
+                width: calc(100% - 28px);
 
-                padding:
-                    25px
-                    0
-                    90px;
+                padding: 25px 0 90px;
             }
 
             .recap-heading h1 {
@@ -1499,22 +1143,17 @@
 
             .recap-tabs {
                 display: flex;
-
                 width: 100%;
             }
 
             .recap-tab {
                 flex: 1;
-
-                padding:
-                    0
-                    8px;
+                padding: 0 8px;
             }
 
             .control-actions,
             .control-form {
                 align-items: stretch;
-
                 flex-direction: column;
 
                 width: 100%;
@@ -1540,24 +1179,16 @@
             .stats-grid,
             .stats-grid.daily {
                 grid-template-columns:
-                    repeat(
-                        2,
-                        minmax(
-                            0,
-                            1fr
-                        )
-                    );
+                    repeat(2, minmax(0, 1fr));
             }
 
             .percentage-panel {
                 align-items: flex-start;
-
                 flex-direction: column;
             }
 
             .recap-toolbar {
                 align-items: stretch;
-
                 flex-direction: column;
             }
 
@@ -1569,7 +1200,6 @@
             .status-filter {
                 width: 100%;
             }
-
         }
     </style>
 
@@ -1776,9 +1406,9 @@
     @if($activeTab === 'harian')
 
 
-        <!-- =============================================
+        <!-- =================================================
              CONTROL HARIAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="control-panel">
 
@@ -1852,9 +1482,9 @@
                 </form>
 
 
-                <!-- =====================================
+                <!-- =================================================
                      DOWNLOAD HARIAN
-                ====================================== -->
+                ================================================== -->
 
                 <details class="download-dropdown">
 
@@ -1874,9 +1504,6 @@
 
 
                     <div class="download-menu">
-
-
-                        <!-- EXCEL HARIAN -->
 
                         <a
                             href="{{
@@ -1909,8 +1536,6 @@
 
                         </a>
 
-
-                        <!-- PDF HARIAN -->
 
                         <a
                             href="{{
@@ -1954,12 +1579,11 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              STATS HARIAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="stats-grid daily">
-
 
             <article class="stat-card total">
 
@@ -2096,9 +1720,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              PERCENTAGE HARIAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="percentage-panel">
 
@@ -2131,9 +1755,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              TOOLBAR HARIAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="recap-toolbar">
 
@@ -2203,9 +1827,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              TABLE HARIAN
-        ============================================== -->
+        ================================================== -->
 
         <div
             class="table-wrapper"
@@ -2415,10 +2039,6 @@
         </div>
 
 
-        <!-- =============================================
-             EMPTY HARIAN
-        ============================================== -->
-
         <div
             class="empty-state"
             id="dailyEmpty"
@@ -2442,9 +2062,9 @@
     @if($activeTab === 'bulanan')
 
 
-        <!-- =============================================
+        <!-- =================================================
              CONTROL BULANAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="control-panel">
 
@@ -2480,11 +2100,6 @@
 
 
             <div class="control-actions">
-
-
-                <!-- =====================================
-                     FILTER BULANAN
-                ====================================== -->
 
                 <form
                     method="GET"
@@ -2569,9 +2184,9 @@
                 </form>
 
 
-                <!-- =====================================
+                <!-- =================================================
                      DOWNLOAD BULANAN
-                ====================================== -->
+                ================================================== -->
 
                 <details class="download-dropdown">
 
@@ -2591,9 +2206,6 @@
 
 
                     <div class="download-menu">
-
-
-                        <!-- EXCEL BULANAN -->
 
                         <a
                             href="{{
@@ -2627,8 +2239,6 @@
 
                         </a>
 
-
-                        <!-- PDF BULANAN -->
 
                         <a
                             href="{{
@@ -2673,12 +2283,11 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              STATS BULANAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="stats-grid">
-
 
             <article class="stat-card days">
 
@@ -2834,9 +2443,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              PERCENTAGE BULANAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="percentage-panel">
 
@@ -2869,9 +2478,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              TOOLBAR BULANAN
-        ============================================== -->
+        ================================================== -->
 
         <section class="recap-toolbar">
 
@@ -2904,9 +2513,9 @@
         </section>
 
 
-        <!-- =============================================
+        <!-- =================================================
              TABLE BULANAN
-        ============================================== -->
+        ================================================== -->
 
         <div
             class="table-wrapper"
@@ -2949,6 +2558,10 @@
 
                         <th>
                             KEHADIRAN
+                        </th>
+
+                        <th>
+                            AKSI
                         </th>
 
                     </tr>
@@ -3106,6 +2719,37 @@
 
                             </td>
 
+
+                            <!-- =================================================
+                                 AKSI DETAIL
+                            ================================================== -->
+
+                            <td class="action-cell">
+
+                                <a
+                                    href="{{
+                                        route(
+                                            'guru.attendance.student.detail',
+                                            [
+                                                'student' => $student->id,
+                                                'month' => $selectedMonth,
+                                                'year' => $selectedYear,
+                                            ]
+                                        )
+                                    }}"
+                                    class="detail-button"
+                                >
+
+                                    <span class="material-symbols-outlined">
+                                        visibility
+                                    </span>
+
+                                    Detail
+
+                                </a>
+
+                            </td>
+
                         </tr>
 
                     @endforeach
@@ -3116,10 +2760,6 @@
 
         </div>
 
-
-        <!-- =============================================
-             EMPTY BULANAN
-        ============================================== -->
 
         <div
             class="empty-state"
@@ -3144,6 +2784,7 @@
 ===================================================== -->
 
 <script>
+
     /*
     =====================================================
     DAILY SEARCH + FILTER
@@ -3177,6 +2818,7 @@
 
 
     function filterDaily() {
+
         if (!dailyTableWrapper) {
             return;
         }
@@ -3201,6 +2843,7 @@
 
         dailyRows.forEach(
             function (row) {
+
                 const name =
                     row.dataset.name
                     || '';
@@ -3245,6 +2888,7 @@
                 if (visible) {
                     visibleCount++;
                 }
+
             }
         );
 
@@ -3256,27 +2900,34 @@
 
 
         if (dailyEmpty) {
+
             dailyEmpty.style.display =
                 visibleCount > 0
                     ? 'none'
                     : 'block';
+
         }
+
     }
 
 
     if (dailySearch) {
+
         dailySearch.addEventListener(
             'input',
             filterDaily
         );
+
     }
 
 
     if (dailyStatusFilter) {
+
         dailyStatusFilter.addEventListener(
             'change',
             filterDaily
         );
+
     }
 
 
@@ -3308,6 +2959,7 @@
 
 
     function filterMonthly() {
+
         if (!monthlyTableWrapper) {
             return;
         }
@@ -3326,6 +2978,7 @@
 
         monthlyRows.forEach(
             function (row) {
+
                 const name =
                     row.dataset.name
                     || '';
@@ -3354,6 +3007,7 @@
                 if (visible) {
                     visibleCount++;
                 }
+
             }
         );
 
@@ -3365,19 +3019,24 @@
 
 
         if (monthlyEmpty) {
+
             monthlyEmpty.style.display =
                 visibleCount > 0
                     ? 'none'
                     : 'block';
+
         }
+
     }
 
 
     if (monthlySearch) {
+
         monthlySearch.addEventListener(
             'input',
             filterMonthly
         );
+
     }
 
 
@@ -3390,25 +3049,32 @@
     document.addEventListener(
         'click',
         function (event) {
+
             document
                 .querySelectorAll(
                     '.download-dropdown[open]'
                 )
                 .forEach(
                     function (dropdown) {
+
                         if (
                             !dropdown.contains(
                                 event.target
                             )
                         ) {
+
                             dropdown.removeAttribute(
                                 'open'
                             );
+
                         }
+
                     }
                 );
+
         }
     );
+
 </script>
 
 

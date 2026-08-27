@@ -17,6 +17,7 @@ use App\Http\Controllers\Guru\SchoolAttendanceRecapExportController;
 use App\Http\Controllers\Guru\SchoolAttendanceRecapPrintController;
 use App\Http\Controllers\Guru\MonthlySchoolAttendanceRecapExportController;
 use App\Http\Controllers\Guru\MonthlySchoolAttendanceRecapPrintController;
+use App\Http\Controllers\Guru\SchoolAttendanceDetailController;
 
 
 /*
@@ -310,7 +311,7 @@ Route::middleware([
         |
         | Route lama tetap dipertahankan agar link lama tidak rusak.
         |
-        | Tetapi sekarang diarahkan ke satu halaman Rekap Presensi:
+        | Tetapi sekarang diarahkan ke:
         |
         | /guru/rekap-presensi?tab=bulanan
         |
@@ -340,6 +341,12 @@ Route::middleware([
                     );
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | VALIDASI BULAN
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     $month < 1
                     ||
@@ -350,6 +357,12 @@ Route::middleware([
                 }
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | VALIDASI TAHUN
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     $year < 2020
                     ||
@@ -359,6 +372,12 @@ Route::middleware([
                         $now->year;
                 }
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | REDIRECT KE TAB BULANAN
+                |--------------------------------------------------------------------------
+                */
 
                 return redirect()
                     ->route(
@@ -384,6 +403,33 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
+        | DETAIL RIWAYAT PRESENSI SEKOLAH PER SISWA
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan dari tabel Rekap Presensi Bulanan.
+        |
+        | Contoh:
+        |
+        | /guru/rekap-presensi/siswa/4
+        | ?month=8
+        | &year=2026
+        |
+        */
+
+        Route::get(
+            '/rekap-presensi/siswa/{student}',
+            [
+                SchoolAttendanceDetailController::class,
+                'show',
+            ]
+        )
+        ->name(
+            'attendance.student.detail'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
         | PENGAJUAN IZIN / SAKIT
         |--------------------------------------------------------------------------
         */
@@ -400,6 +446,12 @@ Route::middleware([
         );
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | APPROVE PENGAJUAN
+        |--------------------------------------------------------------------------
+        */
+
         Route::post(
             '/pengajuan-izin/{leaveRequest}/approve',
             [
@@ -411,6 +463,12 @@ Route::middleware([
             'leave.approve'
         );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | REJECT PENGAJUAN
+        |--------------------------------------------------------------------------
+        */
 
         Route::post(
             '/pengajuan-izin/{leaveRequest}/reject',
@@ -554,7 +612,7 @@ Route::middleware([
         | Satu halaman untuk:
         |
         | - Presensi Sekolah
-        | - Presensi Latihan KKO
+        | - Presensi Latihan
         |
         | Sekolah:
         |
@@ -580,7 +638,7 @@ Route::middleware([
 
         /*
         |--------------------------------------------------------------------------
-        | IZIN / SAKIT
+        | FORM IZIN / SAKIT
         |--------------------------------------------------------------------------
         */
 
@@ -595,6 +653,12 @@ Route::middleware([
             'leave.create'
         );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN IZIN / SAKIT
+        |--------------------------------------------------------------------------
+        */
 
         Route::post(
             '/izin',
