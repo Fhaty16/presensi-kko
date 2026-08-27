@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,7 +10,10 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Rekap Presensi Sekolah - KKO SMANDA</title>
+    <title>
+        Rekap Presensi Sekolah - KKO SMANDA
+    </title>
+
 
     <link
         rel="preconnect"
@@ -37,7 +41,9 @@
         href="{{ asset('css/kko.css') }}"
     >
 
+
     <style>
+
         /*
         =====================================================
         BASE
@@ -48,34 +54,104 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
+
             color: #ffffff;
             background: #101415;
-            font-family: 'Hanken Grotesk', sans-serif;
+
+            font-family:
+                'Hanken Grotesk',
+                sans-serif;
         }
 
         .material-symbols-outlined {
-            font-family: 'Material Symbols Outlined' !important;
+            font-family:
+                'Material Symbols Outlined'
+                !important;
+
             font-weight: normal !important;
             font-style: normal;
+
             line-height: 1;
+
             letter-spacing: normal;
             text-transform: none;
+
             white-space: nowrap;
+
             font-feature-settings: 'liga';
-            -webkit-font-feature-settings: 'liga';
-            -webkit-font-smoothing: antialiased;
+
+            -webkit-font-feature-settings:
+                'liga';
+
+            -webkit-font-smoothing:
+                antialiased;
         }
 
-        .recap-container {
-            width: min(
-                1280px,
-                calc(100% - 48px)
-            );
 
-            margin: 0 auto;
-            padding: 38px 0 100px;
+        /*
+        =====================================================
+        CONTAINER
+        =====================================================
+        */
+
+        .recap-container {
+            margin:
+                0
+                auto;
+        }
+
+
+        /*
+        =====================================================
+        HARIAN
+        =====================================================
+        */
+
+        .recap-container.daily-container {
+            width:
+                min(
+                    1280px,
+                    calc(
+                        100%
+                        -
+                        48px
+                    )
+                );
+
+            padding:
+                38px
+                0
+                100px;
+        }
+
+
+        /*
+        =====================================================
+        BULANAN
+        =====================================================
+        */
+
+        .recap-container.monthly-container {
+            width:
+                min(
+                    1360px,
+                    calc(
+                        100%
+                        -
+                        52px
+                    )
+                );
+
+            padding:
+                30px
+                0
+                90px;
         }
 
 
@@ -88,14 +164,19 @@
         .recap-back {
             display: inline-flex;
             align-items: center;
+
             gap: 7px;
 
-            margin-bottom: 25px;
+            margin-bottom: 24px;
 
             color: #9dcaff;
+
             text-decoration: none;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 10px;
             font-weight: 700;
         }
@@ -104,7 +185,8 @@
             color: #ffffff;
         }
 
-        .recap-back .material-symbols-outlined {
+        .recap-back
+        .material-symbols-outlined {
             font-size: 18px;
         }
 
@@ -126,9 +208,13 @@
 
             color: #9dcaff;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 10px;
             font-weight: 800;
+
             letter-spacing: 1px;
         }
 
@@ -137,13 +223,19 @@
 
             color: #e0e3e5;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 32px;
             font-weight: 800;
         }
 
         .recap-heading p {
-            margin: 7px 0 0;
+            margin:
+                7px
+                0
+                0;
 
             color: #8a919c;
 
@@ -164,11 +256,16 @@
             gap: 5px;
 
             margin-bottom: 22px;
+
             padding: 5px;
 
             background: #151b20;
 
-            border: 1px solid #303c48;
+            border:
+                1px
+                solid
+                #303c48;
+
             border-radius: 10px;
         }
 
@@ -181,7 +278,9 @@
 
             gap: 6px;
 
-            padding: 0 14px;
+            padding:
+                0
+                14px;
 
             color: #7d8c97;
 
@@ -199,15 +298,24 @@
 
         .recap-tab:hover {
             color: #dce7ef;
-            background: rgba(157, 202, 255, .05);
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .05
+                );
         }
 
         .recap-tab.active {
             color: #101415;
+
             background: #9dcaff;
         }
 
-        .recap-tab .material-symbols-outlined {
+        .recap-tab
+        .material-symbols-outlined {
             font-size: 16px;
         }
 
@@ -220,6 +328,7 @@
 
         .control-panel {
             position: relative;
+
             z-index: 30;
 
             display: flex;
@@ -229,11 +338,16 @@
             gap: 20px;
 
             margin-bottom: 20px;
+
             padding: 18px;
 
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 15px;
         }
 
@@ -250,7 +364,10 @@
             width: 43px;
             height: 43px;
 
-            flex: 0 0 43px;
+            flex:
+                0
+                0
+                43px;
 
             display: flex;
             align-items: center;
@@ -258,9 +375,24 @@
 
             color: #9dcaff;
 
-            background: rgba(157, 202, 255, .10);
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
 
-            border: 1px solid rgba(157, 202, 255, .16);
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .16
+                );
+
             border-radius: 11px;
         }
 
@@ -271,7 +403,10 @@
 
             color: #747d88;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 700;
         }
@@ -281,7 +416,10 @@
 
             color: #e0e3e5;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 14px;
         }
 
@@ -318,7 +456,10 @@
 
             color: #71808b;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
             font-weight: 800;
         }
@@ -327,12 +468,19 @@
         .control-select {
             height: 40px;
 
-            padding: 0 12px;
+            padding:
+                0
+                12px;
 
             color: #e0e3e5;
+
             background: #151b20;
 
-            border: 1px solid #404751;
+            border:
+                1px
+                solid
+                #404751;
+
             border-radius: 9px;
 
             outline: none;
@@ -341,13 +489,19 @@
         }
 
         .control-input {
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             color-scheme: dark;
         }
 
         .control-select {
             min-width: 145px;
-            font-family: 'Hanken Grotesk', sans-serif;
+
+            font-family:
+                'Hanken Grotesk',
+                sans-serif;
         }
 
         .control-input:focus,
@@ -364,17 +518,27 @@
 
             gap: 6px;
 
-            padding: 0 15px;
+            padding:
+                0
+                15px;
 
             color: #101415;
+
             background: #9dcaff;
 
-            border: 1px solid #9dcaff;
+            border:
+                1px
+                solid
+                #9dcaff;
+
             border-radius: 9px;
 
             cursor: pointer;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 10px;
             font-weight: 700;
 
@@ -385,19 +549,21 @@
             background: #b5d8ff;
         }
 
-        .control-button .material-symbols-outlined {
+        .control-button
+        .material-symbols-outlined {
             font-size: 16px;
         }
 
 
         /*
         =====================================================
-        DOWNLOAD
+        DOWNLOAD GLOBAL
         =====================================================
         */
 
         .download-dropdown {
             position: relative;
+
             flex-shrink: 0;
         }
 
@@ -410,17 +576,36 @@
 
             gap: 6px;
 
-            padding: 0 14px;
+            padding:
+                0
+                14px;
 
             color: #8ce8c3;
-            background: rgba(54, 211, 153, .08);
 
-            border: 1px solid rgba(54, 211, 153, .35);
+            background:
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .08
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .35
+                );
+
             border-radius: 9px;
 
             cursor: pointer;
 
             list-style: none;
+
             user-select: none;
 
             white-space: nowrap;
@@ -438,33 +623,49 @@
         }
 
         .download-toggle:hover,
-        .download-dropdown[open] .download-toggle {
+        .download-dropdown[open]
+        .download-toggle {
             color: #101415;
+
             background: #8ce8c3;
+
             border-color: #8ce8c3;
         }
 
-        .download-toggle .material-symbols-outlined {
+        .download-toggle
+        .material-symbols-outlined {
             font-size: 17px;
         }
 
         .download-arrow {
             font-size: 15px !important;
 
-            transition: transform .18s ease;
+            transition:
+                transform
+                .18s ease;
         }
 
-        .download-dropdown[open] .download-arrow {
-            transform: rotate(180deg);
+        .download-dropdown[open]
+        .download-arrow {
+            transform:
+                rotate(
+                    180deg
+                );
         }
 
         .download-menu {
             position: absolute;
 
-            top: calc(100% + 7px);
+            top:
+                calc(
+                    100%
+                    +
+                    7px
+                );
+
             right: 0;
 
-            z-index: 999;
+            z-index: 1000;
 
             width: 210px;
 
@@ -472,10 +673,23 @@
 
             background: #151d25;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 10px;
 
-            box-shadow: 0 12px 30px rgba(0, 0, 0, .30);
+            box-shadow:
+                0
+                12px
+                30px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .30
+                );
         }
 
         .download-option {
@@ -486,7 +700,9 @@
 
             width: 100%;
 
-            padding: 10px 11px;
+            padding:
+                10px
+                11px;
 
             color: #cbd6dd;
 
@@ -500,10 +716,12 @@
 
         .download-option:hover {
             color: #ffffff;
+
             background: #1f2b36;
         }
 
-        .download-option .material-symbols-outlined {
+        .download-option
+        .material-symbols-outlined {
             width: 19px;
 
             flex-shrink: 0;
@@ -511,11 +729,13 @@
             font-size: 18px;
         }
 
-        .download-option.excel .material-symbols-outlined {
+        .download-option.excel
+        .material-symbols-outlined {
             color: #8ce8c3;
         }
 
-        .download-option.pdf .material-symbols-outlined {
+        .download-option.pdf
+        .material-symbols-outlined {
             color: #ffaaa5;
         }
 
@@ -553,7 +773,13 @@
             display: grid;
 
             grid-template-columns:
-                repeat(4, minmax(0, 1fr));
+                repeat(
+                    4,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
 
             gap: 10px;
 
@@ -562,7 +788,13 @@
 
         .stats-grid.daily {
             grid-template-columns:
-                repeat(7, minmax(0, 1fr));
+                repeat(
+                    7,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
         }
 
         .stat-card {
@@ -570,7 +802,11 @@
 
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 13px;
         }
 
@@ -584,7 +820,10 @@
 
             color: #7e8792;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
             font-weight: 700;
 
@@ -593,7 +832,8 @@
             white-space: nowrap;
         }
 
-        .stat-label .material-symbols-outlined {
+        .stat-label
+        .material-symbols-outlined {
             font-size: 15px;
         }
 
@@ -602,38 +842,50 @@
 
             color: #ffffff;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 23px;
             font-weight: 800;
         }
 
-        .stat-card.total .stat-label,
-        .stat-card.days .stat-label,
-        .stat-card.students .stat-label {
+        .stat-card.total
+        .stat-label,
+        .stat-card.days
+        .stat-label,
+        .stat-card.students
+        .stat-label {
             color: #9dcaff;
         }
 
-        .stat-card.present .stat-label {
+        .stat-card.present
+        .stat-label {
             color: #8ce8c3;
         }
 
-        .stat-card.late .stat-label {
+        .stat-card.late
+        .stat-label {
             color: #ffb866;
         }
 
-        .stat-card.permission .stat-label {
+        .stat-card.permission
+        .stat-label {
             color: #eacb84;
         }
 
-        .stat-card.sick .stat-label {
+        .stat-card.sick
+        .stat-label {
             color: #9dcaff;
         }
 
-        .stat-card.absent .stat-label {
+        .stat-card.absent
+        .stat-label {
             color: #ffaaa5;
         }
 
-        .stat-card.not-yet .stat-label {
+        .stat-card.not-yet
+        .stat-label {
             color: #9da5af;
         }
 
@@ -652,11 +904,29 @@
             gap: 20px;
 
             margin-bottom: 28px;
-            padding: 15px 17px;
 
-            background: rgba(0, 114, 188, .08);
+            padding:
+                15px
+                17px;
 
-            border: 1px solid rgba(157, 202, 255, .18);
+            background:
+                rgba(
+                    0,
+                    114,
+                    188,
+                    .08
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .18
+                );
+
             border-radius: 13px;
         }
 
@@ -683,7 +953,10 @@
 
             color: #9dcaff;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 27px;
             font-weight: 800;
         }
@@ -697,8 +970,8 @@
 
         .recap-toolbar {
             display: flex;
-            justify-content: space-between;
             align-items: flex-end;
+            justify-content: space-between;
 
             gap: 14px;
 
@@ -710,12 +983,18 @@
 
             color: #e0e3e5;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 21px;
         }
 
         .recap-toolbar-title p {
-            margin: 4px 0 0;
+            margin:
+                4px
+                0
+                0;
 
             color: #8a919c;
 
@@ -724,6 +1003,7 @@
 
         .toolbar-controls {
             display: flex;
+
             gap: 8px;
         }
 
@@ -731,12 +1011,19 @@
             width: 245px;
             height: 40px;
 
-            padding: 0 13px;
+            padding:
+                0
+                13px;
 
             color: #e0e3e5;
+
             background: #1a1e21;
 
-            border: 1px solid #404751;
+            border:
+                1px
+                solid
+                #404751;
+
             border-radius: 9px;
 
             outline: none;
@@ -751,12 +1038,19 @@
         .status-filter {
             height: 40px;
 
-            padding: 0 12px;
+            padding:
+                0
+                12px;
 
             color: #e0e3e5;
+
             background: #1a1e21;
 
-            border: 1px solid #404751;
+            border:
+                1px
+                solid
+                #404751;
+
             border-radius: 9px;
 
             outline: none;
@@ -772,11 +1066,17 @@
         */
 
         .table-wrapper {
+            position: relative;
+
             overflow-x: auto;
 
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 15px;
         }
 
@@ -788,50 +1088,165 @@
             border-collapse: collapse;
         }
 
-        .monthly-table {
-            min-width: 1120px;
+        .daily-table {
+            min-width: 950px;
         }
 
+        .monthly-table {
+            width: 100%;
+
+            min-width: 1080px;
+        }
+
+
+        /*
+        =====================================================
+        BULANAN COLUMN WIDTH
+        =====================================================
+        */
+
+        .monthly-table
+        th:nth-child(2),
+        .monthly-table
+        td:nth-child(2),
+
+        .monthly-table
+        th:nth-child(3),
+        .monthly-table
+        td:nth-child(3),
+
+        .monthly-table
+        th:nth-child(4),
+        .monthly-table
+        td:nth-child(4),
+
+        .monthly-table
+        th:nth-child(5),
+        .monthly-table
+        td:nth-child(5),
+
+        .monthly-table
+        th:nth-child(6),
+        .monthly-table
+        td:nth-child(6),
+
+        .monthly-table
+        th:nth-child(7),
+        .monthly-table
+        td:nth-child(7) {
+            width: 76px;
+
+            text-align: center;
+        }
+
+        .monthly-table
+        th:nth-child(8),
+        .monthly-table
+        td:nth-child(8) {
+            width: 110px;
+
+            text-align: center;
+        }
+
+        .monthly-table
+        th:nth-child(9),
+        .monthly-table
+        td:nth-child(9) {
+            width: 215px;
+            min-width: 215px;
+        }
+
+        .monthly-table
+        th:nth-child(9) {
+            text-align: center;
+        }
+
+
+        /*
+        =====================================================
+        TABLE CELL
+        =====================================================
+        */
+
         .recap-table thead {
-            background: rgba(11, 17, 22, .35);
+            background:
+                rgba(
+                    11,
+                    17,
+                    22,
+                    .35
+                );
         }
 
         .recap-table th {
-            padding: 13px 16px;
+            padding:
+                13px
+                16px;
 
             color: #747d88;
 
             text-align: left;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 700;
 
             letter-spacing: .5px;
 
-            border-bottom: 1px solid #34485d;
+            border-bottom:
+                1px
+                solid
+                #34485d;
         }
 
         .recap-table td {
-            padding: 14px 16px;
+            padding:
+                14px
+                16px;
 
             color: #c1c7ce;
 
             font-size: 10px;
 
-            border-bottom: 1px solid rgba(64, 71, 81, .38);
+            border-bottom:
+                1px
+                solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .38
+                );
         }
 
-        .recap-table tbody tr:last-child td {
+        .recap-table
+        tbody
+        tr:last-child
+        td {
             border-bottom: 0;
         }
 
-        .recap-table tbody tr {
-            transition: background .16s ease;
+        .recap-table
+        tbody
+        tr {
+            transition:
+                background
+                .16s ease;
         }
 
-        .recap-table tbody tr:hover {
-            background: rgba(157, 202, 255, .025);
+        .recap-table
+        tbody
+        tr:hover {
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .025
+                );
         }
 
 
@@ -854,20 +1269,31 @@
             width: 38px;
             height: 38px;
 
-            flex: 0 0 38px;
+            flex:
+                0
+                0
+                38px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
             color: #101415;
+
             background: #9dcaff;
 
             border-radius: 50%;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 13px;
             font-weight: 800;
+        }
+
+        .student-data {
+            min-width: 0;
         }
 
         .student-data strong {
@@ -886,7 +1312,10 @@
 
             color: #747d88;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
         }
 
@@ -903,47 +1332,95 @@
 
             gap: 5px;
 
-            padding: 6px 9px;
+            padding:
+                6px
+                9px;
 
             border-radius: 20px;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 700;
         }
 
-        .status-badge .material-symbols-outlined {
+        .status-badge
+        .material-symbols-outlined {
             font-size: 13px;
         }
 
         .status-badge.present {
             color: #8ce8c3;
-            background: rgba(54, 211, 153, .10);
+
+            background:
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .10
+                );
         }
 
         .status-badge.late {
             color: #ffb866;
-            background: rgba(245, 158, 11, .11);
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    .11
+                );
         }
 
         .status-badge.permission {
             color: #eacb84;
-            background: rgba(199, 160, 80, .11);
+
+            background:
+                rgba(
+                    199,
+                    160,
+                    80,
+                    .11
+                );
         }
 
         .status-badge.sick {
             color: #9dcaff;
-            background: rgba(157, 202, 255, .10);
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
         }
 
         .status-badge.absent {
             color: #ffaaa5;
-            background: rgba(231, 70, 70, .10);
+
+            background:
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .10
+                );
         }
 
         .status-badge.not-yet {
             color: #9da5af;
-            background: rgba(138, 145, 156, .10);
+
+            background:
+                rgba(
+                    138,
+                    145,
+                    156,
+                    .10
+                );
         }
 
 
@@ -954,7 +1431,10 @@
         */
 
         .value {
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 9px;
             font-weight: 700;
         }
@@ -986,7 +1466,10 @@
         .muted {
             color: #68717c;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
         }
 
@@ -996,6 +1479,7 @@
             color: #9ca5af;
 
             font-size: 9px;
+
             line-height: 1.45;
         }
 
@@ -1006,15 +1490,36 @@
 
             min-width: 64px;
 
-            padding: 6px 9px;
+            padding:
+                6px
+                9px;
 
             color: #9dcaff;
-            background: rgba(0, 114, 188, .10);
 
-            border: 1px solid rgba(157, 202, 255, .15);
+            background:
+                rgba(
+                    0,
+                    114,
+                    188,
+                    .10
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .15
+                );
+
             border-radius: 20px;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 800;
         }
@@ -1022,12 +1527,39 @@
 
         /*
         =====================================================
-        DETAIL BUTTON
+        ACTION
+        =====================================================
+        */
+
+        .action-cell {
+            width: 215px;
+            min-width: 215px;
+
+            padding-left: 10px !important;
+            padding-right: 14px !important;
+
+            white-space: nowrap;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            gap: 12px;
+
+            width: 100%;
+        }
+
+
+        /*
+        =====================================================
+        DETAIL
         =====================================================
         */
 
         .detail-button {
-            height: 32px;
+            height: 34px;
 
             display: inline-flex;
             align-items: center;
@@ -1035,17 +1567,38 @@
 
             gap: 5px;
 
-            padding: 0 11px;
+            padding:
+                0
+                11px;
 
             color: #9dcaff;
-            background: rgba(157, 202, 255, .07);
 
-            border: 1px solid rgba(157, 202, 255, .24);
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .07
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .27
+                );
+
             border-radius: 8px;
 
             text-decoration: none;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 800;
 
@@ -1054,22 +1607,578 @@
             transition:
                 color .18s ease,
                 background .18s ease,
-                border-color .18s ease;
+                border-color .18s ease,
+                transform .18s ease;
         }
 
         .detail-button:hover {
             color: #101415;
+
             background: #9dcaff;
+
             border-color: #9dcaff;
+
+            transform:
+                translateY(
+                    -1px
+                );
         }
 
-        .detail-button .material-symbols-outlined {
+        .detail-button
+        .material-symbols-outlined {
             font-size: 15px;
         }
 
-        .action-cell {
-            width: 100px;
+
+        /*
+        =====================================================
+        DOWNLOAD SISWA
+        =====================================================
+        */
+
+        .student-download {
+            position: relative;
+
+            flex-shrink: 0;
+        }
+
+        .student-download-toggle {
+            height: 34px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+
+            padding:
+                0
+                11px;
+
+            color: #8ce8c3;
+
+            background:
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .07
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .27
+                );
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            list-style: none;
+
+            user-select: none;
+
             white-space: nowrap;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 8px;
+            font-weight: 800;
+
+            transition:
+                color .18s ease,
+                background .18s ease,
+                border-color .18s ease,
+                transform .18s ease;
+        }
+
+        .student-download-toggle::-webkit-details-marker {
+            display: none;
+        }
+
+        .student-download-toggle::marker {
+            content: '';
+        }
+
+        .student-download-toggle:hover,
+        .student-download[open]
+        .student-download-toggle {
+            color: #101415;
+
+            background: #8ce8c3;
+
+            border-color: #8ce8c3;
+        }
+
+        .student-download-toggle:hover {
+            transform:
+                translateY(
+                    -1px
+                );
+        }
+
+        .student-download-toggle
+        .material-symbols-outlined {
+            font-size: 15px;
+        }
+
+        .student-download-arrow {
+            font-size: 12px !important;
+
+            transition:
+                transform
+                .18s ease;
+        }
+
+        .student-download[open]
+        .student-download-arrow {
+            transform:
+                rotate(
+                    180deg
+                );
+        }
+
+
+        /*
+        =====================================================
+        DOWNLOAD SISWA MENU
+        =====================================================
+        */
+
+        .student-download-menu {
+            position: absolute;
+
+            top:
+                calc(
+                    100%
+                    +
+                    7px
+                );
+
+            right: 0;
+
+            z-index: 1500;
+
+            width: 185px;
+
+            padding: 5px;
+
+            background: #151d25;
+
+            border:
+                1px
+                solid
+                #34485d;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0
+                14px
+                30px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .38
+                );
+        }
+
+        .student-download-item {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            width: 100%;
+
+            padding:
+                9px
+                10px;
+
+            color: #cbd6dd;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 9px;
+            font-weight: 700;
+
+            transition:
+                background .15s ease,
+                color .15s ease;
+        }
+
+        .student-download-item:hover {
+            color: #ffffff;
+
+            background: #1f2b36;
+        }
+
+        .student-download-item
+        .material-symbols-outlined {
+            width: 18px;
+
+            flex-shrink: 0;
+
+            font-size: 17px;
+        }
+
+        .student-download-item.excel
+        .material-symbols-outlined {
+            color: #8ce8c3;
+        }
+
+        .student-download-item.pdf
+        .material-symbols-outlined {
+            color: #ffaaa5;
+        }
+
+        .student-download-item-text {
+            min-width: 0;
+        }
+
+        .student-download-item-text strong {
+            display: block;
+
+            color: inherit;
+
+            font-size: 9px;
+        }
+
+        .student-download-item-text span {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #71808b;
+
+            font-size: 7px;
+            font-weight: 500;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE MONTHLY CARDS
+        =====================================================
+        */
+
+        .monthly-mobile-list {
+            display: none;
+        }
+
+        .monthly-mobile-card {
+            position: relative;
+
+            padding: 15px;
+
+            background: #1b2531;
+
+            border:
+                1px
+                solid
+                #34485d;
+
+            border-radius: 14px;
+        }
+
+        .monthly-mobile-header {
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            padding-bottom: 13px;
+
+            border-bottom:
+                1px
+                solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .50
+                );
+        }
+
+        .monthly-mobile-avatar {
+            width: 45px;
+            height: 45px;
+
+            flex:
+                0
+                0
+                45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #101415;
+
+            background: #9dcaff;
+
+            border-radius: 50%;
+
+            font-family:
+                'Anybody',
+                sans-serif;
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .monthly-mobile-student {
+            min-width: 0;
+
+            flex: 1;
+        }
+
+        .monthly-mobile-student strong {
+            display: block;
+
+            overflow: hidden;
+
+            color: #edf2f5;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .monthly-mobile-student span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #748391;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE STATUS GRID
+        =====================================================
+        */
+
+        .monthly-mobile-stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                8px
+                10px;
+
+            padding:
+                14px
+                0;
+        }
+
+        .mobile-stat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 8px;
+
+            min-width: 0;
+
+            padding:
+                9px
+                10px;
+
+            background: #151d25;
+
+            border:
+                1px
+                solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .65
+                );
+
+            border-radius: 9px;
+        }
+
+        .mobile-stat span {
+            overflow: hidden;
+
+            color: #798895;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+            font-weight: 700;
+        }
+
+        .mobile-stat strong {
+            flex-shrink: 0;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .mobile-stat.present strong {
+            color: #8ce8c3;
+        }
+
+        .mobile-stat.late strong {
+            color: #ffb866;
+        }
+
+        .mobile-stat.permission strong {
+            color: #eacb84;
+        }
+
+        .mobile-stat.sick strong {
+            color: #9dcaff;
+        }
+
+        .mobile-stat.absent strong {
+            color: #ffaaa5;
+        }
+
+        .mobile-stat.not-yet strong {
+            color: #9da5af;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE ATTENDANCE RATE
+        =====================================================
+        */
+
+        .monthly-mobile-rate {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 13px;
+
+            padding:
+                10px
+                11px;
+
+            background:
+                rgba(
+                    0,
+                    114,
+                    188,
+                    .07
+                );
+
+            border:
+                1px
+                solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .14
+                );
+
+            border-radius: 9px;
+        }
+
+        .monthly-mobile-rate span {
+            color: #8c9aa6;
+
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        .monthly-mobile-rate strong {
+            color: #9dcaff;
+
+            font-family:
+                'Anybody',
+                sans-serif;
+
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE ACTION
+        =====================================================
+        */
+
+        .monthly-mobile-actions {
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                1fr;
+
+            gap: 9px;
+        }
+
+        .monthly-mobile-actions
+        .detail-button {
+            width: 100%;
+            height: 38px;
+        }
+
+        .monthly-mobile-actions
+        .student-download {
+            width: 100%;
+        }
+
+        .monthly-mobile-actions
+        .student-download-toggle {
+            width: 100%;
+            height: 38px;
+        }
+
+        .monthly-mobile-actions
+        .student-download-menu {
+            width: 100%;
+
+            right: 0;
+            left: auto;
         }
 
 
@@ -1082,12 +2191,19 @@
         .empty-state {
             display: none;
 
-            padding: 40px 20px;
+            padding:
+                40px
+                20px;
 
             color: #8a919c;
+
             background: #1b2531;
 
-            border: 1px solid #34485d;
+            border:
+                1px
+                solid
+                #34485d;
+
             border-radius: 15px;
 
             text-align: center;
@@ -1095,7 +2211,8 @@
             font-size: 10px;
         }
 
-        .empty-state .material-symbols-outlined {
+        .empty-state
+        .material-symbols-outlined {
             display: block;
 
             margin-bottom: 8px;
@@ -1108,52 +2225,168 @@
 
         /*
         =====================================================
-        RESPONSIVE
+        RESPONSIVE LARGE
+        =====================================================
+        */
+
+        @media (max-width: 1400px) {
+
+            .recap-container.monthly-container {
+                width:
+                    min(
+                        1280px,
+                        calc(
+                            100%
+                            -
+                            40px
+                        )
+                    );
+            }
+
+        }
+
+
+        /*
+        =====================================================
+        RESPONSIVE LAPTOP
         =====================================================
         */
 
         @media (max-width: 1150px) {
+
             .stats-grid.daily {
                 grid-template-columns:
-                    repeat(4, minmax(0, 1fr));
+                    repeat(
+                        4,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
             }
+
         }
 
+
+        /*
+        =====================================================
+        RESPONSIVE TABLET
+        =====================================================
+        */
+
         @media (max-width: 900px) {
+
+            .recap-container.daily-container,
+            .recap-container.monthly-container {
+                width:
+                    calc(
+                        100%
+                        -
+                        32px
+                    );
+            }
+
             .control-panel {
                 align-items: stretch;
+
                 flex-direction: column;
             }
 
             .control-actions {
                 width: 100%;
             }
+
+            .control-form {
+                flex: 1;
+            }
+
+            .control-field {
+                flex: 1;
+            }
+
+            .control-select,
+            .control-input {
+                width: 100%;
+            }
+
         }
 
-        @media (max-width: 720px) {
-            .recap-container {
-                width: calc(100% - 28px);
 
-                padding: 25px 0 90px;
+        /*
+        =====================================================
+        RESPONSIVE HP
+        =====================================================
+        */
+
+        @media (max-width: 720px) {
+
+            .recap-container.daily-container,
+            .recap-container.monthly-container {
+                width:
+                    calc(
+                        100%
+                        -
+                        24px
+                    );
+
+                padding:
+                    22px
+                    0
+                    85px;
+            }
+
+            .recap-back {
+                margin-bottom: 18px;
+            }
+
+            .recap-heading {
+                margin-bottom: 17px;
             }
 
             .recap-heading h1 {
                 font-size: 25px;
             }
 
+            .recap-heading p {
+                font-size: 10px;
+            }
+
+
+            /*
+            =================================================
+            TABS MOBILE
+            =================================================
+            */
+
             .recap-tabs {
                 display: flex;
+
                 width: 100%;
             }
 
             .recap-tab {
                 flex: 1;
-                padding: 0 8px;
+
+                padding:
+                    0
+                    8px;
+            }
+
+
+            /*
+            =================================================
+            CONTROL MOBILE
+            =================================================
+            */
+
+            .control-panel {
+                padding: 14px;
             }
 
             .control-actions,
             .control-form {
                 align-items: stretch;
+
                 flex-direction: column;
 
                 width: 100%;
@@ -1176,19 +2409,64 @@
                 width: 100%;
             }
 
+
+            /*
+            =================================================
+            STAT MOBILE
+            =================================================
+            */
+
             .stats-grid,
             .stats-grid.daily {
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
             }
+
+            .stat-card {
+                padding: 13px;
+            }
+
+            .stat-card strong {
+                font-size: 21px;
+            }
+
+
+            /*
+            =================================================
+            PERCENTAGE MOBILE
+            =================================================
+            */
 
             .percentage-panel {
                 align-items: flex-start;
+
                 flex-direction: column;
+
+                gap: 8px;
+
+                margin-bottom: 23px;
             }
+
+            .percentage-value {
+                font-size: 25px;
+            }
+
+
+            /*
+            =================================================
+            TOOLBAR MOBILE
+            =================================================
+            */
 
             .recap-toolbar {
                 align-items: stretch;
+
                 flex-direction: column;
             }
 
@@ -1200,7 +2478,83 @@
             .status-filter {
                 width: 100%;
             }
+
+
+            /*
+            =================================================
+            BULANAN TABLE HIDE
+            =================================================
+            */
+
+            #monthlyTableWrapper {
+                display: none;
+            }
+
+
+            /*
+            =================================================
+            MOBILE CARD SHOW
+            =================================================
+            */
+
+            .monthly-mobile-list {
+                display: grid;
+
+                gap: 10px;
+            }
+
         }
+
+
+        /*
+        =====================================================
+        SMALL PHONE
+        =====================================================
+        */
+
+        @media (max-width: 450px) {
+
+            .recap-container.daily-container,
+            .recap-container.monthly-container {
+                width:
+                    calc(
+                        100%
+                        -
+                        18px
+                    );
+
+                padding-top: 18px;
+            }
+
+            .stats-grid,
+            .stats-grid.daily {
+                gap: 7px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-card strong {
+                font-size: 20px;
+            }
+
+            .monthly-mobile-card {
+                padding: 13px;
+            }
+
+            .monthly-mobile-stats {
+                gap: 7px;
+            }
+
+            .mobile-stat {
+                padding:
+                    8px
+                    9px;
+            }
+
+        }
+
     </style>
 
 </head>
@@ -1216,6 +2570,7 @@
 <header class="kko-header">
 
     <div class="kko-header-inner">
+
 
         <div class="kko-brand">
 
@@ -1245,6 +2600,7 @@
 
 
         <div class="kko-header-actions">
+
 
             <div class="header-profile">
 
@@ -1300,7 +2656,9 @@
      CONTENT
 ===================================================== -->
 
-<main class="recap-container">
+<main
+    class="recap-container {{ $activeTab === 'harian' ? 'daily-container' : 'monthly-container' }}"
+>
 
 
     <!-- =================================================
@@ -1336,21 +2694,28 @@
         </h1>
 
         <p>
+
             @if($activeTab === 'harian')
+
                 Pantau status kehadiran seluruh siswa KKO berdasarkan tanggal.
+
             @else
+
                 Pantau ringkasan presensi seluruh siswa KKO berdasarkan bulan.
+
             @endif
+
         </p>
 
     </section>
 
 
     <!-- =================================================
-         NAVIGATION
+         TABS
     ================================================== -->
 
     <nav class="recap-tabs">
+
 
         <a
             href="{{
@@ -1412,6 +2777,7 @@
 
         <section class="control-panel">
 
+
             <div class="control-info">
 
                 <div class="control-icon">
@@ -1430,12 +2796,14 @@
                     </small>
 
                     <strong>
+
                         {{
                             $selectedDate
                                 ->copy()
                                 ->locale('id')
                                 ->translatedFormat('l, d F Y')
                         }}
+
                     </strong>
 
                 </div>
@@ -1444,6 +2812,7 @@
 
 
             <div class="control-actions">
+
 
                 <form
                     method="GET"
@@ -1456,6 +2825,7 @@
                         name="tab"
                         value="harian"
                     >
+
 
                     <input
                         type="date"
@@ -1482,9 +2852,7 @@
                 </form>
 
 
-                <!-- =================================================
-                     DOWNLOAD HARIAN
-                ================================================== -->
+                <!-- DOWNLOAD HARIAN -->
 
                 <details class="download-dropdown">
 
@@ -1504,6 +2872,7 @@
 
 
                     <div class="download-menu">
+
 
                         <a
                             href="{{
@@ -1584,6 +2953,7 @@
         ================================================== -->
 
         <section class="stats-grid daily">
+
 
             <article class="stat-card total">
 
@@ -1761,6 +3131,7 @@
 
         <section class="recap-toolbar">
 
+
             <div class="recap-toolbar-title">
 
                 <h2>
@@ -1768,10 +3139,12 @@
                 </h2>
 
                 <p>
+
                     {{ $datang }}
                     dari
                     {{ $totalSiswa }}
                     siswa tercatat hadir atau terlambat.
+
                 </p>
 
             </div>
@@ -1836,7 +3209,8 @@
             id="dailyTableWrapper"
         >
 
-            <table class="recap-table">
+            <table class="recap-table daily-table">
+
 
                 <thead>
 
@@ -1901,8 +3275,6 @@
                         >
 
 
-                            <!-- SISWA -->
-
                             <td>
 
                                 <div class="student-cell">
@@ -1926,10 +3298,12 @@
                                     <div class="student-data">
 
                                         <strong>
+
                                             {{
                                                 $student->user?->name
                                                 ?? 'Siswa KKO'
                                             }}
+
                                         </strong>
 
                                         <span>
@@ -1943,8 +3317,6 @@
                             </td>
 
 
-                            <!-- NIS -->
-
                             <td>
 
                                 <span class="value">
@@ -1953,8 +3325,6 @@
 
                             </td>
 
-
-                            <!-- KELAS -->
 
                             <td>
 
@@ -1965,8 +3335,6 @@
 
                             </td>
 
-
-                            <!-- JAM MASUK -->
 
                             <td>
 
@@ -1991,8 +3359,6 @@
                             </td>
 
 
-                            <!-- STATUS -->
-
                             <td>
 
                                 <span class="status-badge {{ $statusClass }}">
@@ -2007,8 +3373,6 @@
 
                             </td>
 
-
-                            <!-- CATATAN -->
 
                             <td>
 
@@ -2068,6 +3432,7 @@
 
         <section class="control-panel">
 
+
             <div class="control-info">
 
                 <div class="control-icon">
@@ -2086,8 +3451,10 @@
                     </small>
 
                     <strong>
+
                         {{ $monthNames[$selectedMonth] ?? '-' }}
                         {{ $selectedYear }}
+
                     </strong>
 
                     <span class="control-description">
@@ -2100,6 +3467,7 @@
 
 
             <div class="control-actions">
+
 
                 <form
                     method="GET"
@@ -2184,9 +3552,7 @@
                 </form>
 
 
-                <!-- =================================================
-                     DOWNLOAD BULANAN
-                ================================================== -->
+                <!-- DOWNLOAD BULANAN SEMUA SISWA -->
 
                 <details class="download-dropdown">
 
@@ -2206,6 +3572,7 @@
 
 
                     <div class="download-menu">
+
 
                         <a
                             href="{{
@@ -2288,6 +3655,7 @@
         ================================================== -->
 
         <section class="stats-grid">
+
 
             <article class="stat-card days">
 
@@ -2484,6 +3852,7 @@
 
         <section class="recap-toolbar">
 
+
             <div class="recap-toolbar-title">
 
                 <h2>
@@ -2491,9 +3860,11 @@
                 </h2>
 
                 <p>
+
                     Periode
                     {{ $monthNames[$selectedMonth] ?? '-' }}
                     {{ $selectedYear }}.
+
                 </p>
 
             </div>
@@ -2514,7 +3885,7 @@
 
 
         <!-- =================================================
-             TABLE BULANAN
+             TABLE BULANAN DESKTOP
         ================================================== -->
 
         <div
@@ -2523,6 +3894,7 @@
         >
 
             <table class="recap-table monthly-table">
+
 
                 <thead>
 
@@ -2585,8 +3957,6 @@
                         >
 
 
-                            <!-- SISWA -->
-
                             <td>
 
                                 <div class="student-cell">
@@ -2610,14 +3980,17 @@
                                     <div class="student-data">
 
                                         <strong>
+
                                             {{
                                                 $student->user?->name
                                                 ?? 'Siswa KKO'
                                             }}
+
                                         </strong>
 
                                         <span>
-                                            NIS {{ $student->nis }}
+
+                                            NIS {{ $student->nis ?? '-' }}
 
                                             ·
 
@@ -2625,6 +3998,7 @@
                                                 $student->class?->name
                                                 ?? '-'
                                             }}
+
                                         </span>
 
                                     </div>
@@ -2633,8 +4007,6 @@
 
                             </td>
 
-
-                            <!-- HADIR -->
 
                             <td>
 
@@ -2645,8 +4017,6 @@
                             </td>
 
 
-                            <!-- TERLAMBAT -->
-
                             <td>
 
                                 <span class="value late">
@@ -2655,8 +4025,6 @@
 
                             </td>
 
-
-                            <!-- IZIN -->
 
                             <td>
 
@@ -2667,8 +4035,6 @@
                             </td>
 
 
-                            <!-- SAKIT -->
-
                             <td>
 
                                 <span class="value sick">
@@ -2677,8 +4043,6 @@
 
                             </td>
 
-
-                            <!-- ALFA -->
 
                             <td>
 
@@ -2689,8 +4053,6 @@
                             </td>
 
 
-                            <!-- BELUM -->
-
                             <td>
 
                                 <span class="value not-yet">
@@ -2699,8 +4061,6 @@
 
                             </td>
 
-
-                            <!-- KEHADIRAN -->
 
                             <td>
 
@@ -2720,33 +4080,132 @@
                             </td>
 
 
-                            <!-- =================================================
-                                 AKSI DETAIL
-                            ================================================== -->
-
                             <td class="action-cell">
 
-                                <a
-                                    href="{{
-                                        route(
-                                            'guru.attendance.student.detail',
-                                            [
-                                                'student' => $student->id,
-                                                'month' => $selectedMonth,
-                                                'year' => $selectedYear,
-                                            ]
-                                        )
-                                    }}"
-                                    class="detail-button"
-                                >
+                                <div class="action-group">
 
-                                    <span class="material-symbols-outlined">
-                                        visibility
-                                    </span>
 
-                                    Detail
+                                    <a
+                                        href="{{
+                                            route(
+                                                'guru.attendance.student.detail',
+                                                [
+                                                    'student' => $student->id,
+                                                    'month' => $selectedMonth,
+                                                    'year' => $selectedYear,
+                                                ]
+                                            )
+                                        }}"
+                                        class="detail-button"
+                                        title="Lihat Detail Presensi"
+                                    >
 
-                                </a>
+                                        <span class="material-symbols-outlined">
+                                            visibility
+                                        </span>
+
+                                        Detail
+
+                                    </a>
+
+
+                                    <details class="student-download">
+
+                                        <summary
+                                            class="student-download-toggle"
+                                            title="Download Rekap Siswa"
+                                        >
+
+                                            <span class="material-symbols-outlined">
+                                                download
+                                            </span>
+
+                                            Download
+
+                                            <span class="material-symbols-outlined student-download-arrow">
+                                                expand_more
+                                            </span>
+
+                                        </summary>
+
+
+                                        <div class="student-download-menu">
+
+
+                                            <a
+                                                href="{{
+                                                    route(
+                                                        'guru.attendance.student.export',
+                                                        [
+                                                            'student' => $student->id,
+                                                            'month' => $selectedMonth,
+                                                            'year' => $selectedYear,
+                                                        ]
+                                                    )
+                                                }}"
+                                                class="student-download-item excel"
+                                            >
+
+                                                <span class="material-symbols-outlined">
+                                                    table_view
+                                                </span>
+
+
+                                                <div class="student-download-item-text">
+
+                                                    <strong>
+                                                        Excel
+                                                    </strong>
+
+                                                    <span>
+                                                        Download rekap .xlsx
+                                                    </span>
+
+                                                </div>
+
+                                            </a>
+
+
+                                            <a
+                                                href="{{
+                                                    route(
+                                                        'guru.attendance.student.print',
+                                                        [
+                                                            'student' => $student->id,
+                                                            'month' => $selectedMonth,
+                                                            'year' => $selectedYear,
+                                                        ]
+                                                    )
+                                                }}"
+                                                class="student-download-item pdf"
+                                                target="_blank"
+                                                rel="noopener"
+                                            >
+
+                                                <span class="material-symbols-outlined">
+                                                    picture_as_pdf
+                                                </span>
+
+
+                                                <div class="student-download-item-text">
+
+                                                    <strong>
+                                                        PDF
+                                                    </strong>
+
+                                                    <span>
+                                                        Cetak atau simpan PDF
+                                                    </span>
+
+                                                </div>
+
+                                            </a>
+
+                                        </div>
+
+                                    </details>
+
+                                </div>
 
                             </td>
 
@@ -2760,6 +4219,318 @@
 
         </div>
 
+
+        <!-- =================================================
+             MOBILE CARDS
+        ================================================== -->
+
+        <section class="monthly-mobile-list" id="monthlyMobileList">
+
+            @foreach($monthlyRecaps as $recap)
+
+                @php
+                    $student = $recap['student'];
+                @endphp
+
+
+                <article
+                    class="monthly-mobile-card"
+                    data-name="{{ strtolower($student->user?->name ?? '') }}"
+                    data-nis="{{ strtolower($student->nis ?? '') }}"
+                >
+
+
+                    <!-- HEADER -->
+
+                    <div class="monthly-mobile-header">
+
+                        <div class="monthly-mobile-avatar">
+
+                            {{
+                                strtoupper(
+                                    substr(
+                                        $student->user?->name
+                                        ?? 'S',
+                                        0,
+                                        1
+                                    )
+                                )
+                            }}
+
+                        </div>
+
+
+                        <div class="monthly-mobile-student">
+
+                            <strong>
+
+                                {{
+                                    $student->user?->name
+                                    ?? 'Siswa KKO'
+                                }}
+
+                            </strong>
+
+                            <span>
+
+                                NIS {{ $student->nis ?? '-' }}
+
+                                ·
+
+                                {{
+                                    $student->class?->name
+                                    ?? '-'
+                                }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATS -->
+
+                    <div class="monthly-mobile-stats">
+
+
+                        <div class="mobile-stat present">
+
+                            <span>
+                                HADIR
+                            </span>
+
+                            <strong>
+                                {{ $recap['present'] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mobile-stat late">
+
+                            <span>
+                                TERLAMBAT
+                            </span>
+
+                            <strong>
+                                {{ $recap['late'] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mobile-stat permission">
+
+                            <span>
+                                IZIN
+                            </span>
+
+                            <strong>
+                                {{ $recap['permission'] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mobile-stat sick">
+
+                            <span>
+                                SAKIT
+                            </span>
+
+                            <strong>
+                                {{ $recap['sick'] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mobile-stat absent">
+
+                            <span>
+                                ALFA
+                            </span>
+
+                            <strong>
+                                {{ $recap['absent'] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mobile-stat not-yet">
+
+                            <span>
+                                BELUM
+                            </span>
+
+                            <strong>
+                                {{ $recap['not_recorded'] }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PERCENTAGE -->
+
+                    <div class="monthly-mobile-rate">
+
+                        <span>
+                            Persentase Kehadiran
+                        </span>
+
+                        <strong>
+
+                            {{
+                                number_format(
+                                    $recap['attendance_rate'],
+                                    1,
+                                    ',',
+                                    '.'
+                                )
+                            }}%
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- ACTION -->
+
+                    <div class="monthly-mobile-actions">
+
+
+                        <a
+                            href="{{
+                                route(
+                                    'guru.attendance.student.detail',
+                                    [
+                                        'student' => $student->id,
+                                        'month' => $selectedMonth,
+                                        'year' => $selectedYear,
+                                    ]
+                                )
+                            }}"
+                            class="detail-button"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                visibility
+                            </span>
+
+                            Detail
+
+                        </a>
+
+
+                        <details class="student-download">
+
+                            <summary class="student-download-toggle">
+
+                                <span class="material-symbols-outlined">
+                                    download
+                                </span>
+
+                                Download
+
+                                <span class="material-symbols-outlined student-download-arrow">
+                                    expand_more
+                                </span>
+
+                            </summary>
+
+
+                            <div class="student-download-menu">
+
+
+                                <a
+                                    href="{{
+                                        route(
+                                            'guru.attendance.student.export',
+                                            [
+                                                'student' => $student->id,
+                                                'month' => $selectedMonth,
+                                                'year' => $selectedYear,
+                                            ]
+                                        )
+                                    }}"
+                                    class="student-download-item excel"
+                                >
+
+                                    <span class="material-symbols-outlined">
+                                        table_view
+                                    </span>
+
+
+                                    <div class="student-download-item-text">
+
+                                        <strong>
+                                            Excel
+                                        </strong>
+
+                                        <span>
+                                            Download rekap .xlsx
+                                        </span>
+
+                                    </div>
+
+                                </a>
+
+
+                                <a
+                                    href="{{
+                                        route(
+                                            'guru.attendance.student.print',
+                                            [
+                                                'student' => $student->id,
+                                                'month' => $selectedMonth,
+                                                'year' => $selectedYear,
+                                            ]
+                                        )
+                                    }}"
+                                    class="student-download-item pdf"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+
+                                    <span class="material-symbols-outlined">
+                                        picture_as_pdf
+                                    </span>
+
+
+                                    <div class="student-download-item-text">
+
+                                        <strong>
+                                            PDF
+                                        </strong>
+
+                                        <span>
+                                            Cetak atau simpan PDF
+                                        </span>
+
+                                    </div>
+
+                                </a>
+
+                            </div>
+
+                        </details>
+
+                    </div>
+
+                </article>
+
+            @endforeach
+
+        </section>
+
+
+        <!-- =================================================
+             EMPTY BULANAN
+        ================================================== -->
 
         <div
             class="empty-state"
@@ -2780,7 +4551,7 @@
 
 
 <!-- =====================================================
-     SCRIPT
+     JAVASCRIPT
 ===================================================== -->
 
 <script>
@@ -2796,20 +4567,24 @@
             'dailySearch'
         );
 
+
     const dailyStatusFilter =
         document.getElementById(
             'dailyStatusFilter'
         );
+
 
     const dailyRows =
         document.querySelectorAll(
             '.daily-row'
         );
 
+
     const dailyTableWrapper =
         document.getElementById(
             'dailyTableWrapper'
         );
+
 
     const dailyEmpty =
         document.getElementById(
@@ -2848,9 +4623,11 @@
                     row.dataset.name
                     || '';
 
+
                 const nis =
                     row.dataset.nis
                     || '';
+
 
                 const status =
                     row.dataset.status
@@ -2942,15 +4719,30 @@
             'monthlySearch'
         );
 
+
     const monthlyRows =
         document.querySelectorAll(
             '.monthly-row'
         );
 
+
+    const monthlyCards =
+        document.querySelectorAll(
+            '.monthly-mobile-card'
+        );
+
+
     const monthlyTableWrapper =
         document.getElementById(
             'monthlyTableWrapper'
         );
+
+
+    const monthlyMobileList =
+        document.getElementById(
+            'monthlyMobileList'
+        );
+
 
     const monthlyEmpty =
         document.getElementById(
@@ -2960,11 +4752,6 @@
 
     function filterMonthly() {
 
-        if (!monthlyTableWrapper) {
-            return;
-        }
-
-
         const keyword =
             monthlySearch
                 ? monthlySearch.value
@@ -2973,7 +4760,7 @@
                 : '';
 
 
-        let visibleCount = 0;
+        let matchingStudents = 0;
 
 
         monthlyRows.forEach(
@@ -2982,6 +4769,7 @@
                 const name =
                     row.dataset.name
                     || '';
+
 
                 const nis =
                     row.dataset.nis
@@ -3005,25 +4793,79 @@
 
 
                 if (visible) {
-                    visibleCount++;
+                    matchingStudents++;
                 }
 
             }
         );
 
 
-        monthlyTableWrapper.style.display =
-            visibleCount > 0
-                ? 'block'
-                : 'none';
+        monthlyCards.forEach(
+            function (card) {
+
+                const name =
+                    card.dataset.name
+                    || '';
+
+
+                const nis =
+                    card.dataset.nis
+                    || '';
+
+
+                const visible =
+                    name.includes(
+                        keyword
+                    )
+                    ||
+                    nis.includes(
+                        keyword
+                    );
+
+
+                card.style.display =
+                    visible
+                        ? ''
+                        : 'none';
+
+            }
+        );
 
 
         if (monthlyEmpty) {
 
             monthlyEmpty.style.display =
-                visibleCount > 0
+                matchingStudents > 0
                     ? 'none'
                     : 'block';
+
+        }
+
+
+        if (
+            monthlyTableWrapper
+            &&
+            window.innerWidth > 720
+        ) {
+
+            monthlyTableWrapper.style.display =
+                matchingStudents > 0
+                    ? 'block'
+                    : 'none';
+
+        }
+
+
+        if (
+            monthlyMobileList
+            &&
+            window.innerWidth <= 720
+        ) {
+
+            monthlyMobileList.style.display =
+                matchingStudents > 0
+                    ? 'grid'
+                    : 'none';
 
         }
 
@@ -3042,7 +4884,27 @@
 
     /*
     =====================================================
-    DOWNLOAD DROPDOWN
+    RESIZE
+    =====================================================
+    */
+
+    window.addEventListener(
+        'resize',
+        function () {
+
+            if (!monthlySearch) {
+                return;
+            }
+
+            filterMonthly();
+
+        }
+    );
+
+
+    /*
+    =====================================================
+    CLOSE DROPDOWN SAAT KLIK DI LUAR
     =====================================================
     */
 
@@ -3052,7 +4914,7 @@
 
             document
                 .querySelectorAll(
-                    '.download-dropdown[open]'
+                    '.download-dropdown[open], .student-download[open]'
                 )
                 .forEach(
                     function (dropdown) {
@@ -3074,6 +4936,110 @@
 
         }
     );
+
+
+    /*
+    =====================================================
+    SATU DROPDOWN SISWA SAJA
+    =====================================================
+    */
+
+    document
+        .querySelectorAll(
+            '.student-download'
+        )
+        .forEach(
+            function (dropdown) {
+
+                dropdown.addEventListener(
+                    'toggle',
+                    function () {
+
+                        if (!dropdown.open) {
+                            return;
+                        }
+
+
+                        document
+                            .querySelectorAll(
+                                '.student-download[open]'
+                            )
+                            .forEach(
+                                function (otherDropdown) {
+
+                                    if (
+                                        otherDropdown
+                                        !==
+                                        dropdown
+                                    ) {
+
+                                        otherDropdown
+                                            .removeAttribute(
+                                                'open'
+                                            );
+
+                                    }
+
+                                }
+                            );
+
+                    }
+                );
+
+            }
+        );
+
+
+    /*
+    =====================================================
+    SATU DROPDOWN GLOBAL SAJA
+    =====================================================
+    */
+
+    document
+        .querySelectorAll(
+            '.download-dropdown'
+        )
+        .forEach(
+            function (dropdown) {
+
+                dropdown.addEventListener(
+                    'toggle',
+                    function () {
+
+                        if (!dropdown.open) {
+                            return;
+                        }
+
+
+                        document
+                            .querySelectorAll(
+                                '.download-dropdown[open]'
+                            )
+                            .forEach(
+                                function (otherDropdown) {
+
+                                    if (
+                                        otherDropdown
+                                        !==
+                                        dropdown
+                                    ) {
+
+                                        otherDropdown
+                                            .removeAttribute(
+                                                'open'
+                                            );
+
+                                    }
+
+                                }
+                            );
+
+                    }
+                );
+
+            }
+        );
 
 </script>
 

@@ -18,6 +18,8 @@ use App\Http\Controllers\Guru\SchoolAttendanceRecapPrintController;
 use App\Http\Controllers\Guru\MonthlySchoolAttendanceRecapExportController;
 use App\Http\Controllers\Guru\MonthlySchoolAttendanceRecapPrintController;
 use App\Http\Controllers\Guru\SchoolAttendanceDetailController;
+use App\Http\Controllers\Guru\StudentSchoolAttendanceDetailExportController;
+use App\Http\Controllers\Guru\StudentSchoolAttendanceDetailPrintController;
 
 
 /*
@@ -398,6 +400,54 @@ Route::middleware([
         )
         ->name(
             'attendance.monthly'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EXPORT EXCEL PRESENSI SEKOLAH PER SISWA
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan dari tabel Rekap Presensi Bulanan.
+        |
+        | Contoh:
+        |
+        | /guru/rekap-presensi/siswa/4/export
+        | ?month=8
+        | &year=2026
+        |
+        */
+
+        Route::get(
+            '/rekap-presensi/siswa/{student}/export',
+            StudentSchoolAttendanceDetailExportController::class
+        )
+        ->name(
+            'attendance.student.export'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CETAK / PDF PRESENSI SEKOLAH PER SISWA
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan dari tabel Rekap Presensi Bulanan.
+        |
+        | Contoh:
+        |
+        | /guru/rekap-presensi/siswa/4/cetak
+        | ?month=8
+        | &year=2026
+        |
+        */
+
+        Route::get(
+            '/rekap-presensi/siswa/{student}/cetak',
+            StudentSchoolAttendanceDetailPrintController::class
+        )
+        ->name(
+            'attendance.student.print'
         );
 
 
