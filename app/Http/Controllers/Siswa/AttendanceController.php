@@ -8,8 +8,10 @@ use App\Models\AttendanceSetting;
 use App\Models\Barcode;
 use App\Models\Student;
 use App\Services\DynamicBarcodeService;
+use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -21,10 +23,23 @@ class AttendanceController extends Controller
 
     public function scanner()
     {
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL SISWA LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         $student = Student::where(
             'user_id',
             auth()->id()
         )->firstOrFail();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI HARI INI
+        |--------------------------------------------------------------------------
+        */
 
         $todayAttendance = Attendance::where(
             'student_id',
@@ -35,6 +50,13 @@ class AttendanceController extends Controller
                 now()->toDateString()
             )
             ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'siswa.scan',
@@ -54,9 +76,9 @@ class AttendanceController extends Controller
 
     public function store(
         Request $request,
-        DynamicBarcodeService $barcodeService
+        DynamicBarcodeService $barcodeService,
+        WhatsAppService $whatsAppService
     ) {
-
         /*
         |--------------------------------------------------------------------------
         | VALIDASI REQUEST
@@ -95,22 +117,24 @@ class AttendanceController extends Controller
         | VALIDASI PREFIX QR
         |--------------------------------------------------------------------------
         |
-        | Semua QR KKO harus memiliki format:
+        | Semua QR presensi sekolah KKO harus memiliki format:
         |
         | KKO:TOKEN
         |
         */
 
-        if (!str_starts_with(
-            $request->token,
-            'KKO:'
-        )) {
-
+        if (
+            !str_starts_with(
+                $request->token,
+                'KKO:'
+            )
+        ) {
             return response()->json([
                 'success' => false,
-                'message' => 'Barcode tidak dikenali.',
-            ], 422);
 
+                'message' =>
+                    'Barcode tidak dikenali.',
+            ], 422);
         }
 
 
@@ -148,38 +172,48 @@ class AttendanceController extends Controller
         | SETTING PRESENSI
         |--------------------------------------------------------------------------
         |
-        | 07:00 masih boleh presensi.
-        | Tepat mulai 07:01:00 presensi ditutup.
+        | Ketentuan:
+        |
+        | 07:00:59 = masih boleh
+        | 07:01:00 = sudah ditutup
         |
         */
 
         $settings = AttendanceSetting::firstOrCreate(
             [],
             [
-                'cutoff_time' => '07:01:00',
-                'auto_alpha' => true,
-                'location_radius_meters' => 120,
-                'barcode_lifetime_seconds' => 60,
+                'cutoff_time' =>
+                    '07:01:00',
+
+                'auto_alpha' =>
+                    true,
+
+                'location_radius_meters' =>
+                    120,
+
+                'barcode_lifetime_seconds' =>
+                    60,
             ]
         );
 
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI LOKASI SEKOLAH
+        | VALIDASI KONFIGURASI LOKASI SEKOLAH
         |--------------------------------------------------------------------------
         */
 
         if (
             $settings->school_latitude === null
-            || $settings->school_longitude === null
+            ||
+            $settings->school_longitude === null
         ) {
-
             return response()->json([
                 'success' => false,
-                'message' => 'Lokasi sekolah belum dikonfigurasi oleh admin.',
-            ], 422);
 
+                'message' =>
+                    'Lokasi sekolah belum dikonfigurasi oleh admin.',
+            ], 422);
         }
 
 
@@ -194,18 +228,8 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI BATAS PRESENSI
+        | BATAS PRESENSI
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | 06:59:59 = boleh
-        | 07:00:00 = boleh
-        | 07:00:30 = boleh
-        | 07:00:59 = boleh
-        | 07:01:00 = ditolak
-        | 07:01:01 = ditolak
-        |
         */
 
         $cutoff = $now
@@ -215,13 +239,23 @@ class AttendanceController extends Controller
             );
 
 
-        if ($now->gte($cutoff)) {
+        /*
+        |--------------------------------------------------------------------------
+        | JIKA SUDAH 07:01
+        |--------------------------------------------------------------------------
+        */
 
+        if (
+            $now->gte(
+                $cutoff
+            )
+        ) {
             return response()->json([
                 'success' => false,
-                'message' => 'Presensi sudah ditutup. Mulai pukul 07:01 WIB siswa yang belum presensi dinyatakan Alfa.',
-            ], 422);
 
+                'message' =>
+                    'Presensi sudah ditutup. Mulai pukul 07:01 WIB siswa yang belum presensi dinyatakan Alfa.',
+            ], 422);
         }
 
 
@@ -233,8 +267,11 @@ class AttendanceController extends Controller
 
         $distance = $this->distanceInMeters(
             (float) $request->latitude,
+
             (float) $request->longitude,
+
             (float) $settings->school_latitude,
+
             (float) $settings->school_longitude
         );
 
@@ -246,25 +283,40 @@ class AttendanceController extends Controller
         */
 
         if (
-            $distance >
+            $distance
+            >
             $settings->location_radius_meters
         ) {
-
             return response()->json([
-                'success' => false,
+                'success' =>
+                    false,
 
                 'message' =>
                     'Presensi hanya dapat dilakukan di lingkungan SMA Negeri 2 Cilacap.',
 
                 'distance' =>
-                    round($distance),
+                    round(
+                        $distance
+                    ),
 
                 'radius' =>
                     $settings->location_radius_meters,
 
             ], 422);
-
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VARIABLE ATTENDANCE
+        |--------------------------------------------------------------------------
+        |
+        | Setelah transaction berhasil, object Attendance
+        | akan disimpan di variable ini.
+        |
+        */
+
+        $attendance = null;
 
 
         /*
@@ -274,193 +326,226 @@ class AttendanceController extends Controller
         */
 
         try {
-
-            DB::transaction(function () use (
-                $student,
-                $token,
-                $now
-            ) {
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | CEK SUDAH PRESENSI ATAU BELUM
-                |--------------------------------------------------------------------------
-                */
-
-                $alreadyAttendance =
-                    Attendance::where(
-                        'student_id',
-                        $student->id
-                    )
-                        ->whereDate(
-                            'attendance_date',
-                            $now->toDateString()
-                        )
-                        ->lockForUpdate()
-                        ->exists();
-
-
-                if ($alreadyAttendance) {
-
-                    throw new \RuntimeException(
-                        'Kamu sudah melakukan presensi hari ini.'
-                    );
-
-                }
-
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | AMBIL DAN KUNCI BARCODE
-                |--------------------------------------------------------------------------
-                |
-                | lockForUpdate digunakan agar satu barcode tidak dapat
-                | digunakan dua siswa secara bersamaan.
-                |
-                */
-
-                $barcode =
-                    Barcode::where(
-                        'token',
-                        $token
-                    )
-                        ->lockForUpdate()
-                        ->first();
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | BARCODE TIDAK DITEMUKAN
-                |--------------------------------------------------------------------------
-                */
-
-                if (!$barcode) {
-
-                    throw new \RuntimeException(
-                        'Barcode tidak ditemukan.'
-                    );
-
-                }
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | BARCODE SUDAH TIDAK AKTIF
-                |--------------------------------------------------------------------------
-                */
-
-                if (!$barcode->is_active) {
-
-                    throw new \RuntimeException(
-                        'Barcode sudah digunakan. Silakan scan barcode terbaru.'
-                    );
-
-                }
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | BARCODE SUDAH DIGUNAKAN SISWA LAIN
-                |--------------------------------------------------------------------------
-                */
-
-                if ($barcode->used_at !== null) {
-
-                    throw new \RuntimeException(
-                        'Barcode sudah digunakan oleh siswa lain.'
-                    );
-
-                }
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | BARCODE KEDALUWARSA
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    !$barcode->expired_at
-                    || $barcode->expired_at->lte($now)
+            $attendance = DB::transaction(
+                function () use (
+                    $student,
+                    $token,
+                    $now
                 ) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CEK SUDAH PRESENSI
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $alreadyAttendance =
+                        Attendance::where(
+                            'student_id',
+                            $student->id
+                        )
+                            ->whereDate(
+                                'attendance_date',
+                                $now->toDateString()
+                            )
+                            ->lockForUpdate()
+                            ->exists();
+
+
+                    if (
+                        $alreadyAttendance
+                    ) {
+                        throw new \RuntimeException(
+                            'Kamu sudah melakukan presensi hari ini.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | AMBIL BARCODE
+                    |--------------------------------------------------------------------------
+                    |
+                    | Barcode dikunci agar tidak dapat digunakan
+                    | dua siswa secara bersamaan.
+                    |
+                    */
+
+                    $barcode =
+                        Barcode::where(
+                            'token',
+                            $token
+                        )
+                            ->lockForUpdate()
+                            ->first();
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BARCODE TIDAK DITEMUKAN
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        !$barcode
+                    ) {
+                        throw new \RuntimeException(
+                            'Barcode tidak ditemukan.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BARCODE TIDAK AKTIF
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        !$barcode->is_active
+                    ) {
+                        throw new \RuntimeException(
+                            'Barcode sudah digunakan. Silakan scan barcode terbaru.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BARCODE SUDAH DIGUNAKAN
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        $barcode->used_at !== null
+                    ) {
+                        throw new \RuntimeException(
+                            'Barcode sudah digunakan oleh siswa lain.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | BARCODE KEDALUWARSA
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        !$barcode->expired_at
+                        ||
+                        $barcode->expired_at->lte(
+                            $now
+                        )
+                    ) {
+                        /*
+                        |--------------------------------------------------------------------------
+                        | MATIKAN BARCODE
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $barcode->update([
+                            'is_active' =>
+                                false,
+                        ]);
+
+
+                        throw new \RuntimeException(
+                            'Barcode sudah kedaluwarsa. Silakan scan barcode terbaru.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SIMPAN PRESENSI
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $attendance =
+                        Attendance::create([
+                            'student_id' =>
+                                $student->id,
+
+                            'barcode_id' =>
+                                $barcode->id,
+
+                            'attendance_date' =>
+                                $now->toDateString(),
+
+                            'check_in_time' =>
+                                $now->format(
+                                    'H:i:s'
+                                ),
+
+                            'status' =>
+                                'present',
+
+                            'notes' =>
+                                'Presensi barcode dinamis',
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | WA BELUM TERKIRIM
+                            |--------------------------------------------------------------------------
+                            |
+                            | Saat ini kita masih TEST MODE.
+                            |
+                            */
+
+                            'wa_sent' =>
+                                false,
+                        ]);
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | MATIKAN BARCODE
+                    |--------------------------------------------------------------------------
+                    |
+                    | Barcode hanya boleh digunakan satu kali.
+                    |
+                    */
 
                     $barcode->update([
-                        'is_active' => false,
+                        'is_active' =>
+                            false,
+
+                        'used_by_student_id' =>
+                            $student->id,
+
+                        'used_at' =>
+                            $now,
                     ]);
 
 
-                    throw new \RuntimeException(
-                        'Barcode sudah kedaluwarsa. Silakan scan barcode terbaru.'
-                    );
+                    /*
+                    |--------------------------------------------------------------------------
+                    | RETURN ATTENDANCE
+                    |--------------------------------------------------------------------------
+                    |
+                    | Object ini dibawa keluar dari transaction
+                    | untuk membuat WhatsApp Notification.
+                    |
+                    */
 
+                    return $attendance;
                 }
-
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | SIMPAN PRESENSI SISWA
-                |--------------------------------------------------------------------------
-                */
-
-                Attendance::create([
-
-                    'student_id' =>
-                        $student->id,
-
-                    'barcode_id' =>
-                        $barcode->id,
-
-                    'attendance_date' =>
-                        $now->toDateString(),
-
-                    'check_in_time' =>
-                        $now->format('H:i:s'),
-
-                    'status' =>
-                        'present',
-
-                    'notes' =>
-                        'Presensi barcode dinamis',
-
-                    'wa_sent' =>
-                        false,
-
-                ]);
-
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | MATIKAN BARCODE SETELAH BERHASIL DIGUNAKAN
-                |--------------------------------------------------------------------------
-                */
-
-                $barcode->update([
-
-                    'is_active' =>
-                        false,
-
-                    'used_by_student_id' =>
-                        $student->id,
-
-                    'used_at' =>
-                        $now,
-
-                ]);
-
-            });
-
+            );
 
         } catch (\RuntimeException $e) {
+            /*
+            |--------------------------------------------------------------------------
+            | ERROR PRESENSI
+            |--------------------------------------------------------------------------
+            */
 
             return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 422);
+                'success' =>
+                    false,
 
+                'message' =>
+                    $e->getMessage(),
+            ], 422);
         }
 
 
@@ -469,12 +554,70 @@ class AttendanceController extends Controller
         | GENERATE BARCODE BERIKUTNYA
         |--------------------------------------------------------------------------
         |
-        | Setelah barcode dipakai satu siswa, barcode lama langsung mati
-        | dan barcode baru dibuat untuk siswa berikutnya.
+        | Presensi sudah COMMIT pada tahap ini.
         |
         */
 
         $barcodeService->current();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BUAT NOTIFIKASI WHATSAPP
+        |--------------------------------------------------------------------------
+        |
+        | PENTING:
+        |
+        | Method ini dijalankan SETELAH transaction presensi selesai.
+        |
+        | Jadi:
+        |
+        | - Presensi tidak bergantung pada WhatsApp.
+        | - Jika WhatsApp error, presensi tetap berhasil.
+        | - Untuk sekarang hanya membuat log status PENDING.
+        | - Belum mengirim pesan WhatsApp sungguhan.
+        |
+        */
+
+        if (
+            $attendance
+        ) {
+            try {
+                $whatsAppService
+                    ->createAttendanceNotification(
+                        $student,
+                        $attendance
+                    );
+
+            } catch (\Throwable $e) {
+                /*
+                |--------------------------------------------------------------------------
+                | JANGAN GAGALKAN PRESENSI
+                |--------------------------------------------------------------------------
+                |
+                | Jika sistem WhatsApp bermasalah,
+                | siswa tetap dianggap berhasil presensi.
+                |
+                */
+
+                Log::error(
+                    'Gagal membuat WhatsApp Notification setelah presensi.',
+                    [
+                        'student_id' =>
+                            $student->id,
+
+                        'nis' =>
+                            $student->nis,
+
+                        'attendance_id' =>
+                            $attendance->id,
+
+                        'error' =>
+                            $e->getMessage(),
+                    ]
+                );
+            }
+        }
 
 
         /*
@@ -484,7 +627,6 @@ class AttendanceController extends Controller
         */
 
         return response()->json([
-
             'success' =>
                 true,
 
@@ -498,13 +640,13 @@ class AttendanceController extends Controller
                 $student->nis,
 
             'time' =>
-                $now->format('H:i'),
+                $now->format(
+                    'H:i'
+                ),
 
             'status' =>
                 'HADIR',
-
         ]);
-
     }
 
 
@@ -520,60 +662,125 @@ class AttendanceController extends Controller
         float $lat2,
         float $lon2
     ): float {
-
         /*
-         * Radius bumi dalam meter.
-         */
-        $earthRadius = 6371000;
+        |--------------------------------------------------------------------------
+        | RADIUS BUMI
+        |--------------------------------------------------------------------------
+        */
 
-
-        /*
-         * Konversi koordinat ke radian.
-         */
-        $latFrom = deg2rad($lat1);
-
-        $lonFrom = deg2rad($lon1);
-
-        $latTo = deg2rad($lat2);
-
-        $lonTo = deg2rad($lon2);
+        $earthRadius =
+            6371000;
 
 
         /*
-         * Selisih latitude dan longitude.
-         */
-        $latDelta =
-            $latTo - $latFrom;
+        |--------------------------------------------------------------------------
+        | KONVERSI KE RADIAN
+        |--------------------------------------------------------------------------
+        */
 
-        $lonDelta =
-            $lonTo - $lonFrom;
-
-
-        /*
-         * Rumus Haversine.
-         */
-        $a =
-            sin($latDelta / 2) ** 2
-            +
-            cos($latFrom)
-            *
-            cos($latTo)
-            *
-            sin($lonDelta / 2) ** 2;
+        $latFrom =
+            deg2rad(
+                $lat1
+            );
 
 
-        $c =
-            2
-            *
-            atan2(
-                sqrt($a),
-                sqrt(1 - $a)
+        $lonFrom =
+            deg2rad(
+                $lon1
+            );
+
+
+        $latTo =
+            deg2rad(
+                $lat2
+            );
+
+
+        $lonTo =
+            deg2rad(
+                $lon2
             );
 
 
         /*
-         * Hasil dalam meter.
-         */
-        return $earthRadius * $c;
+        |--------------------------------------------------------------------------
+        | SELISIH
+        |--------------------------------------------------------------------------
+        */
+
+        $latDelta =
+            $latTo
+            -
+            $latFrom;
+
+
+        $lonDelta =
+            $lonTo
+            -
+            $lonFrom;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HAVERSINE
+        |--------------------------------------------------------------------------
+        */
+
+        $a =
+            sin(
+                $latDelta
+                /
+                2
+            ) ** 2
+
+            +
+
+            cos(
+                $latFrom
+            )
+
+            *
+
+            cos(
+                $latTo
+            )
+
+            *
+
+            sin(
+                $lonDelta
+                /
+                2
+            ) ** 2;
+
+
+        $c =
+            2
+
+            *
+
+            atan2(
+                sqrt(
+                    $a
+                ),
+
+                sqrt(
+                    1
+                    -
+                    $a
+                )
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HASIL METER
+        |--------------------------------------------------------------------------
+        */
+
+        return
+            $earthRadius
+            *
+            $c;
     }
 }

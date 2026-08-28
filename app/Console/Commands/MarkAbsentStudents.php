@@ -5,38 +5,53 @@ namespace App\Console\Commands;
 use App\Models\Attendance;
 use App\Models\AttendanceSetting;
 use App\Models\Student;
+use App\Services\WhatsAppService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class MarkAbsentStudents extends Command
 {
-    /**
-     * Nama command Artisan.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | NAMA COMMAND
+    |--------------------------------------------------------------------------
+    */
+
     protected $signature = 'attendance:mark-absent';
 
 
-    /**
-     * Deskripsi command.
-     */
-    protected $description = 'Menandai siswa yang belum presensi sebagai Alfa setiap Senin sampai Jumat setelah pukul 07:01 WIB';
+    /*
+    |--------------------------------------------------------------------------
+    | DESKRIPSI
+    |--------------------------------------------------------------------------
+    */
+
+    protected $description =
+        'Menandai siswa yang belum presensi sebagai Alfa setiap Senin sampai Jumat setelah pukul 07:01 WIB';
 
 
-    /**
-     * Jalankan command.
-     */
-    public function handle(): int
-    {
+    /*
+    |--------------------------------------------------------------------------
+    | HANDLE
+    |--------------------------------------------------------------------------
+    */
+
+    public function handle(
+        WhatsAppService $whatsAppService
+    ): int {
         /*
         |--------------------------------------------------------------------------
         | AMBIL SETTING PRESENSI
         |--------------------------------------------------------------------------
         */
 
-        $settings = AttendanceSetting::first();
+        $settings =
+            AttendanceSetting::first();
 
 
-        if (!$settings) {
-
+        if (
+            !$settings
+        ) {
             $this->error(
                 'Setting presensi belum tersedia.'
             );
@@ -51,8 +66,9 @@ class MarkAbsentStudents extends Command
         |--------------------------------------------------------------------------
         */
 
-        if (!$settings->auto_alpha) {
-
+        if (
+            !$settings->auto_alpha
+        ) {
             $this->info(
                 'Auto Alfa sedang dinonaktifkan.'
             );
@@ -67,27 +83,21 @@ class MarkAbsentStudents extends Command
         |--------------------------------------------------------------------------
         */
 
-        $now = now();
+        $now =
+            now(
+                'Asia/Jakarta'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
         | HANYA SENIN - JUMAT
         |--------------------------------------------------------------------------
-        |
-        | Senin  = dijalankan
-        | Selasa = dijalankan
-        | Rabu   = dijalankan
-        | Kamis  = dijalankan
-        | Jumat  = dijalankan
-        |
-        | Sabtu  = tidak dijalankan
-        | Minggu = tidak dijalankan
-        |
         */
 
-        if (!$now->isWeekday()) {
-
+        if (
+            !$now->isWeekday()
+        ) {
             $this->info(
                 'Hari ini Sabtu/Minggu. Auto Alfa tidak dijalankan.'
             );
@@ -102,7 +112,8 @@ class MarkAbsentStudents extends Command
         |--------------------------------------------------------------------------
         */
 
-        $today = $now->toDateString();
+        $today =
+            $now->toDateString();
 
 
         /*
@@ -110,20 +121,19 @@ class MarkAbsentStudents extends Command
         | BATAS PRESENSI
         |--------------------------------------------------------------------------
         |
-        | Aturan:
-        |
-        | 06:59:59 = masih boleh hadir
-        | 07:00:00 = masih boleh hadir
-        | 07:00:59 = masih boleh hadir
+        | 06:59:59 = masih boleh
+        | 07:00:00 = masih boleh
+        | 07:00:59 = masih boleh
         | 07:01:00 = mulai Alfa
         |
         */
 
-        $cutoff = $now
-            ->copy()
-            ->setTimeFromTimeString(
-                $settings->cutoff_time
-            );
+        $cutoff =
+            $now
+                ->copy()
+                ->setTimeFromTimeString(
+                    $settings->cutoff_time
+                );
 
 
         /*
@@ -132,12 +142,15 @@ class MarkAbsentStudents extends Command
         |--------------------------------------------------------------------------
         */
 
-        if ($now->lt($cutoff)) {
-
+        if (
+            $now->lt(
+                $cutoff
+            )
+        ) {
             $this->warn(
-                'Belum melewati batas presensi ' .
-                $settings->cutoff_time .
-                '.'
+                'Belum melewati batas presensi '
+                . $settings->cutoff_time
+                . '.'
             );
 
             return self::SUCCESS;
@@ -146,14 +159,24 @@ class MarkAbsentStudents extends Command
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL SEMUA SISWA AKTIF
+        | AMBIL SISWA AKTIF
         |--------------------------------------------------------------------------
+        |
+        | Relasi user ikut dimuat karena nama siswa digunakan
+        | dalam pesan WhatsApp.
+        |
         */
 
-        $students = Student::where(
-            'status',
-            'active'
-        )->get();
+        $students =
+            Student::query()
+                ->with(
+                    'user'
+                )
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->get();
 
 
         /*
@@ -163,47 +186,59 @@ class MarkAbsentStudents extends Command
         */
 
         $created = 0;
+
         $skipped = 0;
+
+        $whatsappCreated = 0;
+
+        $whatsappSkipped = 0;
+
+        $whatsappFailed = 0;
 
 
         /*
         |--------------------------------------------------------------------------
-        | PROSES SISWA SATU PER SATU
+        | PROSES SISWA
         |--------------------------------------------------------------------------
         */
 
-        foreach ($students as $student) {
-
+        foreach (
+            $students
+            as $student
+        ) {
             /*
             |--------------------------------------------------------------------------
             | CEK PRESENSI HARI INI
             |--------------------------------------------------------------------------
             |
-            | Jika siswa sudah memiliki salah satu status:
+            | Jika sudah punya:
             |
-            | present     = Hadir
-            | late        = Terlambat
-            | permission  = Izin
-            | sick        = Sakit
-            | absent      = Alfa
+            | present
+            | late
+            | permission
+            | sick
+            | absent
             |
-            | maka siswa tersebut tidak akan dibuat Alfa lagi.
+            | maka jangan membuat Alfa lagi.
             |
             */
 
-            $alreadyExists = Attendance::where(
-                'student_id',
-                $student->id
-            )
-                ->whereDate(
-                    'attendance_date',
-                    $today
-                )
-                ->exists();
+            $alreadyExists =
+                Attendance::query()
+                    ->where(
+                        'student_id',
+                        $student->id
+                    )
+                    ->whereDate(
+                        'attendance_date',
+                        $today
+                    )
+                    ->exists();
 
 
-            if ($alreadyExists) {
-
+            if (
+                $alreadyExists
+            ) {
                 $skipped++;
 
                 continue;
@@ -216,33 +251,92 @@ class MarkAbsentStudents extends Command
             |--------------------------------------------------------------------------
             */
 
-            Attendance::create([
+            $attendance =
+                Attendance::create([
+                    'student_id' =>
+                        $student->id,
 
-                'student_id' =>
-                    $student->id,
+                    'barcode_id' =>
+                        null,
 
-                'barcode_id' =>
-                    null,
+                    'attendance_date' =>
+                        $today,
 
-                'attendance_date' =>
-                    $today,
+                    'check_in_time' =>
+                        null,
 
-                'check_in_time' =>
-                    null,
+                    'status' =>
+                        'absent',
 
-                'status' =>
-                    'absent',
+                    'notes' =>
+                        'Alfa otomatis karena belum melakukan presensi sampai pukul 07:01 WIB.',
 
-                'notes' =>
-                    'Alfa otomatis karena belum melakukan presensi sampai pukul 07:01 WIB.',
-
-                'wa_sent' =>
-                    false,
-
-            ]);
+                    'wa_sent' =>
+                        false,
+                ]);
 
 
             $created++;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BUAT NOTIFIKASI WHATSAPP
+            |--------------------------------------------------------------------------
+            |
+            | Masih TEST MODE.
+            |
+            | Kalau siswa tidak memiliki parent_phone,
+            | WhatsAppService akan mengembalikan null.
+            |
+            */
+
+            try {
+                $notification =
+                    $whatsAppService
+                        ->createAttendanceNotification(
+                            $student,
+                            $attendance
+                        );
+
+
+                if (
+                    $notification
+                ) {
+                    $whatsappCreated++;
+                } else {
+                    $whatsappSkipped++;
+                }
+
+            } catch (
+                \Throwable $exception
+            ) {
+                /*
+                |--------------------------------------------------------------------------
+                | JANGAN GAGALKAN AUTO ALFA
+                |--------------------------------------------------------------------------
+                */
+
+                $whatsappFailed++;
+
+
+                Log::error(
+                    'Gagal membuat WhatsApp Notification untuk Auto Alfa.',
+                    [
+                        'student_id' =>
+                            $student->id,
+
+                        'nis' =>
+                            $student->nis,
+
+                        'attendance_id' =>
+                            $attendance->id,
+
+                        'error' =>
+                            $exception->getMessage(),
+                    ]
+                );
+            }
         }
 
 
@@ -260,27 +354,60 @@ class MarkAbsentStudents extends Command
 
 
         $this->line(
-            'Tanggal     : ' . $today
+            'Tanggal     : '
+            . $today
         );
 
 
         $this->line(
-            'Hari        : ' . $now->translatedFormat('l')
+            'Hari        : '
+            . $now
+                ->locale('id')
+                ->translatedFormat(
+                    'l'
+                )
         );
 
 
         $this->line(
-            'Total siswa : ' . $students->count()
+            'Total siswa : '
+            . $students->count()
         );
 
 
         $this->line(
-            'Alfa baru   : ' . $created
+            'Alfa baru   : '
+            . $created
         );
 
 
         $this->line(
-            'Dilewati    : ' . $skipped
+            'Dilewati    : '
+            . $skipped
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | INFO WHATSAPP
+        |--------------------------------------------------------------------------
+        */
+
+        $this->line(
+            'WA dibuat   : '
+            . $whatsappCreated
+        );
+
+
+        $this->line(
+            'WA dilewati : '
+            . $whatsappSkipped
+        );
+
+
+        $this->line(
+            'WA gagal    : '
+            . $whatsappFailed
         );
 
 

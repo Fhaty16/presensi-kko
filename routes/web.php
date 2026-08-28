@@ -20,6 +20,7 @@ use App\Http\Controllers\Guru\MonthlySchoolAttendanceRecapPrintController;
 use App\Http\Controllers\Guru\SchoolAttendanceDetailController;
 use App\Http\Controllers\Guru\StudentSchoolAttendanceDetailExportController;
 use App\Http\Controllers\Guru\StudentSchoolAttendanceDetailPrintController;
+use App\Http\Controllers\Guru\NewsController;
 
 
 /*
@@ -33,6 +34,7 @@ use App\Http\Controllers\Siswa\AttendanceController as SiswaAttendanceController
 use App\Http\Controllers\Siswa\LeaveRequestController as SiswaLeaveRequestController;
 use App\Http\Controllers\Siswa\AttendanceHistoryController;
 use App\Http\Controllers\Siswa\TrainingScanController;
+use App\Http\Controllers\Siswa\NewsController as SiswaNewsController;
 
 
 /*
@@ -436,6 +438,132 @@ Route::middleware([
             'leave.reject'
         );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - DAFTAR BERITA
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/berita',
+            [
+                NewsController::class,
+                'index',
+            ]
+        )
+        ->name(
+            'news.index'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - FORM TAMBAH
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/berita/tambah',
+            [
+                NewsController::class,
+                'create',
+            ]
+        )
+        ->name(
+            'news.create'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - SIMPAN
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post(
+            '/berita',
+            [
+                NewsController::class,
+                'store',
+            ]
+        )
+        ->name(
+            'news.store'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - FORM EDIT
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/berita/{news}/edit',
+            [
+                NewsController::class,
+                'edit',
+            ]
+        )
+        ->name(
+            'news.edit'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - UPDATE
+        |--------------------------------------------------------------------------
+        */
+
+        Route::put(
+            '/berita/{news}',
+            [
+                NewsController::class,
+                'update',
+            ]
+        )
+        ->name(
+            'news.update'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - PUBLISH / DRAFT
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post(
+            '/berita/{news}/status',
+            [
+                NewsController::class,
+                'toggleStatus',
+            ]
+        )
+        ->name(
+            'news.toggle-status'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - HAPUS
+        |--------------------------------------------------------------------------
+        */
+
+        Route::delete(
+            '/berita/{news}',
+            [
+                NewsController::class,
+                'destroy',
+            ]
+        )
+        ->name(
+            'news.destroy'
+        );
+
     });
 
 
@@ -479,17 +607,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | NOTIFIKASI SISWA - TANDAI SUDAH DIBACA
         |--------------------------------------------------------------------------
-        |
-        | Digunakan ketika siswa membuka dropdown notifikasi.
-        |
-        | URL:
-        |
-        | POST /siswa/notifikasi/baca
-        |
-        | Route name:
-        |
-        | siswa.notifications.read
-        |
         */
 
         Route::post(
@@ -639,6 +756,52 @@ Route::middleware([
         )
         ->name(
             'leave.store'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - DAFTAR
+        |--------------------------------------------------------------------------
+        |
+        | Menampilkan semua berita yang sudah Published
+        | kepada siswa.
+        |
+        */
+
+        Route::get(
+            '/berita',
+            [
+                SiswaNewsController::class,
+                'index',
+            ]
+        )
+        ->name(
+            'news.index'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - DETAIL
+        |--------------------------------------------------------------------------
+        |
+        | Menampilkan detail satu berita.
+        |
+        | Controller akan memastikan bahwa siswa hanya dapat
+        | membuka berita yang statusnya Published.
+        |
+        */
+
+        Route::get(
+            '/berita/{news}',
+            [
+                SiswaNewsController::class,
+                'show',
+            ]
+        )
+        ->name(
+            'news.show'
         );
 
     });

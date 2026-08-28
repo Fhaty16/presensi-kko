@@ -8,7 +8,9 @@ use App\Models\AttendanceSetting;
 use App\Models\LeaveRequest;
 use App\Models\Student;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\View\View;
+use Throwable;
 
 class DashboardController extends Controller
 {
@@ -22,14 +24,162 @@ class DashboardController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
+        | WAKTU SEKARANG
+        |--------------------------------------------------------------------------
+        */
+
+        $now =
+            Carbon::now(
+                'Asia/Jakarta'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
         | TANGGAL HARI INI
         |--------------------------------------------------------------------------
         */
 
         $today =
-            Carbon::now(
+            $now->toDateString();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM BATAS PRESENSI SEKOLAH
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceSetting =
+            AttendanceSetting::query()
+                ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM BATAS RAW
+        |--------------------------------------------------------------------------
+        */
+
+        $cutoffRaw =
+            (string) (
+                $attendanceSetting?->cutoff_time
+                ?? '07:01:00'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMALISASI FORMAT JAM
+        |--------------------------------------------------------------------------
+        |
+        | Misalnya database berisi:
+        |
+        | 07:01
+        |
+        | akan diubah menjadi:
+        |
+        | 07:01:00
+        |
+        */
+
+        $cutoffTime =
+            strlen(
+                $cutoffRaw
+            ) === 5
+                ? $cutoffRaw . ':00'
+                : substr(
+                    $cutoffRaw,
+                    0,
+                    8
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TAMPILAN JAM BATAS
+        |--------------------------------------------------------------------------
+        */
+
+        $cutoffDisplay =
+            substr(
+                $cutoffTime,
+                0,
+                5
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | WAKTU BATAS HARI INI
+        |--------------------------------------------------------------------------
+        */
+
+        $cutoffDateTime =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $today
+                    . ' '
+                    . $cutoffTime,
                 'Asia/Jakarta'
-            )->toDateString();
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AUTO ALFA FALLBACK
+        |--------------------------------------------------------------------------
+        |
+        | Tujuan:
+        |
+        | - Tidak perlu menjalankan schedule:work secara manual.
+        |
+        | - Hanya berlaku Senin sampai Jumat.
+        |
+        | - Sebelum jam batas tidak melakukan apa-apa.
+        |
+        | - Setelah jam batas, ketika Dashboard Guru dibuka,
+        |   command attendance:mark-absent otomatis dijalankan.
+        |
+        | - Sabtu dan Minggu tidak dijalankan.
+        |
+        | Command attendance:mark-absent sendiri sudah menangani
+        | siswa yang sudah memiliki presensi, sehingga tidak
+        | membuat data presensi ganda.
+        |
+        */
+
+        if (
+            $now->isWeekday()
+            &&
+            $now->greaterThanOrEqualTo(
+                $cutoffDateTime
+            )
+        ) {
+
+            try {
+
+                Artisan::call(
+                    'attendance:mark-absent'
+                );
+
+            } catch (Throwable $exception) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | JANGAN BUAT DASHBOARD ERROR
+                |--------------------------------------------------------------------------
+                |
+                | Kalau Auto-Alfa mengalami masalah, halaman Guru
+                | tetap dapat dibuka dan error dicatat ke Laravel log.
+                |
+                */
+
+                report(
+                    $exception
+                );
+            }
+        }
 
 
         /*
@@ -51,6 +201,12 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         | PRESENSI HARI INI
         |--------------------------------------------------------------------------
+        |
+        | Query dilakukan SETELAH Auto-Alfa dijalankan.
+        |
+        | Jadi kalau Auto-Alfa baru saja membuat data,
+        | angka dashboard langsung ikut diperbarui.
+        |
         */
 
         $todayAttendances =
@@ -144,38 +300,8 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | JAM BATAS PRESENSI SEKOLAH
-        |--------------------------------------------------------------------------
-        */
-
-        $attendanceSetting =
-            AttendanceSetting::query()
-                ->first();
-
-
-        $cutoffDisplay =
-            substr(
-                (string) (
-                    $attendanceSetting?->cutoff_time
-                    ?? '07:01:00'
-                ),
-                0,
-                5
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
         | JUMLAH PENGAJUAN YANG MASIH MENUNGGU
         |--------------------------------------------------------------------------
-        |
-        | Semua pengajuan:
-        |
-        | - Presensi Sekolah
-        | - Latihan KKO
-        |
-        | dihitung selama statusnya masih pending.
-        |
         */
 
         $pendingLeaveCount =
@@ -189,7 +315,7 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | NOTIFIKASI TERBARU
+        | NOTIFIKASI PENGAJUAN TERBARU
         |--------------------------------------------------------------------------
         */
 

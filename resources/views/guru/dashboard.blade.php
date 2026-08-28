@@ -60,6 +60,7 @@
             box-sizing: border-box;
         }
 
+
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal !important;
@@ -95,12 +96,14 @@
             text-decoration: none;
         }
 
+
         a.management-card:visited,
         a.teacher-action-card:visited,
         a.sport-card:visited,
         a.text-link:visited {
             color: inherit;
         }
+
 
         a.management-card,
         a.teacher-action-card,
@@ -109,12 +112,14 @@
             cursor: pointer;
         }
 
+
         a.sport-card {
             transition:
                 transform .18s ease,
                 border-color .18s ease,
                 background .18s ease;
         }
+
 
         a.sport-card:hover {
             transform: translateY(-2px);
@@ -131,6 +136,7 @@
         .guru-notification-wrapper {
             position: relative;
         }
+
 
         .guru-notification-button {
             position: relative;
@@ -213,6 +219,7 @@
                 transform .18s ease;
         }
 
+
         .guru-notification-wrapper.active
         .guru-notification-dropdown {
             opacity: 1;
@@ -240,9 +247,11 @@
                 rgba(64, 71, 81, .70);
         }
 
+
         .guru-notification-header-title {
             min-width: 0;
         }
+
 
         .guru-notification-header-title strong {
             display: block;
@@ -254,6 +263,7 @@
             font-weight: 800;
         }
 
+
         .guru-notification-header-title span {
             display: block;
 
@@ -263,6 +273,7 @@
 
             font-size: 9px;
         }
+
 
         .guru-notification-header-count {
             flex: 0 0 auto;
@@ -291,6 +302,7 @@
             overflow-y: auto;
         }
 
+
         .guru-notification-item {
             display: flex;
             align-items: center;
@@ -311,10 +323,12 @@
                 background .18s ease;
         }
 
+
         .guru-notification-item:hover {
             background:
                 rgba(157, 202, 255, .06);
         }
+
 
         .guru-notification-item:last-child {
             border-bottom: 0;
@@ -342,15 +356,18 @@
             border-radius: 11px;
         }
 
+
         .guru-notification-icon.sick {
             color: #9dcaff;
             background: rgba(157, 202, 255, .10);
         }
 
+
         .guru-notification-icon.permission {
             color: #f6c453;
             background: rgba(245, 158, 11, .11);
         }
+
 
         .guru-notification-icon
         .material-symbols-outlined {
@@ -368,6 +385,7 @@
             flex: 1;
         }
 
+
         .guru-notification-content strong {
             display: block;
 
@@ -382,6 +400,7 @@
             text-overflow: ellipsis;
         }
 
+
         .guru-notification-content p {
             margin: 4px 0 0;
 
@@ -391,6 +410,7 @@
             font-size: 7px;
             line-height: 1.5;
         }
+
 
         .guru-notification-content small {
             display: block;
@@ -402,6 +422,7 @@
             font-size: 7px;
             line-height: 1.5;
         }
+
 
         .guru-notification-arrow {
             flex: 0 0 auto;
@@ -434,6 +455,7 @@
             font-weight: 800;
         }
 
+
         .notification-scope.school {
             color: #9dcaff;
             background: rgba(0, 114, 188, .10);
@@ -441,12 +463,14 @@
             border: 1px solid rgba(157, 202, 255, .12);
         }
 
+
         .notification-scope.training {
             color: #c5afff;
             background: rgba(160, 120, 255, .10);
 
             border: 1px solid rgba(175, 145, 255, .13);
         }
+
 
         .notification-scope
         .material-symbols-outlined {
@@ -464,6 +488,7 @@
             text-align: center;
         }
 
+
         .guru-notification-empty
         .material-symbols-outlined {
             display: block;
@@ -475,6 +500,7 @@
             font-size: 34px;
         }
 
+
         .guru-notification-empty strong {
             display: block;
 
@@ -482,6 +508,7 @@
 
             font-size: 10px;
         }
+
 
         .guru-notification-empty p {
             margin: 5px 0 0;
@@ -523,10 +550,12 @@
                 background .18s ease;
         }
 
+
         .guru-notification-footer:hover {
             background:
                 rgba(0, 114, 188, .10);
         }
+
 
         .guru-notification-footer
         .material-symbols-outlined {
@@ -559,6 +588,7 @@
                 rgba(157, 202, 255, .30);
         }
 
+
         .leave-request-management-card
         .management-icon {
             color: #9dcaff;
@@ -567,11 +597,13 @@
                 rgba(0, 114, 188, .12);
         }
 
+
         .leave-management-content {
             flex: 1;
 
             min-width: 0;
         }
+
 
         .leave-management-title-row {
             display: flex;
@@ -581,9 +613,11 @@
             gap: 7px;
         }
 
+
         .leave-management-title-row strong {
             margin: 0;
         }
+
 
         .leave-management-badge {
             min-width: 19px;
@@ -614,6 +648,7 @@
             border-color:
                 rgba(231, 70, 70, .35);
         }
+
 
         .leave-request-management-card.has-pending
         .management-icon {
@@ -1642,8 +1677,8 @@
                  BERITA KKO
             ================================================== -->
 
-            <button
-                type="button"
+            <a
+                href="{{ route('guru.news.index') }}"
                 class="management-card"
             >
 
@@ -1673,7 +1708,7 @@
                     arrow_forward
                 </span>
 
-            </button>
+            </a>
 
 
             <!-- =================================================

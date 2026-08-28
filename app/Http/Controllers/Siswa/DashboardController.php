@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\News;
 use App\Models\Student;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -24,28 +25,12 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $student =
-            Student::with(
-                'class'
+        $student = Student::with('class')
+            ->where(
+                'user_id',
+                auth()->id()
             )
-                ->where(
-                    'user_id',
-                    auth()->id()
-                )
-                ->firstOrFail();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | HARI INI
-        |--------------------------------------------------------------------------
-        */
-
-        $today =
-            now(
-                'Asia/Jakarta'
-            )
-                ->toDateString();
+            ->firstOrFail();
 
 
         /*
@@ -54,143 +39,166 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $todayAttendance =
-            Attendance::query()
-                ->where(
-                    'student_id',
-                    $student->id
-                )
-                ->whereDate(
-                    'attendance_date',
-                    $today
-                )
-                ->first();
+        $today = now(
+            'Asia/Jakarta'
+        )->toDateString();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | RENTANG MINGGU INI
-        |--------------------------------------------------------------------------
-        */
-
-        $startOfWeek =
-            now(
-                'Asia/Jakarta'
+        $todayAttendance = Attendance::query()
+            ->where(
+                'student_id',
+                $student->id
             )
-                ->copy()
-                ->startOfWeek();
-
-
-        $endOfWeek =
-            now(
-                'Asia/Jakarta'
+            ->whereDate(
+                'attendance_date',
+                $today
             )
-                ->copy()
-                ->endOfWeek();
+            ->first();
 
 
         /*
         |--------------------------------------------------------------------------
-        | PRESENSI MINGGU INI
+        | STATISTIK MINGGUAN
         |--------------------------------------------------------------------------
         */
 
-        $weeklyAttendances =
-            Attendance::query()
-                ->where(
-                    'student_id',
-                    $student->id
-                )
-                ->whereBetween(
-                    'attendance_date',
-                    [
-                        $startOfWeek
-                            ->toDateString(),
-
-                        $endOfWeek
-                            ->toDateString(),
-                    ]
-                )
-                ->get();
+        $startOfWeek = now(
+            'Asia/Jakarta'
+        )
+            ->copy()
+            ->startOfWeek();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATISTIK
-        |--------------------------------------------------------------------------
-        */
+        $endOfWeek = now(
+            'Asia/Jakarta'
+        )
+            ->copy()
+            ->endOfWeek();
+
+
+        $weeklyAttendances = Attendance::query()
+            ->where(
+                'student_id',
+                $student->id
+            )
+            ->whereBetween(
+                'attendance_date',
+                [
+                    $startOfWeek->toDateString(),
+                    $endOfWeek->toDateString(),
+                ]
+            )
+            ->get();
+
 
         $weeklyStats = [
+            'hadir' => $weeklyAttendances
+                ->whereIn(
+                    'status',
+                    [
+                        'present',
+                        'late',
+                    ]
+                )
+                ->count(),
 
-            'hadir' =>
-                $weeklyAttendances
-                    ->whereIn(
-                        'status',
-                        [
-                            'present',
-                            'late',
-                        ]
-                    )
-                    ->count(),
+            'izin' => $weeklyAttendances
+                ->where(
+                    'status',
+                    'permission'
+                )
+                ->count(),
 
-            'izin' =>
-                $weeklyAttendances
-                    ->where(
-                        'status',
-                        'permission'
-                    )
-                    ->count(),
+            'sakit' => $weeklyAttendances
+                ->where(
+                    'status',
+                    'sick'
+                )
+                ->count(),
 
-            'sakit' =>
-                $weeklyAttendances
-                    ->where(
-                        'status',
-                        'sick'
-                    )
-                    ->count(),
-
-            'alfa' =>
-                $weeklyAttendances
-                    ->where(
-                        'status',
-                        'absent'
-                    )
-                    ->count(),
-
+            'alfa' => $weeklyAttendances
+                ->where(
+                    'status',
+                    'absent'
+                )
+                ->count(),
         ];
 
 
         /*
         |--------------------------------------------------------------------------
-        | NOTIFIKASI TERBARU
+        | NOTIFIKASI
         |--------------------------------------------------------------------------
         */
 
-        $notifications =
-            auth()
-                ->user()
-                ->notifications()
-                ->latest()
-                ->limit(8)
-                ->get();
+        $notifications = auth()
+            ->user()
+            ->notifications()
+            ->latest()
+            ->limit(8)
+            ->get();
+
+
+        $unreadNotificationCount = auth()
+            ->user()
+            ->unreadNotifications()
+            ->count();
 
 
         /*
         |--------------------------------------------------------------------------
-        | NOTIFIKASI BELUM DIBACA
+        | QUERY BERITA PUBLISHED
         |--------------------------------------------------------------------------
         */
 
-        $unreadNotificationCount =
-            auth()
-                ->user()
-                ->unreadNotifications()
-                ->count();
+        $publishedNewsQuery = News::query()
+            ->where(
+                'status',
+                'published'
+            )
+            ->whereNotNull(
+                'published_at'
+            )
+            ->where(
+                'published_at',
+                '<=',
+                now(
+                    'Asia/Jakarta'
+                )
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | VIEW
+        | MAKSIMAL 4 BERITA DI DASHBOARD
+        |--------------------------------------------------------------------------
+        */
+
+        $latestNews = (clone $publishedNewsQuery)
+            ->latest(
+                'published_at'
+            )
+            ->limit(4)
+            ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ADA BERITA LAIN?
+        |--------------------------------------------------------------------------
+        |
+        | Jika jumlah berita Published lebih dari 4,
+        | card "Lihat Semua Berita" muncul di ujung carousel.
+        |
+        */
+
+        $hasMoreNews = (clone $publishedNewsQuery)
+            ->count() > 4;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN VIEW
         |--------------------------------------------------------------------------
         */
 
@@ -201,7 +209,9 @@ class DashboardController extends Controller
                 'todayAttendance',
                 'weeklyStats',
                 'notifications',
-                'unreadNotificationCount'
+                'unreadNotificationCount',
+                'latestNews',
+                'hasMoreNews'
             )
         );
     }
@@ -209,33 +219,20 @@ class DashboardController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | TANDAI SEMUA NOTIFIKASI SUDAH DIBACA
+    | TANDAI NOTIFIKASI DIBACA
     |--------------------------------------------------------------------------
     */
 
     public function markNotificationsRead(): JsonResponse
     {
-        /*
-        |--------------------------------------------------------------------------
-        | MARK AS READ
-        |--------------------------------------------------------------------------
-        */
-
         auth()
             ->user()
             ->unreadNotifications
             ->markAsRead();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | RESPONSE
-        |--------------------------------------------------------------------------
-        */
-
-        return response()
-            ->json([
-                'success' => true,
-            ]);
+        return response()->json([
+            'success' => true,
+        ]);
     }
 }
