@@ -35,6 +35,7 @@ use App\Http\Controllers\Siswa\LeaveRequestController as SiswaLeaveRequestContro
 use App\Http\Controllers\Siswa\AttendanceHistoryController;
 use App\Http\Controllers\Siswa\TrainingScanController;
 use App\Http\Controllers\Siswa\NewsController as SiswaNewsController;
+use App\Http\Controllers\Siswa\ScheduleController;
 
 
 /*
@@ -618,6 +619,30 @@ Route::middleware([
         )
         ->name(
             'notifications.read'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JADWAL PELAJARAN
+        |--------------------------------------------------------------------------
+        |
+        | Menampilkan jadwal pelajaran berdasarkan class_id siswa.
+        |
+        | Halaman ini nantinya juga menjadi sumber data untuk fitur
+        | KKO AI Assistant.
+        |
+        */
+
+        Route::get(
+            '/jadwal-pelajaran',
+            [
+                ScheduleController::class,
+                'index',
+            ]
+        )
+        ->name(
+            'schedule.index'
         );
 
 
