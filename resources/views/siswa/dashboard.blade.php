@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -94,6 +95,7 @@
             text-decoration: none;
         }
 
+
         a.student-mini-card:visited,
         a.student-scan-card:visited {
             color: inherit;
@@ -108,7 +110,16 @@
 
         .student-side-actions {
             display: grid;
-            grid-template-rows: repeat(3, minmax(0, 1fr));
+
+            grid-template-rows:
+                repeat(
+                    3,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
             gap: 14px;
         }
 
@@ -123,26 +134,183 @@
             position: relative;
         }
 
-        .training-menu-card .student-mini-icon {
+
+        .training-menu-card
+        .student-mini-icon {
             color: #9dcaff;
-            background: rgba(157, 202, 255, .10);
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
         }
+
 
         .training-menu-card::after {
             content: '';
+
             position: absolute;
+
             left: 0;
             top: 18%;
             bottom: 18%;
+
             width: 2px;
+
             background: #9dcaff;
+
             border-radius: 10px;
+
             opacity: 0;
-            transition: opacity .2s ease;
+
+            transition:
+                opacity
+                .2s
+                ease;
         }
+
 
         .training-menu-card:hover::after {
             opacity: 1;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FLOATING KKO AI ASSISTANT
+        |--------------------------------------------------------------------------
+        */
+
+        .student-ai-fab {
+            position: fixed;
+
+            right: 30px;
+            bottom: 30px;
+
+            z-index: 1850;
+
+            width: 56px;
+            height: 56px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+
+            color: #0b1821;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #b8dcff,
+                    #78b7ff
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .20
+                );
+
+            border-radius: 50%;
+
+            text-decoration: none;
+
+            box-shadow:
+                0
+                10px
+                28px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .34
+                ),
+                0
+                4px
+                14px
+                rgba(
+                    63,
+                    153,
+                    255,
+                    .18
+                );
+
+            transition:
+                transform
+                .18s
+                ease,
+                filter
+                .18s
+                ease,
+                box-shadow
+                .18s
+                ease;
+        }
+
+
+        .student-ai-fab:visited {
+            color: #0b1821;
+        }
+
+
+        .student-ai-fab:hover {
+            transform:
+                translateY(
+                    -3px
+                );
+
+            filter:
+                brightness(
+                    1.05
+                );
+
+            box-shadow:
+                0
+                14px
+                34px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .40
+                ),
+                0
+                6px
+                18px
+                rgba(
+                    63,
+                    153,
+                    255,
+                    .24
+                );
+        }
+
+
+        .student-ai-fab:active {
+            transform:
+                scale(
+                    .94
+                );
+        }
+
+
+        .student-ai-fab
+        .material-symbols-outlined {
+            font-size: 27px;
+
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 550,
+                'GRAD' 0,
+                'opsz' 32;
         }
 
 
@@ -154,15 +322,19 @@
 
         .student-notification-wrapper {
             position: relative;
+
             z-index: 2000;
         }
+
 
         .student-notification-button {
             position: relative;
         }
 
+
         .student-notification-count {
             position: absolute;
+
             top: -4px;
             right: -4px;
 
@@ -173,17 +345,27 @@
             align-items: center;
             justify-content: center;
 
-            padding: 0 4px;
+            padding:
+                0
+                4px;
 
             color: #ffffff;
+
             background: #e74646;
 
-            border: 2px solid #101415;
+            border:
+                2px solid
+                #101415;
+
             border-radius: 20px;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
             font-weight: 800;
+
             line-height: 1;
         }
 
@@ -196,40 +378,76 @@
 
         .student-notification-dropdown {
             position: absolute;
-            top: calc(100% + 12px);
+
+            top:
+                calc(
+                    100%
+                    +
+                    12px
+                );
+
             right: 0;
+
             z-index: 3000;
 
             width: 370px;
+
             overflow: hidden;
 
             color: #ffffff;
+
             background: #151d25;
 
-            border: 1px solid #34485d;
+            border:
+                1px solid
+                #34485d;
+
             border-radius: 14px;
 
             box-shadow:
-                0 24px 60px rgba(0, 0, 0, .45);
+                0
+                24px
+                60px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .45
+                );
 
             opacity: 0;
+
             visibility: hidden;
 
-            transform: translateY(-7px);
+            transform:
+                translateY(
+                    -7px
+                );
 
             pointer-events: none;
 
             transition:
-                opacity .18s ease,
-                visibility .18s ease,
-                transform .18s ease;
+                opacity
+                .18s
+                ease,
+                visibility
+                .18s
+                ease,
+                transform
+                .18s
+                ease;
         }
+
 
         .student-notification-dropdown.active {
             opacity: 1;
+
             visibility: visible;
 
-            transform: translateY(0);
+            transform:
+                translateY(
+                    0
+                );
 
             pointer-events: auto;
         }
@@ -245,32 +463,56 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 12px;
 
-            padding: 15px 16px;
+            padding:
+                15px
+                16px;
 
-            background: rgba(11, 17, 22, .45);
+            background:
+                rgba(
+                    11,
+                    17,
+                    22,
+                    .45
+                );
 
             border-bottom:
-                1px solid rgba(64, 71, 81, .55);
+                1px solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .55
+                );
         }
+
 
         .student-notification-header-text {
             min-width: 0;
         }
 
-        .student-notification-header-text strong {
+
+        .student-notification-header-text
+        strong {
             display: block;
 
             color: #edf3f7;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 13px;
             font-weight: 800;
         }
 
-        .student-notification-header-text span {
+
+        .student-notification-header-text
+        span {
             display: block;
+
             margin-top: 3px;
 
             color: #788793;
@@ -278,20 +520,39 @@
             font-size: 8px;
         }
 
+
         .student-notification-header-badge {
             flex-shrink: 0;
 
-            padding: 5px 8px;
+            padding:
+                5px
+                8px;
 
             color: #9dcaff;
-            background: rgba(157, 202, 255, .08);
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .08
+                );
 
             border:
-                1px solid rgba(157, 202, 255, .18);
+                1px solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .18
+                );
 
             border-radius: 20px;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
             font-weight: 800;
         }
@@ -305,22 +566,30 @@
 
         .student-notification-list {
             max-height: 390px;
+
             overflow-y: auto;
 
             scrollbar-width: thin;
-            scrollbar-color: #34485d #151d25;
+
+            scrollbar-color:
+                #34485d
+                #151d25;
         }
+
 
         .student-notification-list::-webkit-scrollbar {
             width: 5px;
         }
 
+
         .student-notification-list::-webkit-scrollbar-track {
             background: #151d25;
         }
 
+
         .student-notification-list::-webkit-scrollbar-thumb {
             background: #34485d;
+
             border-radius: 20px;
         }
 
@@ -336,32 +605,61 @@
 
             display: flex;
             align-items: flex-start;
+
             gap: 11px;
 
-            padding: 13px 15px;
+            padding:
+                13px
+                15px;
 
             border-bottom:
-                1px solid rgba(64, 71, 81, .38);
+                1px solid
+                rgba(
+                    64,
+                    71,
+                    81,
+                    .38
+                );
 
-            transition: background .16s ease;
+            transition:
+                background
+                .16s
+                ease;
         }
+
 
         .student-notification-item:last-child {
             border-bottom: 0;
         }
 
+
         .student-notification-item:hover {
-            background: rgba(157, 202, 255, .025);
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .025
+                );
         }
 
+
         .student-notification-item.unread {
-            background: rgba(157, 202, 255, .035);
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .035
+                );
         }
+
 
         .student-notification-item.unread::before {
             content: '';
 
             position: absolute;
+
             left: 0;
             top: 12px;
             bottom: 12px;
@@ -370,7 +668,11 @@
 
             background: #9dcaff;
 
-            border-radius: 0 10px 10px 0;
+            border-radius:
+                0
+                10px
+                10px
+                0;
         }
 
 
@@ -384,7 +686,10 @@
             width: 38px;
             height: 38px;
 
-            flex: 0 0 38px;
+            flex:
+                0
+                0
+                38px;
 
             display: flex;
             align-items: center;
@@ -393,24 +698,54 @@
             border-radius: 10px;
         }
 
-        .student-notification-icon .material-symbols-outlined {
+
+        .student-notification-icon
+        .material-symbols-outlined {
             font-size: 20px;
         }
 
+
         .student-notification-icon.approved {
             color: #8ce8c3;
-            background: rgba(54, 211, 153, .10);
+
+            background:
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .10
+                );
 
             border:
-                1px solid rgba(54, 211, 153, .16);
+                1px solid
+                rgba(
+                    54,
+                    211,
+                    153,
+                    .16
+                );
         }
+
 
         .student-notification-icon.rejected {
             color: #ffaaa5;
-            background: rgba(231, 70, 70, .10);
+
+            background:
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .10
+                );
 
             border:
-                1px solid rgba(231, 70, 70, .16);
+                1px solid
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .16
+                );
         }
 
 
@@ -422,10 +757,13 @@
 
         .student-notification-content {
             min-width: 0;
+
             flex: 1;
         }
 
-        .student-notification-content strong {
+
+        .student-notification-content
+        strong {
             display: block;
 
             color: #e6edf3;
@@ -434,29 +772,42 @@
             font-weight: 800;
         }
 
-        .student-notification-content p {
-            margin: 5px 0 0;
+
+        .student-notification-content
+        p {
+            margin:
+                5px
+                0
+                0;
 
             color: #9aa7b1;
 
             font-size: 9px;
+
             line-height: 1.45;
         }
+
 
         .student-notification-meta {
             display: flex;
             align-items: center;
+
             gap: 5px;
 
             margin-top: 7px;
 
             color: #687783;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
         }
 
-        .student-notification-meta .material-symbols-outlined {
+
+        .student-notification-meta
+        .material-symbols-outlined {
             font-size: 12px;
         }
 
@@ -468,9 +819,13 @@
         */
 
         .student-notification-empty {
-            padding: 30px 18px;
+            padding:
+                30px
+                18px;
+
             text-align: center;
         }
+
 
         .student-notification-empty-icon {
             width: 48px;
@@ -480,22 +835,42 @@
             align-items: center;
             justify-content: center;
 
-            margin: 0 auto 12px;
+            margin:
+                0
+                auto
+                12px;
 
             color: #70808c;
-            background: rgba(157, 202, 255, .05);
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .05
+                );
 
             border:
-                1px solid rgba(157, 202, 255, .10);
+                1px solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
 
             border-radius: 50%;
         }
 
-        .student-notification-empty-icon .material-symbols-outlined {
+
+        .student-notification-empty-icon
+        .material-symbols-outlined {
             font-size: 23px;
         }
 
-        .student-notification-empty strong {
+
+        .student-notification-empty
+        strong {
             display: block;
 
             color: #d5dde3;
@@ -503,14 +878,20 @@
             font-size: 10px;
         }
 
-        .student-notification-empty p {
+
+        .student-notification-empty
+        p {
             max-width: 230px;
 
-            margin: 5px auto 0;
+            margin:
+                5px
+                auto
+                0;
 
             color: #70808c;
 
             font-size: 8px;
+
             line-height: 1.45;
         }
 
@@ -523,32 +904,31 @@
 
         .news-dashboard-section {
             position: relative;
+
             overflow: hidden;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | HEADER BERITA
-        |--------------------------------------------------------------------------
-        */
 
         .news-dashboard-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 20px;
 
             margin-bottom: 18px;
         }
 
+
         .news-dashboard-heading {
             display: flex;
             align-items: center;
+
             gap: 10px;
 
             min-width: 0;
         }
+
 
         .news-dashboard-heading-icon {
             display: flex;
@@ -558,22 +938,34 @@
             color: #9dcaff;
         }
 
-        .news-dashboard-heading-icon .material-symbols-outlined {
+
+        .news-dashboard-heading-icon
+        .material-symbols-outlined {
             font-size: 26px;
         }
 
-        .news-dashboard-heading h2 {
+
+        .news-dashboard-heading
+        h2 {
             margin: 0;
 
             color: #edf2f5;
 
-            font-family: 'Anybody', sans-serif;
+            font-family:
+                'Anybody',
+                sans-serif;
+
             font-size: 20px;
             font-weight: 800;
         }
 
-        .news-dashboard-heading p {
-            margin: 4px 0 0;
+
+        .news-dashboard-heading
+        p {
+            margin:
+                4px
+                0
+                0;
 
             color: #74828d;
 
@@ -583,7 +975,7 @@
 
         /*
         |--------------------------------------------------------------------------
-        | LIHAT SEMUA DI HEADER
+        | NEWS LINK
         |--------------------------------------------------------------------------
         */
 
@@ -592,34 +984,49 @@
 
             display: inline-flex;
             align-items: center;
+
             gap: 7px;
 
             color: #9dcaff;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 800;
 
             text-decoration: none;
 
             transition:
-                color .18s ease,
-                transform .18s ease;
+                color
+                .18s
+                ease,
+                transform
+                .18s
+                ease;
         }
+
 
         .news-header-link:hover {
             color: #ffffff;
-            transform: translateX(2px);
+
+            transform:
+                translateX(
+                    2px
+                );
         }
 
-        .news-header-link .material-symbols-outlined {
+
+        .news-header-link
+        .material-symbols-outlined {
             font-size: 16px;
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | CAROUSEL BERITA
+        | NEWS CAROUSEL
         |--------------------------------------------------------------------------
         */
 
@@ -634,24 +1041,37 @@
             overflow-x: auto;
             overflow-y: hidden;
 
-            padding: 2px 2px 12px;
+            padding:
+                2px
+                2px
+                12px;
 
-            scroll-snap-type: x mandatory;
+            scroll-snap-type:
+                x
+                mandatory;
+
             scroll-behavior: smooth;
 
-            overscroll-behavior-inline: contain;
+            overscroll-behavior-inline:
+                contain;
 
             scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
+
+            -webkit-overflow-scrolling:
+                touch;
 
             cursor: grab;
+
             user-select: none;
         }
 
+
         .news-carousel.dragging {
             cursor: grabbing;
+
             scroll-snap-type: none;
         }
+
 
         .news-carousel::-webkit-scrollbar {
             display: none;
@@ -660,14 +1080,18 @@
 
         /*
         |--------------------------------------------------------------------------
-        | CARD BERITA
+        | NEWS CARD
         |--------------------------------------------------------------------------
         */
 
         .news-carousel-card {
             position: relative;
 
-            flex: 0 0 350px;
+            flex:
+                0
+                0
+                350px;
+
             width: 350px;
 
             min-width: 0;
@@ -678,38 +1102,59 @@
             overflow: hidden;
 
             color: inherit;
+
             background: #19232d;
 
-            border: 1px solid #34485d;
+            border:
+                1px solid
+                #34485d;
+
             border-radius: 12px;
 
             text-decoration: none;
 
-            scroll-snap-align: start;
+            scroll-snap-align:
+                start;
 
             transition:
-                transform .18s ease,
-                border-color .18s ease,
-                background .18s ease;
+                transform
+                .18s
+                ease,
+                border-color
+                .18s
+                ease,
+                background
+                .18s
+                ease;
         }
+
 
         .news-carousel-card:visited {
             color: inherit;
         }
 
+
         .news-carousel-card:hover {
-            transform: translateY(-2px);
+            transform:
+                translateY(
+                    -2px
+                );
 
             background: #1b2732;
 
             border-color:
-                rgba(157, 202, 255, .45);
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .45
+                );
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | COVER BERITA
+        | NEWS IMAGE
         |--------------------------------------------------------------------------
         */
 
@@ -718,7 +1163,10 @@
 
             width: 100%;
 
-            aspect-ratio: 4 / 5;
+            aspect-ratio:
+                4
+                /
+                5;
 
             overflow: hidden;
 
@@ -727,21 +1175,23 @@
             justify-content: center;
 
             color: #9dcaff;
+
             background: #101820;
 
             border-bottom:
-                1px solid rgba(52, 72, 93, .75);
+                1px solid
+                rgba(
+                    52,
+                    72,
+                    93,
+                    .75
+                );
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | IMAGE
-        |--------------------------------------------------------------------------
-        */
-
         .news-carousel-main {
             position: absolute;
+
             inset: 0;
 
             width: 100%;
@@ -755,7 +1205,9 @@
             padding: 0;
 
             pointer-events: none;
+
             user-select: none;
+
             -webkit-user-drag: none;
 
             will-change:
@@ -763,13 +1215,17 @@
                 object-position;
         }
 
+
         .news-image-placeholder {
             position: relative;
+
             z-index: 2;
 
             color: #9dcaff;
 
-            font-size: 44px !important;
+            font-size:
+                44px
+                !important;
 
             opacity: .75;
         }
@@ -777,46 +1233,67 @@
 
         /*
         |--------------------------------------------------------------------------
-        | BADGE KATEGORI
+        | NEWS CATEGORY
         |--------------------------------------------------------------------------
         */
 
         .news-carousel-category {
             position: absolute;
+
             top: 12px;
             left: 12px;
+
             z-index: 4;
 
-            max-width: calc(100% - 24px);
+            max-width:
+                calc(
+                    100%
+                    -
+                    24px
+                );
 
-            padding: 7px 11px;
+            padding:
+                7px
+                11px;
 
             overflow: hidden;
 
             border:
-                1px solid rgba(255, 255, 255, .14);
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .14
+                );
 
             border-radius: 5px;
 
             box-shadow:
-                0 4px 12px rgba(0, 0, 0, .16);
+                0
+                4px
+                12px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .16
+                );
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 900;
 
             letter-spacing: .35px;
 
             white-space: nowrap;
+
             text-overflow: ellipsis;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | INFORMASI KKO = BIRU
-        |--------------------------------------------------------------------------
-        */
 
         .news-category-info {
             color: #082b46;
@@ -824,23 +1301,11 @@
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | PRESTASI = KUNING
-        |--------------------------------------------------------------------------
-        */
-
         .news-category-prestasi {
             color: #332400;
             background: #f7c948;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | PENGUMUMAN = MERAH
-        |--------------------------------------------------------------------------
-        */
 
         .news-category-pengumuman {
             color: #ffffff;
@@ -848,23 +1313,11 @@
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | KEGIATAN = HIJAU
-        |--------------------------------------------------------------------------
-        */
-
         .news-category-kegiatan {
             color: #062d21;
             background: #5dd6a5;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | LATIHAN = UNGU
-        |--------------------------------------------------------------------------
-        */
 
         .news-category-latihan {
             color: #ffffff;
@@ -872,23 +1325,11 @@
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | PERTANDINGAN = ORANYE
-        |--------------------------------------------------------------------------
-        */
-
         .news-category-pertandingan {
             color: #321500;
             background: #ff9f43;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | DEFAULT
-        |--------------------------------------------------------------------------
-        */
 
         .news-category-default {
             color: #17202a;
@@ -898,20 +1339,26 @@
 
         /*
         |--------------------------------------------------------------------------
-        | BODY BERITA
+        | NEWS BODY
         |--------------------------------------------------------------------------
         */
 
         .news-carousel-body {
             display: flex;
             flex-direction: column;
+
             flex: 1;
 
-            padding: 15px 16px 16px;
+            padding:
+                15px
+                16px
+                16px;
         }
 
+
         .news-carousel-title {
-            display: -webkit-box;
+            display:
+                -webkit-box;
 
             margin: 0;
 
@@ -921,32 +1368,43 @@
 
             font-size: 14px;
             font-weight: 800;
+
             line-height: 1.3;
 
             -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+
+            -webkit-box-orient:
+                vertical;
         }
 
-        .news-carousel-summary {
-            display: -webkit-box;
 
-            margin: 7px 0 0;
+        .news-carousel-summary {
+            display:
+                -webkit-box;
+
+            margin:
+                7px
+                0
+                0;
 
             overflow: hidden;
 
             color: #aeb8c0;
 
             font-size: 10px;
+
             line-height: 1.55;
 
             -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+
+            -webkit-box-orient:
+                vertical;
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | META BERITA
+        | NEWS META
         |--------------------------------------------------------------------------
         */
 
@@ -954,87 +1412,94 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 12px;
 
             margin-top: auto;
+
             padding-top: 13px;
         }
+
 
         .news-carousel-time {
             display: flex;
             align-items: center;
+
             gap: 6px;
 
             min-width: 0;
 
             color: #788793;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
         }
 
-        .news-carousel-time .material-symbols-outlined {
+
+        .news-carousel-time
+        .material-symbols-outlined {
             flex-shrink: 0;
+
             font-size: 13px;
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | SELENGKAPNYA
-        |--------------------------------------------------------------------------
-        */
-
         .news-read-more {
             display: inline-flex;
             align-items: center;
+
             gap: 4px;
 
             flex-shrink: 0;
 
             color: #9dcaff;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 7px;
             font-weight: 800;
 
             white-space: nowrap;
-
-            transition:
-                color .18s ease,
-                transform .18s ease;
         }
 
-        .news-carousel-card:hover .news-read-more {
-            color: #ffffff;
-        }
 
-        .news-read-more .material-symbols-outlined {
+        .news-read-more
+        .material-symbols-outlined {
             font-size: 14px;
 
             transition:
-                transform .18s ease;
+                transform
+                .18s
+                ease;
         }
+
 
         .news-carousel-card:hover
         .news-read-more
         .material-symbols-outlined {
-            transform: translateX(3px);
+            transform:
+                translateX(
+                    3px
+                );
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | LIHAT SEMUA DI UJUNG CAROUSEL
+        | NEWS MORE
         |--------------------------------------------------------------------------
-        |
-        | Hanya teks + panah.
-        | Tidak memakai border, background, atau card besar.
-        |
         */
 
         .news-carousel-more-card {
-            flex: 0 0 125px;
+            flex:
+                0
+                0
+                125px;
 
             width: 125px;
             min-width: 125px;
@@ -1046,59 +1511,69 @@
             justify-content: center;
 
             color: #9dcaff;
+
             background: transparent;
 
             border: none;
-            border-radius: 0;
 
             text-decoration: none;
 
-            scroll-snap-align: start;
+            scroll-snap-align:
+                start;
 
             cursor: pointer;
+
             user-select: none;
         }
+
 
         .news-carousel-more-card:visited {
             color: #9dcaff;
         }
 
+
         .news-carousel-more-inner {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+
             gap: 7px;
 
             color: inherit;
 
-            font-family: 'JetBrains Mono', monospace;
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
             font-size: 8px;
             font-weight: 900;
 
             white-space: nowrap;
 
             transition:
-                color .18s ease,
-                transform .18s ease;
+                color
+                .18s
+                ease,
+                transform
+                .18s
+                ease;
         }
+
 
         .news-carousel-more-card:hover
         .news-carousel-more-inner {
             color: #ffffff;
-            transform: translateX(3px);
+
+            transform:
+                translateX(
+                    3px
+                );
         }
 
-        .news-carousel-more-inner .material-symbols-outlined {
-            font-size: 17px;
 
-            transition:
-                transform .18s ease;
-        }
-
-        .news-carousel-more-card:hover
         .news-carousel-more-inner
         .material-symbols-outlined {
-            transform: translateX(3px);
+            font-size: 17px;
         }
 
 
@@ -1122,25 +1597,37 @@
             padding: 25px;
 
             color: #73818c;
+
             background: #151d24;
 
-            border: 1px dashed #34485d;
+            border:
+                1px dashed
+                #34485d;
+
             border-radius: 12px;
 
             text-align: center;
         }
 
-        .news-empty-state .material-symbols-outlined {
+
+        .news-empty-state
+        .material-symbols-outlined {
             color: #9dcaff;
+
             font-size: 31px;
         }
 
-        .news-empty-state strong {
+
+        .news-empty-state
+        strong {
             color: #dce3e8;
+
             font-size: 11px;
         }
 
-        .news-empty-state p {
+
+        .news-empty-state
+        p {
             max-width: 370px;
 
             margin: 0;
@@ -1148,17 +1635,19 @@
             color: #74818b;
 
             font-size: 9px;
+
             line-height: 1.55;
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | MOBILE NAV LINK
+        | MOBILE NAV
         |--------------------------------------------------------------------------
         */
 
-        .mobile-bottom-nav a {
+        .mobile-bottom-nav
+        a {
             text-decoration: none;
         }
 
@@ -1169,7 +1658,10 @@
         |--------------------------------------------------------------------------
         */
 
-        @media (max-width: 720px) {
+        @media (
+            max-width:
+                720px
+        ) {
 
             .student-notification-dropdown {
                 position: fixed;
@@ -1181,18 +1673,105 @@
                 width: auto;
 
                 max-height:
-                    calc(100vh - 100px);
+                    calc(
+                        100vh
+                        -
+                        100px
+                    );
             }
+
 
             .student-notification-list {
                 max-height:
-                    calc(100vh - 190px);
+                    calc(
+                        100vh
+                        -
+                        190px
+                    );
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | NEWS HEADER MOBILE
+            | FLOATING AI MOBILE
+            |--------------------------------------------------------------------------
+            */
+
+            .student-ai-fab {
+                right: 18px;
+
+                bottom:
+                    calc(
+                        90px
+                        +
+                        env(
+                            safe-area-inset-bottom
+                        )
+                    );
+
+                width: 48px;
+                height: 48px;
+
+                z-index: 1900;
+
+                border:
+                    2px solid
+                    rgba(
+                        12,
+                        17,
+                        20,
+                        .92
+                    );
+
+                box-shadow:
+                    0
+                    7px
+                    20px
+                    rgba(
+                        0,
+                        0,
+                        0,
+                        .36
+                    ),
+                    0
+                    3px
+                    10px
+                    rgba(
+                        68,
+                        153,
+                        255,
+                        .16
+                    );
+            }
+
+
+            .student-ai-fab
+            .material-symbols-outlined {
+                font-size: 24px;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUANG BAWAH
+            |--------------------------------------------------------------------------
+            */
+
+            .student-dashboard-container {
+                padding-bottom:
+                    calc(
+                        135px
+                        +
+                        env(
+                            safe-area-inset-bottom
+                        )
+                    );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | NEWS MOBILE
             |--------------------------------------------------------------------------
             */
 
@@ -1200,65 +1779,80 @@
                 align-items: center;
             }
 
-            .news-dashboard-heading h2 {
+
+            .news-dashboard-heading
+            h2 {
                 font-size: 17px;
             }
 
-            .news-dashboard-heading p {
+
+            .news-dashboard-heading
+            p {
                 display: none;
             }
 
-            .news-dashboard-heading-icon .material-symbols-outlined {
+
+            .news-dashboard-heading-icon
+            .material-symbols-outlined {
                 font-size: 22px;
             }
+
 
             .news-header-link {
                 font-size: 7px;
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | NEWS CAROUSEL MOBILE
-            |--------------------------------------------------------------------------
-            */
-
             .news-carousel {
                 gap: 11px;
+
                 margin-right: -12px;
             }
 
+
             .news-carousel-card {
-                flex: 0 0 78%;
+                flex:
+                    0
+                    0
+                    78%;
+
                 width: 78%;
             }
 
+
             .news-carousel-more-card {
-                flex: 0 0 105px;
+                flex:
+                    0
+                    0
+                    105px;
 
                 width: 105px;
                 min-width: 105px;
             }
 
+
             .news-carousel-more-inner {
                 font-size: 7px;
             }
 
+
             .news-carousel-body {
-                padding: 13px 14px 14px;
+                padding:
+                    13px
+                    14px
+                    14px;
             }
+
 
             .news-carousel-title {
                 font-size: 13px;
             }
 
+
             .news-carousel-summary {
                 font-size: 9px;
             }
 
-            .news-carousel-meta {
-                font-size: 7px;
-            }
         }
 
 
@@ -1268,31 +1862,83 @@
         |--------------------------------------------------------------------------
         */
 
-        @media (max-width: 450px) {
+        @media (
+            max-width:
+                450px
+        ) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | POSISI UNTUK LAYAR 400PX
+            |--------------------------------------------------------------------------
+            |
+            | Posisi hanya dinaikkan sekitar 10px.
+            |
+            */
+
+            .student-ai-fab {
+                right: 16px;
+
+                bottom:
+                    calc(
+                        88px
+                        +
+                        env(
+                            safe-area-inset-bottom
+                        )
+                    );
+
+                width: 46px;
+                height: 46px;
+            }
+
+
+            .student-ai-fab
+            .material-symbols-outlined {
+                font-size: 23px;
+            }
+
 
             .student-notification-header {
-                padding: 13px 14px;
+                padding:
+                    13px
+                    14px;
             }
+
 
             .student-notification-item {
-                padding: 12px 13px;
+                padding:
+                    12px
+                    13px;
             }
 
-            .student-notification-content p {
+
+            .student-notification-content
+            p {
                 font-size: 8px;
             }
 
+
             .news-carousel-card {
-                flex: 0 0 82%;
+                flex:
+                    0
+                    0
+                    82%;
+
                 width: 82%;
             }
 
+
             .news-carousel-more-card {
-                flex: 0 0 96px;
+                flex:
+                    0
+                    0
+                    96px;
 
                 width: 96px;
                 min-width: 96px;
             }
+
         }
 
     </style>
@@ -1461,7 +2107,7 @@
 
 
             <!-- =================================================
-                 NOTIFICATION
+                 NOTIFIKASI
             ================================================== -->
 
             <div class="student-notification-wrapper">
@@ -1509,7 +2155,6 @@
                     id="studentNotificationDropdown"
                 >
 
-
                     <div class="student-notification-header">
 
                         <div class="student-notification-header-text">
@@ -1542,10 +2187,6 @@
                     </div>
 
 
-                    <!-- =================================================
-                         NOTIFICATION LIST
-                    ================================================== -->
-
                     <div class="student-notification-list">
 
                         @forelse($notifications as $notification)
@@ -1563,7 +2204,8 @@
 
                                 $isApproved =
                                     $notificationStatus
-                                    === 'approved';
+                                    ===
+                                    'approved';
 
 
                                 $notificationTitle =
@@ -1585,7 +2227,6 @@
                             <div
                                 class="student-notification-item {{ $notification->read_at ? '' : 'unread' }}"
                             >
-
 
                                 <div
                                     class="student-notification-icon {{ $isApproved ? 'approved' : 'rejected' }}"
@@ -1610,6 +2251,7 @@
                                         {{ $notificationTitle }}
                                     </strong>
 
+
                                     <p>
                                         {{ $notificationMessage }}
                                     </p>
@@ -1620,6 +2262,7 @@
                                         <span class="material-symbols-outlined">
                                             schedule
                                         </span>
+
 
                                         <span>
 
@@ -1640,7 +2283,6 @@
 
 
                         @empty
-
 
                             <div class="student-notification-empty">
 
@@ -1720,6 +2362,7 @@
             >
 
                 @csrf
+
 
                 <button
                     type="submit"
@@ -1835,6 +2478,7 @@
                     <strong>
                         {{ $statusText }}
                     </strong>
+
 
                     <p>
                         {{ $statusDescription }}
@@ -2105,9 +2749,7 @@
         <div class="student-stat-grid">
 
 
-            <!-- =================================================
-                 HADIR
-            ================================================== -->
+            <!-- HADIR -->
 
             <article class="student-stat-card stat-hadir">
 
@@ -2130,9 +2772,7 @@
             </article>
 
 
-            <!-- =================================================
-                 IZIN
-            ================================================== -->
+            <!-- IZIN -->
 
             <article class="student-stat-card stat-izin">
 
@@ -2155,9 +2795,7 @@
             </article>
 
 
-            <!-- =================================================
-                 SAKIT
-            ================================================== -->
+            <!-- SAKIT -->
 
             <article class="student-stat-card stat-sakit">
 
@@ -2180,9 +2818,7 @@
             </article>
 
 
-            <!-- =================================================
-                 ALFA
-            ================================================== -->
+            <!-- ALFA -->
 
             <article class="student-stat-card stat-alfa">
 
@@ -2216,10 +2852,6 @@
     <section class="dashboard-section news-dashboard-section">
 
 
-        <!-- =================================================
-             HEADER BERITA
-        ================================================== -->
-
         <div class="news-dashboard-header">
 
 
@@ -2249,10 +2881,6 @@
             </div>
 
 
-            <!-- =================================================
-                 LIHAT SEMUA ATAS
-            ================================================== -->
-
             <a
                 href="{{ route('siswa.news.index') }}"
                 class="news-header-link"
@@ -2269,10 +2897,6 @@
         </div>
 
 
-        <!-- =================================================
-             CAROUSEL
-        ================================================== -->
-
         @if($latestNews->isNotEmpty())
 
             <div
@@ -2281,16 +2905,8 @@
             >
 
 
-                <!-- =================================================
-                     BERITA MAKSIMAL 4
-                ================================================== -->
-
                 @foreach($latestNews as $news)
 
-
-                    <!-- =================================================
-                         TENTUKAN WARNA KATEGORI
-                    ================================================== -->
 
                     @php
 
@@ -2333,26 +2949,14 @@
                     @endphp
 
 
-                    <!-- =================================================
-                         CARD BERITA
-                    ================================================== -->
-
                     <a
                         href="{{ route('siswa.news.show', $news) }}"
                         class="news-carousel-card"
                     >
 
 
-                        <!-- =================================================
-                             COVER
-                        ================================================== -->
-
                         <div class="news-carousel-image">
 
-
-                            <!-- =================================================
-                                 CATEGORY
-                            ================================================== -->
 
                             <span
                                 class="news-carousel-category {{ $categoryClass }}"
@@ -2367,10 +2971,6 @@
 
                             </span>
 
-
-                            <!-- =================================================
-                                 IMAGE
-                            ================================================== -->
 
                             @if($news->image)
 
@@ -2414,17 +3014,11 @@
                         </div>
 
 
-                        <!-- =================================================
-                             BODY
-                        ================================================== -->
-
                         <div class="news-carousel-body">
 
 
                             <h3 class="news-carousel-title">
-
                                 {{ $news->title }}
-
                             </h3>
 
 
@@ -2443,10 +3037,6 @@
                             </p>
 
 
-                            <!-- =================================================
-                                 META + SELENGKAPNYA
-                            ================================================== -->
-
                             <div class="news-carousel-meta">
 
                                 <div class="news-carousel-time">
@@ -2454,6 +3044,7 @@
                                     <span class="material-symbols-outlined">
                                         schedule
                                     </span>
+
 
                                     <span>
 
@@ -2489,10 +3080,6 @@
                 @endforeach
 
 
-                <!-- =================================================
-                     LIHAT SEMUA DI UJUNG CAROUSEL
-                ================================================== -->
-
                 @if($hasMoreNews)
 
                     <a
@@ -2521,10 +3108,6 @@
         @else
 
 
-            <!-- =================================================
-                 EMPTY
-            ================================================== -->
-
             <div class="news-empty-state">
 
                 <span class="material-symbols-outlined">
@@ -2552,15 +3135,29 @@
 
 
 <!-- =====================================================
+     FLOATING KKO AI ASSISTANT
+===================================================== -->
+
+<a
+    href="{{ route('siswa.ai.index') }}"
+    class="student-ai-fab"
+    title="Buka KKO AI Assistant"
+    aria-label="Buka KKO AI Assistant"
+>
+
+    <span class="material-symbols-outlined">
+        smart_toy
+    </span>
+
+</a>
+
+
+<!-- =====================================================
      MOBILE BOTTOM NAV
 ===================================================== -->
 
 <nav class="mobile-bottom-nav">
 
-
-    <!-- =================================================
-         HOME
-    ================================================== -->
 
     <a
         href="{{ route('siswa.dashboard') }}"
@@ -2578,10 +3175,6 @@
     </a>
 
 
-    <!-- =================================================
-         LATIHAN
-    ================================================== -->
-
     <a
         href="{{ route('siswa.training.index') }}"
     >
@@ -2597,10 +3190,6 @@
     </a>
 
 
-    <!-- =================================================
-         IZIN
-    ================================================== -->
-
     <a
         href="{{ route('siswa.leave.create') }}"
     >
@@ -2615,10 +3204,6 @@
 
     </a>
 
-
-    <!-- =================================================
-         RIWAYAT
-    ================================================== -->
 
     <a
         href="{{ route('siswa.attendance.history') }}"
@@ -2645,7 +3230,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | NOTIFICATION ELEMENT
+    | NOTIFICATION
     |--------------------------------------------------------------------------
     */
 
@@ -2676,12 +3261,6 @@
     let notificationsMarkedRead =
         false;
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | TOGGLE NOTIFICATION
-    |--------------------------------------------------------------------------
-    */
 
     if (
         studentNotificationButton
@@ -2739,13 +3318,8 @@
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | MARK NOTIFICATION READ
-    |--------------------------------------------------------------------------
-    */
-
-    async function markNotificationsRead() {
+    async function markNotificationsRead()
+    {
 
         try {
 
@@ -2925,7 +3499,8 @@
 
             if (
                 event.key
-                !== 'Escape'
+                !==
+                'Escape'
             ) {
 
                 return;
@@ -2964,13 +3539,8 @@
 
     /*
     |--------------------------------------------------------------------------
-    | CAROUSEL BERITA
+    | NEWS CAROUSEL
     |--------------------------------------------------------------------------
-    |
-    | Desktop : klik-tahan lalu geser.
-    | Mobile  : swipe native browser.
-    | Klik normal pada berita / Lihat Semua tetap aktif.
-    |
     */
 
     const newsCarousel =
@@ -2997,26 +3567,15 @@
             false;
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | POINTER DOWN
-        |--------------------------------------------------------------------------
-        */
-
         newsCarousel
             .addEventListener(
                 'pointerdown',
                 function (event) {
 
-                    /*
-                    |------------------------------------------------------------------
-                    | Touch memakai native horizontal swipe.
-                    |------------------------------------------------------------------
-                    */
-
                     if (
                         event.pointerType
-                        === 'touch'
+                        ===
+                        'touch'
                     ) {
 
                         return;
@@ -3050,12 +3609,6 @@
             );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | POINTER MOVE
-        |--------------------------------------------------------------------------
-        */
-
         newsCarousel
             .addEventListener(
                 'pointermove',
@@ -3080,7 +3633,8 @@
                         Math.abs(
                             movement
                         )
-                        > 8
+                        >
+                        8
                     ) {
 
                         didDrag =
@@ -3098,13 +3652,8 @@
             );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | STOP DRAG
-        |--------------------------------------------------------------------------
-        */
-
-        function stopNewsDragging() {
+        function stopNewsDragging()
+        {
 
             if (
                 !isDragging
@@ -3125,13 +3674,6 @@
                     'dragging'
                 );
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Kalau drag tidak menghasilkan event click,
-            | reset flag setelah sebentar supaya klik berikutnya normal.
-            |--------------------------------------------------------------------------
-            */
 
             if (
                 didDrag
@@ -3182,16 +3724,6 @@
                 }
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | LINK BERITA + LIHAT SEMUA
-        |--------------------------------------------------------------------------
-        |
-        | Klik biasa   -> link dibuka.
-        | Setelah drag -> click yang muncul akibat drag dibatalkan.
-        |
-        */
 
         newsCarousel
             .querySelectorAll(
