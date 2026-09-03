@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Pelatih;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attendance;
-use App\Models\AttendanceSetting;
 use App\Models\LeaveRequest;
 use App\Models\Student;
+use App\Models\TrainingSession;
 use Carbon\Carbon;
 use Illuminate\View\View;
+use Throwable;
 
 class DashboardController extends Controller
 {
@@ -22,19 +22,27 @@ class DashboardController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
-        | TANGGAL HARI INI
+        | WAKTU SISTEM
         |--------------------------------------------------------------------------
         */
 
-        $today =
+        $now =
             Carbon::now(
                 'Asia/Jakarta'
-            )->toDateString();
+            );
+
+        $today =
+            $now->toDateString();
+
+        $currentTime =
+            $now->format(
+                'H:i:s'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | TOTAL SISWA AKTIF
+        | TOTAL ATLET AKTIF
         |--------------------------------------------------------------------------
         */
 
@@ -49,17 +57,241 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | PRESENSI SEKOLAH HARI INI
+        | LATIHAN HARI INI
         |--------------------------------------------------------------------------
         */
 
-        $todayAttendances =
-            Attendance::query()
+        $todayTrainingSessions =
+            TrainingSession::query()
+                ->with([
+                    'attendances',
+                ])
                 ->whereDate(
-                    'attendance_date',
+                    'training_date',
                     $today
                 )
+                ->orderBy(
+                    'start_time'
+                )
                 ->get();
+
+
+        $todayTrainingCount =
+            $todayTrainingSessions
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SESI YANG SEDANG BERLANGSUNG
+        |--------------------------------------------------------------------------
+        */
+
+        $activeSession =
+            $todayTrainingSessions
+                ->first(
+                    function (
+                        $session
+                    ) use (
+                        $now
+                    ) {
+
+                        $startsAt =
+                            $this->sessionStartsAt(
+                                $session
+                            );
+
+                        $endsAt =
+                            $this->sessionEndsAt(
+                                $session
+                            );
+
+
+                        if (
+                            !$startsAt
+                            ||
+                            !$endsAt
+                        ) {
+                            return false;
+                        }
+
+
+                        return
+                            $now->gte(
+                                $startsAt
+                            )
+                            &&
+                            $now->lt(
+                                $endsAt
+                            );
+                    }
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SESI BERIKUTNYA HARI INI
+        |--------------------------------------------------------------------------
+        */
+
+        $upcomingTodaySession =
+            $todayTrainingSessions
+                ->first(
+                    function (
+                        $session
+                    ) use (
+                        $now
+                    ) {
+
+                        $startsAt =
+                            $this->sessionStartsAt(
+                                $session
+                            );
+
+
+                        return
+                            $startsAt
+                            &&
+                            $startsAt->gt(
+                                $now
+                            );
+                    }
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SESI TERAKHIR HARI INI
+        |--------------------------------------------------------------------------
+        */
+
+        $lastTodaySession =
+            $todayTrainingSessions
+                ->last();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SESI FOKUS DASHBOARD
+        |--------------------------------------------------------------------------
+        |
+        | Prioritas:
+        |
+        | 1. Sedang berlangsung
+        | 2. Akan berlangsung
+        | 3. Sesi terakhir hari ini
+        |
+        */
+
+        $focusSession =
+            $activeSession
+            ??
+            $upcomingTodaySession
+            ??
+            $lastTodaySession;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS SESI
+        |--------------------------------------------------------------------------
+        */
+
+        $focusSessionStatus =
+            'BELUM ADA LATIHAN';
+
+
+        if ($focusSession) {
+
+            $startsAt =
+                $this->sessionStartsAt(
+                    $focusSession
+                );
+
+            $endsAt =
+                $this->sessionEndsAt(
+                    $focusSession
+                );
+
+
+            if (
+                $startsAt
+                &&
+                $endsAt
+                &&
+                $now->gte(
+                    $startsAt
+                )
+                &&
+                $now->lt(
+                    $endsAt
+                )
+            ) {
+
+                $focusSessionStatus =
+                    'SEDANG BERLANGSUNG';
+
+            } elseif (
+                $startsAt
+                &&
+                $now->lt(
+                    $startsAt
+                )
+            ) {
+
+                $focusSessionStatus =
+                    'SEGERA DIMULAI';
+
+            } else {
+
+                $focusSessionStatus =
+                    'SELESAI';
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL ATLET PADA CABANG SESI
+        |--------------------------------------------------------------------------
+        */
+
+        $totalAtletSession =
+            0;
+
+
+        if (
+            $focusSession
+            &&
+            filled(
+                $focusSession->sport
+            )
+        ) {
+
+            $totalAtletSession =
+                Student::query()
+                    ->where(
+                        'status',
+                        'active'
+                    )
+                    ->where(
+                        'sport',
+                        $focusSession->sport
+                    )
+                    ->count();
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI SESI FOKUS
+        |--------------------------------------------------------------------------
+        */
+
+        $focusAttendances =
+            $focusSession
+                ? $focusSession->attendances
+                : collect();
 
 
         /*
@@ -67,12 +299,12 @@ class DashboardController extends Controller
         | HADIR
         |--------------------------------------------------------------------------
         |
-        | Hadir + Terlambat dianggap hadir.
+        | present + late dianggap mengikuti latihan.
         |
         */
 
         $hadir =
-            $todayAttendances
+            $focusAttendances
                 ->whereIn(
                     'status',
                     [
@@ -90,7 +322,7 @@ class DashboardController extends Controller
         */
 
         $sakit =
-            $todayAttendances
+            $focusAttendances
                 ->where(
                     'status',
                     'sick'
@@ -105,7 +337,7 @@ class DashboardController extends Controller
         */
 
         $izin =
-            $todayAttendances
+            $focusAttendances
                 ->where(
                     'status',
                     'permission'
@@ -120,7 +352,7 @@ class DashboardController extends Controller
         */
 
         $alfa =
-            $todayAttendances
+            $focusAttendances
                 ->where(
                     'status',
                     'absent'
@@ -130,42 +362,33 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | SUDAH PRESENSI
+        | JUMLAH YANG SUDAH TERCATAT
         |--------------------------------------------------------------------------
         */
 
-        $sudahPresensi =
-            $todayAttendances
-                ->pluck(
-                    'student_id'
-                )
-                ->unique()
-                ->count();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BELUM PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        $belumPresensi =
-            max(
-                $totalSiswa
-                - $sudahPresensi,
-                0
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | IZIN + SAKIT
-        |--------------------------------------------------------------------------
-        */
-
-        $izinSakitHariIni =
+        $tercatat =
+            $hadir
+            +
+            $sakit
+            +
             $izin
-            + $sakit;
+            +
+            $alfa;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BELUM TERCATAT
+        |--------------------------------------------------------------------------
+        */
+
+        $belumTercatat =
+            max(
+                0,
+                $totalAtletSession
+                -
+                $tercatat
+            );
 
 
         /*
@@ -175,119 +398,92 @@ class DashboardController extends Controller
         */
 
         $persentaseHadir =
-            $totalSiswa > 0
+            $totalAtletSession > 0
                 ? round(
                     (
                         $hadir
-                        / $totalSiswa
-                    ) * 100
+                        /
+                        $totalAtletSession
+                    )
+                    *
+                    100
                 )
                 : 0;
 
 
         /*
         |--------------------------------------------------------------------------
-        | JAM BATAS PRESENSI SEKOLAH
+        | LATIHAN BERIKUTNYA
         |--------------------------------------------------------------------------
         */
 
-        $attendanceSetting =
-            AttendanceSetting::query()
-                ->first();
+        $upcomingTrainingSessions =
+            TrainingSession::query()
+                ->where(
+                    function (
+                        $query
+                    ) use (
+                        $today,
+                        $currentTime
+                    ) {
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | HARI SETELAH HARI INI
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $query
+                            ->whereDate(
+                                'training_date',
+                                '>',
+                                $today
+                            )
 
 
-        $cutoffDisplay =
-            substr(
-                (string) (
-                    $attendanceSetting?->cutoff_time
-                    ?? '07:01:00'
-                ),
-                0,
-                5
-            );
+                            /*
+                            |--------------------------------------------------------------------------
+                            | ATAU HARI INI TAPI BELUM DIMULAI
+                            |--------------------------------------------------------------------------
+                            */
 
+                            ->orWhere(
+                                function (
+                                    $query
+                                ) use (
+                                    $today,
+                                    $currentTime
+                                ) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | PRESENSI TERBARU
-        |--------------------------------------------------------------------------
-        */
-
-        $presensiTerbaru =
-            Attendance::query()
-                ->with([
-                    'student.user',
-                    'student.class',
-                ])
-                ->whereDate(
-                    'attendance_date',
-                    $today
+                                    $query
+                                        ->whereDate(
+                                            'training_date',
+                                            $today
+                                        )
+                                        ->where(
+                                            'start_time',
+                                            '>',
+                                            $currentTime
+                                        );
+                                }
+                            );
+                    }
                 )
-                ->orderByDesc(
-                    'check_in_time'
+                ->orderBy(
+                    'training_date'
                 )
-                ->limit(6)
+                ->orderBy(
+                    'start_time'
+                )
+                ->limit(
+                    4
+                )
                 ->get();
 
 
         /*
         |--------------------------------------------------------------------------
-        | REKAP KELAS
-        |--------------------------------------------------------------------------
-        */
-
-        $rekapKelas =
-            Student::query()
-                ->with(
-                    'class'
-                )
-                ->where(
-                    'status',
-                    'active'
-                )
-                ->get()
-                ->groupBy(
-                    'class_id'
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | NOTIFIKASI PENGAJUAN LATIHAN KKO
-        |--------------------------------------------------------------------------
-        |
-        | Hanya:
-        |
-        | - attendance_scope = training
-        | - status = pending
-        |
-        | Pengajuan sekolah TIDAK ditampilkan kepada Pelatih.
-        |
-        */
-
-        $pendingTrainingRequests =
-            LeaveRequest::query()
-                ->with([
-                    'student.user',
-                    'student.class',
-                    'trainingSession',
-                ])
-                ->where(
-                    'attendance_scope',
-                    'training'
-                )
-                ->where(
-                    'status',
-                    'pending'
-                )
-                ->latest()
-                ->limit(6)
-                ->get();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JUMLAH NOTIFIKASI LATIHAN
+        | JUMLAH PENGAJUAN LATIHAN PENDING
         |--------------------------------------------------------------------------
         */
 
@@ -306,28 +502,229 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VIEW
+        | PENGAJUAN LATIHAN TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $pendingTrainingRequests =
+            LeaveRequest::query()
+                ->with([
+                    'student.user',
+                    'student.class',
+                    'trainingSession',
+                ])
+                ->where(
+                    'attendance_scope',
+                    'training'
+                )
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->latest()
+                ->limit(
+                    6
+                )
+                ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JUMLAH ATLET PER CABANG
+        |--------------------------------------------------------------------------
+        */
+
+        $sportCounts =
+            Student::query()
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->whereIn(
+                    'sport',
+                    [
+                        'Atletik',
+                        'Bola Basket',
+                        'Sepak Bola',
+                        'Bola Voli',
+                    ]
+                )
+                ->selectRaw(
+                    'sport, COUNT(*) as total'
+                )
+                ->groupBy(
+                    'sport'
+                )
+                ->pluck(
+                    'total',
+                    'sport'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KIRIM DATA KE VIEW
         |--------------------------------------------------------------------------
         */
 
         return view(
             'pelatih.dashboard',
-            compact(
-                'totalSiswa',
-                'hadir',
-                'sakit',
-                'izin',
-                'alfa',
-                'sudahPresensi',
-                'belumPresensi',
-                'izinSakitHariIni',
-                'persentaseHadir',
-                'cutoffDisplay',
-                'presensiTerbaru',
-                'rekapKelas',
-                'pendingTrainingRequests',
-                'pendingTrainingCount'
-            )
+            [
+                'totalSiswa' =>
+                    $totalSiswa,
+
+                'todayTrainingCount' =>
+                    $todayTrainingCount,
+
+                'focusSession' =>
+                    $focusSession,
+
+                'focusSessionStatus' =>
+                    $focusSessionStatus,
+
+                'totalAtletSession' =>
+                    $totalAtletSession,
+
+                'hadir' =>
+                    $hadir,
+
+                'sakit' =>
+                    $sakit,
+
+                'izin' =>
+                    $izin,
+
+                'alfa' =>
+                    $alfa,
+
+                'belumTercatat' =>
+                    $belumTercatat,
+
+                'persentaseHadir' =>
+                    $persentaseHadir,
+
+                'upcomingTrainingSessions' =>
+                    $upcomingTrainingSessions,
+
+                'pendingTrainingCount' =>
+                    $pendingTrainingCount,
+
+                'pendingTrainingRequests' =>
+                    $pendingTrainingRequests,
+
+                'sportCounts' =>
+                    $sportCounts,
+            ]
         );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | WAKTU MULAI LATIHAN
+    |--------------------------------------------------------------------------
+    */
+
+    private function sessionStartsAt(
+        TrainingSession $session
+    ): ?Carbon {
+
+        if (
+            !$session->training_date
+            ||
+            !$session->start_time
+        ) {
+
+            return null;
+        }
+
+
+        try {
+
+            $date =
+                Carbon::parse(
+                    $session->training_date
+                )->format(
+                    'Y-m-d'
+                );
+
+
+            $time =
+                Carbon::parse(
+                    $session->start_time
+                )->format(
+                    'H:i:s'
+                );
+
+
+            return Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date
+                .
+                ' '
+                .
+                $time,
+                'Asia/Jakarta'
+            );
+
+        } catch (Throwable $exception) {
+
+            return null;
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | WAKTU SELESAI LATIHAN
+    |--------------------------------------------------------------------------
+    */
+
+    private function sessionEndsAt(
+        TrainingSession $session
+    ): ?Carbon {
+
+        if (
+            !$session->training_date
+            ||
+            !$session->end_time
+        ) {
+
+            return null;
+        }
+
+
+        try {
+
+            $date =
+                Carbon::parse(
+                    $session->training_date
+                )->format(
+                    'Y-m-d'
+                );
+
+
+            $time =
+                Carbon::parse(
+                    $session->end_time
+                )->format(
+                    'H:i:s'
+                );
+
+
+            return Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $date
+                .
+                ' '
+                .
+                $time,
+                'Asia/Jakarta'
+            );
+
+        } catch (Throwable $exception) {
+
+            return null;
+        }
     }
 }

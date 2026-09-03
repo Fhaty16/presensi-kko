@@ -68,9 +68,16 @@ use App\Http\Controllers\TrainingAttendanceRecapPrintController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get(
+    '/',
+    function () {
+
+        return redirect()
+            ->route(
+                'login'
+            );
+    }
+);
 
 
 /*
@@ -79,22 +86,49 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')
-    ->get('/dashboard', function () {
+Route::middleware(
+    'auth'
+)
+    ->get(
+        '/dashboard',
+        function () {
 
-        $user = auth()->user();
+            $user =
+                auth()->user();
 
-        return match ($user->role) {
-            'guru' => redirect()->route('guru.dashboard'),
 
-            'siswa' => redirect()->route('siswa.dashboard'),
+            return match (
+                $user->role
+            ) {
 
-            'pelatih' => redirect()->route('pelatih.dashboard'),
+                'guru' =>
+                    redirect()
+                        ->route(
+                            'guru.dashboard'
+                        ),
 
-            default => abort(403),
-        };
-    })
-    ->name('dashboard');
+                'siswa' =>
+                    redirect()
+                        ->route(
+                            'siswa.dashboard'
+                        ),
+
+                'pelatih' =>
+                    redirect()
+                        ->route(
+                            'pelatih.dashboard'
+                        ),
+
+                default =>
+                    abort(
+                        403
+                    ),
+            };
+        }
+    )
+    ->name(
+        'dashboard'
+    );
 
 
 /*
@@ -107,8 +141,12 @@ Route::middleware([
     'auth',
     'role:guru',
 ])
-    ->prefix('guru')
-    ->name('guru.')
+    ->prefix(
+        'guru'
+    )
+    ->name(
+        'guru.'
+    )
     ->group(function () {
 
         /*
@@ -124,7 +162,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('dashboard');
+            ->name(
+                'dashboard'
+            );
 
 
         /*
@@ -140,7 +180,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('attendance.manual');
+            ->name(
+                'attendance.manual'
+            );
 
 
         Route::post(
@@ -150,7 +192,9 @@ Route::middleware([
                 'store',
             ]
         )
-            ->name('attendance.manual.store');
+            ->name(
+                'attendance.manual.store'
+            );
 
 
         /*
@@ -166,7 +210,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('attendance.recap');
+            ->name(
+                'attendance.recap'
+            );
 
 
         /*
@@ -179,7 +225,9 @@ Route::middleware([
             '/rekap-presensi/export',
             SchoolAttendanceRecapExportController::class
         )
-            ->name('attendance.recap.export');
+            ->name(
+                'attendance.recap.export'
+            );
 
 
         /*
@@ -192,7 +240,9 @@ Route::middleware([
             '/rekap-presensi/cetak',
             SchoolAttendanceRecapPrintController::class
         )
-            ->name('attendance.recap.print');
+            ->name(
+                'attendance.recap.print'
+            );
 
 
         /*
@@ -205,7 +255,9 @@ Route::middleware([
             '/rekap-presensi/bulanan/export',
             MonthlySchoolAttendanceRecapExportController::class
         )
-            ->name('attendance.monthly.export');
+            ->name(
+                'attendance.monthly.export'
+            );
 
 
         /*
@@ -218,7 +270,9 @@ Route::middleware([
             '/rekap-presensi/bulanan/cetak',
             MonthlySchoolAttendanceRecapPrintController::class
         )
-            ->name('attendance.monthly.print');
+            ->name(
+                'attendance.monthly.print'
+            );
 
 
         /*
@@ -226,7 +280,7 @@ Route::middleware([
         | ROUTE KOMPATIBILITAS REKAP BULANAN
         |--------------------------------------------------------------------------
         |
-        | Route lama dipertahankan supaya URL/link lama tidak rusak.
+        | Route lama dipertahankan agar link lama tetap dapat digunakan.
         |
         */
 
@@ -234,17 +288,24 @@ Route::middleware([
             '/rekap-presensi/bulanan',
             function () {
 
-                $now = now('Asia/Jakarta');
+                $now =
+                    now(
+                        'Asia/Jakarta'
+                    );
 
-                $month = (int) request()->query(
-                    'month',
-                    $now->month
-                );
 
-                $year = (int) request()->query(
-                    'year',
-                    $now->year
-                );
+                $month =
+                    (int) request()->query(
+                        'month',
+                        $now->month
+                    );
+
+
+                $year =
+                    (int) request()->query(
+                        'year',
+                        $now->year
+                    );
 
 
                 if (
@@ -252,7 +313,9 @@ Route::middleware([
                     ||
                     $month > 12
                 ) {
-                    $month = $now->month;
+
+                    $month =
+                        $now->month;
                 }
 
 
@@ -261,21 +324,31 @@ Route::middleware([
                     ||
                     $year > 2100
                 ) {
-                    $year = $now->year;
+
+                    $year =
+                        $now->year;
                 }
 
 
-                return redirect()->route(
-                    'guru.attendance.recap',
-                    [
-                        'tab' => 'bulanan',
-                        'month' => $month,
-                        'year' => $year,
-                    ]
-                );
+                return redirect()
+                    ->route(
+                        'guru.attendance.recap',
+                        [
+                            'tab' =>
+                                'bulanan',
+
+                            'month' =>
+                                $month,
+
+                            'year' =>
+                                $year,
+                        ]
+                    );
             }
         )
-            ->name('attendance.monthly');
+            ->name(
+                'attendance.monthly'
+            );
 
 
         /*
@@ -288,7 +361,9 @@ Route::middleware([
             '/rekap-presensi/siswa/{student}/export',
             StudentSchoolAttendanceDetailExportController::class
         )
-            ->name('attendance.student.export');
+            ->name(
+                'attendance.student.export'
+            );
 
 
         /*
@@ -301,7 +376,9 @@ Route::middleware([
             '/rekap-presensi/siswa/{student}/cetak',
             StudentSchoolAttendanceDetailPrintController::class
         )
-            ->name('attendance.student.print');
+            ->name(
+                'attendance.student.print'
+            );
 
 
         /*
@@ -317,7 +394,9 @@ Route::middleware([
                 'show',
             ]
         )
-            ->name('attendance.student.detail');
+            ->name(
+                'attendance.student.detail'
+            );
 
 
         /*
@@ -333,7 +412,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('leave.index');
+            ->name(
+                'leave.index'
+            );
 
 
         /*
@@ -349,7 +430,9 @@ Route::middleware([
                 'approve',
             ]
         )
-            ->name('leave.approve');
+            ->name(
+                'leave.approve'
+            );
 
 
         /*
@@ -365,12 +448,14 @@ Route::middleware([
                 'reject',
             ]
         )
-            ->name('leave.reject');
+            ->name(
+                'leave.reject'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | BERITA KKO
+        | BERITA KKO - DAFTAR
         |--------------------------------------------------------------------------
         */
 
@@ -381,8 +466,16 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('news.index');
+            ->name(
+                'news.index'
+            );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - TAMBAH
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             '/berita/tambah',
@@ -391,8 +484,16 @@ Route::middleware([
                 'create',
             ]
         )
-            ->name('news.create');
+            ->name(
+                'news.create'
+            );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - SIMPAN
+        |--------------------------------------------------------------------------
+        */
 
         Route::post(
             '/berita',
@@ -401,8 +502,16 @@ Route::middleware([
                 'store',
             ]
         )
-            ->name('news.store');
+            ->name(
+                'news.store'
+            );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - EDIT
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             '/berita/{news}/edit',
@@ -411,8 +520,16 @@ Route::middleware([
                 'edit',
             ]
         )
-            ->name('news.edit');
+            ->name(
+                'news.edit'
+            );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - UPDATE
+        |--------------------------------------------------------------------------
+        */
 
         Route::put(
             '/berita/{news}',
@@ -421,8 +538,16 @@ Route::middleware([
                 'update',
             ]
         )
-            ->name('news.update');
+            ->name(
+                'news.update'
+            );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - PUBLISH / DRAFT
+        |--------------------------------------------------------------------------
+        */
 
         Route::post(
             '/berita/{news}/status',
@@ -431,8 +556,16 @@ Route::middleware([
                 'toggleStatus',
             ]
         )
-            ->name('news.toggle-status');
+            ->name(
+                'news.toggle-status'
+            );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA KKO - HAPUS
+        |--------------------------------------------------------------------------
+        */
 
         Route::delete(
             '/berita/{news}',
@@ -441,7 +574,9 @@ Route::middleware([
                 'destroy',
             ]
         )
-            ->name('news.destroy');
+            ->name(
+                'news.destroy'
+            );
     });
 
 
@@ -455,8 +590,12 @@ Route::middleware([
     'auth',
     'role:siswa',
 ])
-    ->prefix('siswa')
-    ->name('siswa.')
+    ->prefix(
+        'siswa'
+    )
+    ->name(
+        'siswa.'
+    )
     ->group(function () {
 
         /*
@@ -472,7 +611,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('dashboard');
+            ->name(
+                'dashboard'
+            );
 
 
         /*
@@ -488,7 +629,9 @@ Route::middleware([
                 'markNotificationsRead',
             ]
         )
-            ->name('notifications.read');
+            ->name(
+                'notifications.read'
+            );
 
 
         /*
@@ -504,18 +647,15 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('schedule.index');
+            ->name(
+                'schedule.index'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
         | KKO AI ASSISTANT - HALAMAN
         |--------------------------------------------------------------------------
-        |
-        | URL:
-        |
-        | /siswa/ai
-        |
         */
 
         Route::get(
@@ -525,33 +665,31 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('ai.index');
+            ->name(
+                'ai.index'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | KKO AI ASSISTANT - CHAT API
+        | KKO AI ASSISTANT - PROSES CHAT
         |--------------------------------------------------------------------------
         |
-        | Flow:
+        | Alur:
         |
-        | siswa login
-        |       ↓
-        | students
-        |       ↓
-        | class_id
-        |       ↓
-        | school_schedules
-        |       ↓
-        | subjects
-        |       ↓
+        | Siswa Login
+        |      ↓
+        | Student
+        |      ↓
+        | Class
+        |      ↓
+        | Jadwal + Presensi
+        |      ↓
         | AiAssistantController
-        |       ↓
+        |      ↓
         | GroqService
-        |       ↓
+        |      ↓
         | Groq API
-        |       ↓
-        | JSON response
         |
         */
 
@@ -562,13 +700,20 @@ Route::middleware([
                 'chat',
             ]
         )
-            ->name('ai.chat');
+            ->name(
+                'ai.chat'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | PRESENSI SEKOLAH - SCANNER
+        | SCANNER PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
+        |
+        | Siswa hanya melakukan scan.
+        |
+        | Siswa TIDAK dapat membuka barcode global sekolah.
+        |
         */
 
         Route::get(
@@ -578,12 +723,14 @@ Route::middleware([
                 'scanner',
             ]
         )
-            ->name('presensi.scan');
+            ->name(
+                'presensi.scan'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | PRESENSI SEKOLAH - PROSES SCAN
+        | PROSES PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
         */
 
@@ -594,12 +741,14 @@ Route::middleware([
                 'store',
             ]
         )
-            ->name('presensi.store');
+            ->name(
+                'presensi.store'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | JADWAL LATIHAN KKO
+        | JADWAL LATIHAN SISWA
         |--------------------------------------------------------------------------
         */
 
@@ -610,7 +759,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('training.index');
+            ->name(
+                'training.index'
+            );
 
 
         /*
@@ -626,7 +777,9 @@ Route::middleware([
                 'scanner',
             ]
         )
-            ->name('training.scan');
+            ->name(
+                'training.scan'
+            );
 
 
         /*
@@ -642,7 +795,9 @@ Route::middleware([
                 'store',
             ]
         )
-            ->name('training.store');
+            ->name(
+                'training.store'
+            );
 
 
         /*
@@ -658,7 +813,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('attendance.history');
+            ->name(
+                'attendance.history'
+            );
 
 
         /*
@@ -674,7 +831,9 @@ Route::middleware([
                 'create',
             ]
         )
-            ->name('leave.create');
+            ->name(
+                'leave.create'
+            );
 
 
         /*
@@ -690,7 +849,9 @@ Route::middleware([
                 'store',
             ]
         )
-            ->name('leave.store');
+            ->name(
+                'leave.store'
+            );
 
 
         /*
@@ -706,7 +867,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('news.index');
+            ->name(
+                'news.index'
+            );
 
 
         /*
@@ -722,7 +885,9 @@ Route::middleware([
                 'show',
             ]
         )
-            ->name('news.show');
+            ->name(
+                'news.show'
+            );
     });
 
 
@@ -736,8 +901,12 @@ Route::middleware([
     'auth',
     'role:pelatih',
 ])
-    ->prefix('pelatih')
-    ->name('pelatih.')
+    ->prefix(
+        'pelatih'
+    )
+    ->name(
+        'pelatih.'
+    )
     ->group(function () {
 
         /*
@@ -753,7 +922,9 @@ Route::middleware([
                 'index',
             ]
         )
-            ->name('dashboard');
+            ->name(
+                'dashboard'
+            );
     });
 
 
@@ -762,17 +933,21 @@ Route::middleware([
 | PENGELOLAAN LATIHAN KKO
 |--------------------------------------------------------------------------
 |
-| Route ini saat ini dapat diakses oleh user yang sudah login.
-|
-| Nanti kalau diperlukan, kita dapat membatasi hanya:
+| Digunakan oleh:
 |
 | - Guru
 | - Pelatih
 |
+| Validasi role juga dilakukan di TrainingController.
+|
+| Siswa memiliki route latihan sendiri di prefix /siswa.
+|
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')
+Route::middleware(
+    'auth'
+)
     ->group(function () {
 
         /*
@@ -788,7 +963,9 @@ Route::middleware('auth')
                 'index',
             ]
         )
-            ->name('training.index');
+            ->name(
+                'training.index'
+            );
 
 
         /*
@@ -804,7 +981,9 @@ Route::middleware('auth')
                 'create',
             ]
         )
-            ->name('training.create');
+            ->name(
+                'training.create'
+            );
 
 
         /*
@@ -820,7 +999,9 @@ Route::middleware('auth')
                 'store',
             ]
         )
-            ->name('training.store');
+            ->name(
+                'training.store'
+            );
 
 
         /*
@@ -836,7 +1017,9 @@ Route::middleware('auth')
                 'edit',
             ]
         )
-            ->name('training.edit');
+            ->name(
+                'training.edit'
+            );
 
 
         /*
@@ -852,7 +1035,9 @@ Route::middleware('auth')
                 'update',
             ]
         )
-            ->name('training.update');
+            ->name(
+                'training.update'
+            );
 
 
         /*
@@ -868,13 +1053,20 @@ Route::middleware('auth')
                 'destroy',
             ]
         )
-            ->name('training.destroy');
+            ->name(
+                'training.destroy'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | BARCODE LATIHAN
+        | BARCODE PRESENSI LATIHAN
         |--------------------------------------------------------------------------
+        |
+        | Barcode ini BERBEDA dengan barcode presensi sekolah.
+        |
+        | Setiap barcode terikat pada satu TrainingSession.
+        |
         */
 
         Route::get(
@@ -884,7 +1076,9 @@ Route::middleware('auth')
                 'show',
             ]
         )
-            ->name('training.barcode.display');
+            ->name(
+                'training.barcode.display'
+            );
 
 
         /*
@@ -900,12 +1094,14 @@ Route::middleware('auth')
                 'current',
             ]
         )
-            ->name('training.barcode.current');
+            ->name(
+                'training.barcode.current'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | UPDATE STATUS PRESENSI SISWA
+        | UPDATE STATUS PRESENSI LATIHAN SISWA
         |--------------------------------------------------------------------------
         */
 
@@ -916,12 +1112,14 @@ Route::middleware('auth')
                 'updateStudentStatus',
             ]
         )
-            ->name('training.student.status');
+            ->name(
+                'training.student.status'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | HAPUS STATUS PRESENSI SISWA
+        | HAPUS STATUS PRESENSI LATIHAN SISWA
         |--------------------------------------------------------------------------
         */
 
@@ -932,7 +1130,9 @@ Route::middleware('auth')
                 'clearStudentStatus',
             ]
         )
-            ->name('training.student.status.clear');
+            ->name(
+                'training.student.status.clear'
+            );
 
 
         /*
@@ -940,7 +1140,8 @@ Route::middleware('auth')
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
         |
-        | Diletakkan paling bawah karena memiliki parameter dinamis.
+        | Route parameter dinamis diletakkan paling bawah
+        | agar tidak bentrok dengan /buat dan /barcode.
         |
         */
 
@@ -951,7 +1152,9 @@ Route::middleware('auth')
                 'show',
             ]
         )
-            ->name('training.show');
+            ->name(
+                'training.show'
+            );
     });
 
 
@@ -959,9 +1162,17 @@ Route::middleware('auth')
 |--------------------------------------------------------------------------
 | DATA CABANG OLAHRAGA SISWA
 |--------------------------------------------------------------------------
+|
+| Digunakan untuk pengelolaan atlet KKO serta rekap latihan.
+|
+| Controller melakukan validasi role Guru / Pelatih.
+|
+|--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')
+Route::middleware(
+    'auth'
+)
     ->group(function () {
 
         /*
@@ -977,7 +1188,9 @@ Route::middleware('auth')
                 'index',
             ]
         )
-            ->name('students.sports.index');
+            ->name(
+                'students.sports.index'
+            );
 
 
         /*
@@ -990,7 +1203,9 @@ Route::middleware('auth')
             '/data-cabang-siswa/export',
             TrainingAttendanceRecapExportController::class
         )
-            ->name('students.sports.export');
+            ->name(
+                'students.sports.export'
+            );
 
 
         /*
@@ -1003,12 +1218,14 @@ Route::middleware('auth')
             '/data-cabang-siswa/cetak',
             TrainingAttendanceRecapPrintController::class
         )
-            ->name('students.sports.print');
+            ->name(
+                'students.sports.print'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | DETAIL RIWAYAT PRESENSI SISWA
+        | DETAIL RIWAYAT PRESENSI LATIHAN SISWA
         |--------------------------------------------------------------------------
         */
 
@@ -1019,7 +1236,9 @@ Route::middleware('auth')
                 'attendanceDetail',
             ]
         )
-            ->name('students.sports.attendance-detail');
+            ->name(
+                'students.sports.attendance-detail'
+            );
 
 
         /*
@@ -1035,7 +1254,9 @@ Route::middleware('auth')
                 'update',
             ]
         )
-            ->name('students.sports.update');
+            ->name(
+                'students.sports.update'
+            );
     });
 
 
@@ -1043,14 +1264,29 @@ Route::middleware('auth')
 |--------------------------------------------------------------------------
 | BARCODE PRESENSI SEKOLAH
 |--------------------------------------------------------------------------
+|
+| KHUSUS GURU.
+|
+| Barcode ini digunakan untuk presensi masuk sekolah.
+|
+| Hak akses:
+|
+| Guru      : boleh menampilkan barcode.
+| Siswa     : hanya melakukan scan.
+| Pelatih   : tidak memiliki akses.
+|
+|--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')
+Route::middleware([
+    'auth',
+    'role:guru',
+])
     ->group(function () {
 
         /*
         |--------------------------------------------------------------------------
-        | HALAMAN BARCODE
+        | HALAMAN BARCODE PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
         */
 
@@ -1061,12 +1297,14 @@ Route::middleware('auth')
                 'index',
             ]
         )
-            ->name('barcode.display');
+            ->name(
+                'barcode.display'
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | TOKEN BARCODE AKTIF
+        | TOKEN BARCODE PRESENSI SEKOLAH AKTIF
         |--------------------------------------------------------------------------
         */
 
@@ -1077,7 +1315,9 @@ Route::middleware('auth')
                 'current',
             ]
         )
-            ->name('barcode.current');
+            ->name(
+                'barcode.current'
+            );
     });
 
 
