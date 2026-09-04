@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Student;
-use App\Models\TrainingAttendance;
 use App\Models\TrainingSession;
+use App\Services\TrainingAttendanceService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Throwable;
 
 class MarkTrainingAbsent extends Command
 {
@@ -15,11 +15,11 @@ class MarkTrainingAbsent extends Command
     | SIGNATURE COMMAND
     |--------------------------------------------------------------------------
     |
-    | Jalankan normal:
+    | Normal:
     |
     | php artisan training:mark-absent
     |
-    | Cek tanpa menyimpan:
+    | Simulasi:
     |
     | php artisan training:mark-absent --dry-run
     |
@@ -29,6 +29,12 @@ class MarkTrainingAbsent extends Command
         'training:mark-absent
         {--dry-run : Cek siswa yang akan menjadi Alfa tanpa menyimpan ke database}';
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | DESCRIPTION
+    |--------------------------------------------------------------------------
+    */
 
     protected $description =
         'Menandai siswa Alfa jika belum melakukan presensi lebih dari 30 menit setelah latihan dimulai.';
@@ -40,27 +46,30 @@ class MarkTrainingAbsent extends Command
     |--------------------------------------------------------------------------
     */
 
-    public function handle(): int
-    {
-        $timezone =
-            'Asia/Jakarta';
+    public function handle(
+        TrainingAttendanceService $trainingAttendanceService
+    ): int {
 
+        /*
+        |--------------------------------------------------------------------------
+        | WAKTU SEKARANG
+        |--------------------------------------------------------------------------
+        */
 
         $now =
             Carbon::now(
-                $timezone
+                TrainingAttendanceService::TIMEZONE
             );
 
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL SESI HARI INI
+        | SESI HARI INI
         |--------------------------------------------------------------------------
         |
-        | Untuk keamanan, command hanya memproses sesi latihan
-        | pada tanggal hari ini.
+        | Hanya sesi pada tanggal hari ini yang diproses.
         |
-        | Jadi sesi lama tidak tiba-tiba diisi Alfa.
+        | Sesi lama tidak akan tiba-tiba dibuatkan Alfa.
         |
         */
 
@@ -73,27 +82,43 @@ class MarkTrainingAbsent extends Command
                 ->whereNotNull(
                     'start_time'
                 )
+                ->orderBy(
+                    'start_time'
+                )
                 ->get();
-
-
-        $totalCandidates = 0;
-        $totalCreated = 0;
 
 
         /*
         |--------------------------------------------------------------------------
-        | JIKA TIDAK ADA SESI
+        | TIDAK ADA SESI
         |--------------------------------------------------------------------------
         */
 
-        if ($sessions->isEmpty()) {
+        if (
+            $sessions->isEmpty()
+        ) {
 
             $this->info(
                 'Tidak ada sesi latihan hari ini.'
             );
 
+
             return self::SUCCESS;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | COUNTER
+        |--------------------------------------------------------------------------
+        */
+
+        $totalCandidates =
+            0;
+
+
+        $totalCreated =
+            0;
 
 
         /*
@@ -102,231 +127,144 @@ class MarkTrainingAbsent extends Command
         |--------------------------------------------------------------------------
         */
 
-        foreach ($sessions as $session) {
+        foreach (
+            $sessions
+            as $session
+        ) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | TANGGAL SESI
-            |--------------------------------------------------------------------------
-            */
-
-            $trainingDate =
-                Carbon::parse(
-                    $session->training_date,
-                    $timezone
-                )->format(
-                    'Y-m-d'
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | JAM MULAI
-            |--------------------------------------------------------------------------
-            */
-
-            $startTime =
-                Carbon::parse(
-                    $session->start_time,
-                    $timezone
-                )->format(
-                    'H:i:s'
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | WAKTU MULAI LENGKAP
-            |--------------------------------------------------------------------------
-            */
-
-            $startsAt =
-                Carbon::createFromFormat(
-                    'Y-m-d H:i:s',
-                    $trainingDate
-                    . ' '
-                    . $startTime,
-                    $timezone
-                );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | BATAS ALFA
-            |--------------------------------------------------------------------------
-            |
-            | Contoh:
-            |
-            | Jam mulai : 14:00
-            |
-            | 14:00:00 - 14:10:00
-            | => Hadir
-            |
-            | 14:10:01 - 14:30:00
-            | => Terlambat
-            |
-            | > 14:30:00
-            | => Alfa
-            |
-            */
-
-            $alphaAt =
-                $startsAt
-                    ->copy()
-                    ->addMinutes(30);
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | BELUM LEWAT BATAS ALFA
-            |--------------------------------------------------------------------------
-            |
-            | Pada tepat 14:30:00 belum diproses.
-            |
-            | Baru setelah melewati 14:30:00 siswa menjadi Alfa.
-            |
-            */
-
-            if (
-                $now->lte(
-                    $alphaAt
-                )
-            ) {
-                continue;
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | INFORMASI SESI
-            |--------------------------------------------------------------------------
-            */
-
-            $this->newLine();
-
-            $this->line(
-                'Sesi: '
-                . $session->sport
-                . ' | Mulai: '
-                . $startsAt->format('H:i')
-                . ' | Batas Alfa: '
-                . $alphaAt->format('H:i')
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | AMBIL SISWA SESUAI CABANG OLAHRAGA
-            |--------------------------------------------------------------------------
-            |
-            | Penting:
-            |
-            | Sesi Atletik
-            | => hanya siswa Atletik
-            |
-            | Sesi Bola Basket
-            | => hanya siswa Bola Basket
-            |
-            | dan seterusnya.
-            |
-            */
-
-            $students =
-                Student::query()
-                    ->with('user')
-                    ->where(
-                        'status',
-                        'active'
-                    )
-                    ->where(
-                        'sport',
-                        $session->sport
-                    )
-                    ->get();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | JIKA CABANG TIDAK PUNYA SISWA
-            |--------------------------------------------------------------------------
-            */
-
-            if ($students->isEmpty()) {
-
-                $this->line(
-                    'Tidak ada siswa aktif pada cabang '
-                    . $session->sport
-                    . '.'
-                );
-
-                continue;
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | PROSES SETIAP SISWA
-            |--------------------------------------------------------------------------
-            */
-
-            foreach ($students as $student) {
+            try {
 
                 /*
                 |--------------------------------------------------------------------------
-                | CEK APAKAH SISWA SUDAH PUNYA PRESENSI
+                | WAKTU MULAI
                 |--------------------------------------------------------------------------
-                |
-                | Kalau sudah memiliki salah satu:
-                |
-                | present
-                | late
-                | permission
-                | sick
-                | absent
-                |
-                | maka data TIDAK disentuh.
-                |
                 */
 
-                $existingAttendance =
-                    TrainingAttendance::query()
-                        ->where(
-                            'training_session_id',
-                            $session->id
-                        )
-                        ->where(
-                            'student_id',
-                            $student->id
-                        )
-                        ->exists();
+                $startsAt =
+                    $trainingAttendanceService
+                        ->getSessionStartsAt(
+                            $session
+                        );
 
 
-                if ($existingAttendance) {
+                /*
+                |--------------------------------------------------------------------------
+                | WAKTU ALFA
+                |--------------------------------------------------------------------------
+                */
+
+                $alphaAt =
+                    $trainingAttendanceService
+                        ->getAutomaticAbsentAt(
+                            $session
+                        );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | DATA TIDAK VALID
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    !$startsAt
+                    ||
+                    !$alphaAt
+                ) {
                     continue;
                 }
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | SISWA CALON ALFA
+                | BELUM LEWAT BATAS ALFA
                 |--------------------------------------------------------------------------
                 */
 
-                $totalCandidates++;
+                if (
+                    !$trainingAttendanceService
+                        ->isAutomaticAbsentDue(
+                            $session
+                        )
+                ) {
+                    continue;
+                }
 
 
-                $studentName =
-                    $student->user?->name
-                    ?? 'Siswa #' . $student->id;
+                /*
+                |--------------------------------------------------------------------------
+                | INFORMASI SESI
+                |--------------------------------------------------------------------------
+                */
+
+                $this->newLine();
+
+
+                $this->line(
+                    'Sesi: '
+                    .
+                    $session->sport
+                    .
+                    ' | Mulai: '
+                    .
+                    $startsAt->format(
+                        'H:i'
+                    )
+                    .
+                    ' | Batas Alfa: '
+                    .
+                    $alphaAt->format(
+                        'H:i'
+                    )
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CALON ALFA
+                |--------------------------------------------------------------------------
+                */
+
+                $candidates =
+                    $trainingAttendanceService
+                        ->getAutomaticAbsentCandidates(
+                            $session
+                        );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | TIDAK ADA CALON ALFA
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $candidates->isEmpty()
+                ) {
+
+                    $this->line(
+                        'Tidak ada siswa yang perlu ditandai Alfa.'
+                    );
+
+
+                    continue;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | JUMLAH CALON
+                |--------------------------------------------------------------------------
+                */
+
+                $totalCandidates +=
+                    $candidates->count();
 
 
                 /*
                 |--------------------------------------------------------------------------
                 | DRY RUN
                 |--------------------------------------------------------------------------
-                |
-                | Tidak menyimpan database.
-                |
                 */
 
                 if (
@@ -335,11 +273,28 @@ class MarkTrainingAbsent extends Command
                     )
                 ) {
 
-                    $this->line(
-                        '[DRY RUN] '
-                        . $studentName
-                        . ' → ALFA'
-                    );
+                    foreach (
+                        $candidates
+                        as $student
+                    ) {
+
+                        $studentName =
+                            $student->user?->name
+                            ??
+                            'Siswa #'
+                            .
+                            $student->id;
+
+
+                        $this->line(
+                            '[DRY RUN] '
+                            .
+                            $studentName
+                            .
+                            ' -> ALFA'
+                        );
+                    }
+
 
                     continue;
                 }
@@ -347,55 +302,68 @@ class MarkTrainingAbsent extends Command
 
                 /*
                 |--------------------------------------------------------------------------
-                | SIMPAN ALFA
+                | SIMPAN ALFA MELALUI SERVICE
                 |--------------------------------------------------------------------------
-                |
-                | firstOrCreate digunakan sebagai perlindungan tambahan
-                | agar record tidak dibuat dua kali.
-                |
                 */
 
-                $attendance =
-                    TrainingAttendance::firstOrCreate(
-                        [
-                            'training_session_id' =>
-                                $session->id,
+                $created =
+                    $trainingAttendanceService
+                        ->markAutomaticAbsencesIfDue(
+                            $session
+                        );
 
-                            'student_id' =>
-                                $student->id,
-                        ],
-                        [
-                            'status' =>
-                                'absent',
 
-                            'checked_in_at' =>
-                                null,
-
-                            'notes' =>
-                                'Alfa otomatis karena tidak melakukan presensi lebih dari 30 menit setelah latihan dimulai.',
-                        ]
-                    );
+                $totalCreated +=
+                    $created;
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | HITUNG DATA BARU
+                | INFORMASI
                 |--------------------------------------------------------------------------
                 */
 
                 if (
-                    $attendance->wasRecentlyCreated
+                    $created > 0
                 ) {
 
-                    $totalCreated++;
+                    $this->info(
+                        $created
+                        .
+                        ' siswa berhasil ditandai Alfa.'
+                    );
 
+                } else {
 
                     $this->line(
-                        '[ALFA] '
-                        . $studentName
-                        . ' → berhasil ditandai Alfa'
+                        'Tidak ada Alfa baru yang dibuat.'
                     );
                 }
+
+            } catch (
+                Throwable $exception
+            ) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | ERROR SESI
+                |--------------------------------------------------------------------------
+                */
+
+                report(
+                    $exception
+                );
+
+
+                $this->error(
+                    'Gagal memproses sesi ID '
+                    .
+                    $session->id
+                    .
+                    ': '
+                    .
+                    $exception->getMessage()
+                );
             }
         }
 
@@ -414,10 +382,13 @@ class MarkTrainingAbsent extends Command
 
             $this->newLine();
 
+
             $this->info(
                 'Dry run selesai. '
-                . $totalCandidates
-                . ' siswa akan ditandai Alfa.'
+                .
+                $totalCandidates
+                .
+                ' siswa akan ditandai Alfa.'
             );
 
 
@@ -433,10 +404,13 @@ class MarkTrainingAbsent extends Command
 
         $this->newLine();
 
+
         $this->info(
             'Proses Alfa latihan selesai. '
-            . $totalCreated
-            . ' siswa berhasil ditandai Alfa.'
+            .
+            $totalCreated
+            .
+            ' siswa berhasil ditandai Alfa.'
         );
 
 
