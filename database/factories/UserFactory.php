@@ -12,34 +12,137 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | MODEL
+    |--------------------------------------------------------------------------
+    */
+
+    protected $model =
+        User::class;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PASSWORD DEFAULT
+    |--------------------------------------------------------------------------
+    */
+
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | DEFAULT STATE
+    |--------------------------------------------------------------------------
+    |
+    | User default dibuat sebagai siswa.
+    |
+    | NIS siswa tidak berada di tabel users.
+    | NIS disimpan di tabel students.
+    |
+    */
+
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'name' =>
+                fake()->name(),
+
+            'nip' =>
+                null,
+
+            'password' =>
+                static::$password
+                ??=
+                Hash::make(
+                    'password'
+                ),
+
+            'role' =>
+                'siswa',
+
+            'remember_token' =>
+                Str::random(
+                    10
+                ),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATE GURU
+    |--------------------------------------------------------------------------
+    */
+
+    public function guru(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(
+            fn (array $attributes) => [
+                'nip' =>
+                    fake()
+                        ->unique()
+                        ->numerify(
+                            '198###########'
+                        ),
+
+                'role' =>
+                    'guru',
+            ]
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATE SISWA
+    |--------------------------------------------------------------------------
+    |
+    | NIS siswa tetap dibuat melalui model/factory Student.
+    |
+    */
+
+    public function siswa(): static
+    {
+        return $this->state(
+            fn (array $attributes) => [
+                'nip' =>
+                    null,
+
+                'role' =>
+                    'siswa',
+            ]
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATE PELATIH
+    |--------------------------------------------------------------------------
+    |
+    | Pelatih menggunakan akun users.
+    |
+    | Jika login Pelatih pada controller ternyata memakai field selain NIP,
+    | state ini nanti kita sesuaikan setelah audit AuthenticatedSessionController.
+    |
+    */
+
+    public function pelatih(): static
+    {
+        return $this->state(
+            fn (array $attributes) => [
+                'nip' =>
+                    fake()
+                        ->unique()
+                        ->numerify(
+                            'PLT########'
+                        ),
+
+                'role' =>
+                    'pelatih',
+            ]
+        );
     }
 }
