@@ -22,8 +22,34 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
+    | BATAS HADIR
+    |--------------------------------------------------------------------------
+    |
+    | Mulai latihan sampai tepat +10 menit:
+    |
+    | status = present
+    |
+    | Setelah +10 menit:
+    |
+    | status = late
+    |
+    */
+
+    public const LATE_LIMIT_MINUTES =
+        10;
+
+
+    /*
+    |--------------------------------------------------------------------------
     | BATAS ALFA
     |--------------------------------------------------------------------------
+    |
+    | Tepat +30 menit masih boleh presensi.
+    |
+    | Setelah +30 menit:
+    |
+    | status = absent
+    |
     */
 
     public const AUTO_ABSENT_AFTER_MINUTES =
@@ -117,6 +143,43 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
+    | BATAS HADIR
+    |--------------------------------------------------------------------------
+    |
+    | Contoh:
+    |
+    | Mulai latihan : 14:00
+    | Batas hadir   : 14:10
+    |
+    | Tepat 14:10:00 masih Hadir.
+    |
+    */
+
+    public function getLateLimitAt(
+        TrainingSession $trainingSession
+    ): ?Carbon {
+
+        $startsAt =
+            $this->getSessionStartsAt(
+                $trainingSession
+            );
+
+
+        if (!$startsAt) {
+            return null;
+        }
+
+
+        return $startsAt
+            ->copy()
+            ->addMinutes(
+                self::LATE_LIMIT_MINUTES
+            );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | WAKTU ALFA
     |--------------------------------------------------------------------------
     |
@@ -155,8 +218,6 @@ class TrainingAttendanceService
     | CEK APAKAH SUDAH WAKTUNYA ALFA
     |--------------------------------------------------------------------------
     |
-    | Penting:
-    |
     | 14:30:00
     | => belum Alfa
     |
@@ -169,12 +230,6 @@ class TrainingAttendanceService
         TrainingSession $trainingSession
     ): bool {
 
-        /*
-        |--------------------------------------------------------------------------
-        | WAKTU ALFA
-        |--------------------------------------------------------------------------
-        */
-
         $alphaAt =
             $this->getAutomaticAbsentAt(
                 $trainingSession
@@ -186,23 +241,11 @@ class TrainingAttendanceService
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | WAKTU SEKARANG
-        |--------------------------------------------------------------------------
-        */
-
         $now =
             Carbon::now(
                 self::TIMEZONE
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | HARUS SUDAH LEWAT BATAS
-        |--------------------------------------------------------------------------
-        */
 
         return $now->gt(
             $alphaAt
@@ -219,7 +262,7 @@ class TrainingAttendanceService
     |
     | - status active
     | - cabang olahraga sama dengan sesi
-    | - belum memiliki record TrainingAttendance
+    | - belum memiliki TrainingAttendance
     |
     */
 
@@ -263,15 +306,6 @@ class TrainingAttendanceService
         |--------------------------------------------------------------------------
         | SISWA YANG SUDAH MEMILIKI PRESENSI
         |--------------------------------------------------------------------------
-        |
-        | Status apa pun dianggap sudah tercatat:
-        |
-        | present
-        | late
-        | permission
-        | sick
-        | absent
-        |
         */
 
         $existingStudentIds =
@@ -287,7 +321,7 @@ class TrainingAttendanceService
 
         /*
         |--------------------------------------------------------------------------
-        | QUERY SISWA
+        | QUERY SISWA SESUAI CABANG
         |--------------------------------------------------------------------------
         */
 
@@ -308,7 +342,7 @@ class TrainingAttendanceService
 
         /*
         |--------------------------------------------------------------------------
-        | KECUALIKAN SISWA YANG SUDAH TERCATAT
+        | KECUALIKAN YANG SUDAH TERCATAT
         |--------------------------------------------------------------------------
         */
 
@@ -323,12 +357,6 @@ class TrainingAttendanceService
                 );
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | HASIL
-        |--------------------------------------------------------------------------
-        */
 
         return $studentsQuery
             ->get();
@@ -345,23 +373,11 @@ class TrainingAttendanceService
         TrainingSession $trainingSession
     ): int {
 
-        /*
-        |--------------------------------------------------------------------------
-        | AMBIL CALON ALFA
-        |--------------------------------------------------------------------------
-        */
-
         $students =
             $this->getAutomaticAbsentCandidates(
                 $trainingSession
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | TIDAK ADA CALON ALFA
-        |--------------------------------------------------------------------------
-        */
 
         if (
             $students->isEmpty()
@@ -370,21 +386,9 @@ class TrainingAttendanceService
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | JUMLAH RECORD BARU
-        |--------------------------------------------------------------------------
-        */
-
         $createdCount =
             0;
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | PROSES SISWA
-        |--------------------------------------------------------------------------
-        */
 
         foreach (
             $students
@@ -396,11 +400,8 @@ class TrainingAttendanceService
             | FIRST OR CREATE
             |--------------------------------------------------------------------------
             |
-            | Tetap gunakan firstOrCreate sebagai perlindungan tambahan jika:
-            |
-            | - scheduler berjalan bersamaan,
-            | - controller membuka sesi bersamaan,
-            | - terjadi request hampir bersamaan.
+            | Menjaga agar tidak terjadi duplikasi jika scheduler/controller
+            | berjalan hampir bersamaan.
             |
             */
 
@@ -426,12 +427,6 @@ class TrainingAttendanceService
                 );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | HITUNG RECORD BARU
-            |--------------------------------------------------------------------------
-            */
-
             if (
                 $attendance->wasRecentlyCreated
             ) {
@@ -439,12 +434,6 @@ class TrainingAttendanceService
             }
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | HASIL
-        |--------------------------------------------------------------------------
-        */
 
         return $createdCount;
     }
@@ -455,14 +444,10 @@ class TrainingAttendanceService
     | HAPUS ALFA OTOMATIS
     |--------------------------------------------------------------------------
     |
-    | Digunakan jika jadwal latihan berubah.
+    | Digunakan ketika jadwal latihan berubah.
     |
-    | Yang dihapus hanya:
-    |
-    | status = absent
-    | notes  = AUTO_ABSENT_NOTE
-    |
-    | Alfa manual tidak akan ikut terhapus.
+    | Hanya Alfa otomatis yang dihapus.
+    | Alfa manual tetap dipertahankan.
     |
     */
 
