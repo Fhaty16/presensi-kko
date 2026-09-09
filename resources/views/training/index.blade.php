@@ -67,6 +67,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | PAGE
@@ -83,6 +84,7 @@
 
             padding: 34px 0 100px;
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -110,6 +112,7 @@
         .back-link .material-symbols-outlined {
             font-size: 17px;
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -157,6 +160,7 @@
             font-size: 10px;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | CREATE BUTTON
@@ -192,6 +196,7 @@
             font-size: 18px;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | SUCCESS
@@ -219,6 +224,7 @@
         .success-message .material-symbols-outlined {
             font-size: 18px;
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -257,6 +263,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -353,6 +360,7 @@
             font-size: 8px;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | STATUS BADGE
@@ -400,6 +408,7 @@
         .training-status .material-symbols-outlined {
             font-size: 14px;
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -453,6 +462,7 @@
             white-space: nowrap;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | NOTE
@@ -472,6 +482,7 @@
             font-size: 8px;
             line-height: 1.5;
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -572,6 +583,7 @@
             font-size: 15px;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | EMPTY
@@ -613,6 +625,7 @@
 
             font-size: 9px;
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -698,6 +711,28 @@
 
 
 <body class="dashboard-page">
+
+
+@php
+
+    /*
+    |--------------------------------------------------------------------------
+    | TRAINING ATTENDANCE SERVICE
+    |--------------------------------------------------------------------------
+    */
+
+    $trainingAttendanceService =
+        app(
+            \App\Services\TrainingAttendanceService::class
+        );
+
+
+    $now =
+        \Carbon\Carbon::now(
+            \App\Services\TrainingAttendanceService::TIMEZONE
+        );
+
+@endphp
 
 
 <header class="kko-header">
@@ -903,6 +938,45 @@
 
                     @php
 
+                        /*
+                        |--------------------------------------------------------------------------
+                        | WAKTU SESI DARI SERVICE
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $sessionTimes =
+                            $trainingAttendanceService
+                                ->getSessionTimes(
+                                    $session
+                                );
+
+
+                        $startsAt =
+                            $sessionTimes['starts_at']
+                            ?? null;
+
+
+                        $endsAt =
+                            $sessionTimes['ends_at']
+                            ?? null;
+
+
+                        $alphaAt =
+                            $sessionTimes['alpha_at']
+                            ?? null;
+
+
+                        $closesAt =
+                            $sessionTimes['closes_at']
+                            ?? null;
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | FORMAT
+                        |--------------------------------------------------------------------------
+                        */
+
                         $sessionDate =
                             $session->training_date
                                 ? \Carbon\Carbon::parse(
@@ -912,82 +986,79 @@
 
 
                         $startDisplay =
-                            $session->start_time
-                                ? \Carbon\Carbon::parse(
-                                    $session->start_time
-                                )->format('H:i')
+                            $startsAt
+                                ? $startsAt->format(
+                                    'H:i'
+                                )
                                 : '-';
 
 
                         $endDisplay =
-                            $session->end_time
-                                ? \Carbon\Carbon::parse(
-                                    $session->end_time
-                                )->format('H:i')
+                            $endsAt
+                                ? $endsAt->format(
+                                    'H:i'
+                                )
                                 : '-';
 
 
-                        $now =
-                            \Carbon\Carbon::now(
-                                'Asia/Jakarta'
-                            );
+                        $alphaDisplay =
+                            $alphaAt
+                                ? $alphaAt->format(
+                                    'H:i'
+                                )
+                                : '-';
 
 
-                        $startsAt = null;
-                        $endsAt = null;
-
+                        /*
+                        |--------------------------------------------------------------------------
+                        | STATUS SESI LATIHAN
+                        |--------------------------------------------------------------------------
+                        |
+                        | Status sesi menggunakan jam latihan sebenarnya.
+                        |
+                        | Bukan closes_at karena sesi latihan masih bisa tetap
+                        | berjalan walaupun presensi sudah ditutup.
+                        |
+                        */
 
                         if (
-                            $sessionDate
-                            && $session->start_time
+                            !$startsAt
+                            ||
+                            !$endsAt
                         ) {
 
-                            $startsAt =
-                                \Carbon\Carbon::parse(
-                                    $sessionDate->format('Y-m-d')
-                                    . ' '
-                                    . $startDisplay,
-                                    'Asia/Jakarta'
-                                );
-
-                        }
+                            $sessionStatus =
+                                'finished';
 
 
-                        if (
-                            $sessionDate
-                            && $session->end_time
-                        ) {
-
-                            $endsAt =
-                                \Carbon\Carbon::parse(
-                                    $sessionDate->format('Y-m-d')
-                                    . ' '
-                                    . $endDisplay,
-                                    'Asia/Jakarta'
-                                );
-
-                        }
+                            $sessionStatusLabel =
+                                'JADWAL BELUM LENGKAP';
 
 
-                        if (
-                            $startsAt
-                            && $now->lt($startsAt)
+                            $sessionStatusIcon =
+                                'warning';
+
+
+                        } elseif (
+                            $now->lt(
+                                $startsAt
+                            )
                         ) {
 
                             $sessionStatus =
                                 'upcoming';
 
+
                             $sessionStatusLabel =
                                 'BELUM DIMULAI';
+
 
                             $sessionStatusIcon =
                                 'schedule';
 
+
                         } elseif (
-                            $startsAt
-                            && $endsAt
-                            && $now->between(
-                                $startsAt,
+                            $now->lte(
                                 $endsAt
                             )
                         ) {
@@ -995,25 +1066,35 @@
                             $sessionStatus =
                                 'active';
 
+
                             $sessionStatusLabel =
                                 'SEDANG BERLANGSUNG';
 
+
                             $sessionStatusIcon =
                                 'play_circle';
+
 
                         } else {
 
                             $sessionStatus =
                                 'finished';
 
+
                             $sessionStatusLabel =
                                 'SELESAI';
 
+
                             $sessionStatusIcon =
                                 'check_circle';
-
                         }
 
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | JUMLAH PRESENSI
+                        |--------------------------------------------------------------------------
+                        */
 
                         $attendanceCount =
                             $session
@@ -1111,7 +1192,18 @@
                                 </span>
 
                                 <strong>
-                                    {{ $startDisplay }} WIB
+
+                                    @if($startsAt)
+
+                                        {{ $startDisplay }}
+                                        WIB
+
+                                    @else
+
+                                        -
+
+                                    @endif
+
                                 </strong>
 
                             </div>
@@ -1124,7 +1216,18 @@
                                 </span>
 
                                 <strong>
-                                    {{ $endDisplay }} WIB
+
+                                    @if($endsAt)
+
+                                        {{ $endDisplay }}
+                                        WIB
+
+                                    @else
+
+                                        -
+
+                                    @endif
+
                                 </strong>
 
                             </div>
@@ -1138,12 +1241,9 @@
 
                                 <strong>
 
-                                    @if($startsAt)
+                                    @if($alphaAt)
 
-                                        {{ $startsAt
-                                            ->copy()
-                                            ->addMinutes(30)
-                                            ->format('H:i') }}
+                                        {{ $alphaDisplay }}
                                         WIB
 
                                     @else
@@ -1200,8 +1300,6 @@
                             <div class="training-actions">
 
 
-                                <!-- DETAIL -->
-
                                 <a
                                     href="{{ route(
                                         'training.show',
@@ -1219,8 +1317,6 @@
                                 </a>
 
 
-                                <!-- EDIT -->
-
                                 <a
                                     href="{{ route(
                                         'training.edit',
@@ -1237,8 +1333,6 @@
 
                                 </a>
 
-
-                                <!-- DELETE -->
 
                                 <form
                                     method="POST"
@@ -1320,4 +1414,5 @@
 
 
 </body>
+
 </html>

@@ -3,12 +3,24 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Barcode Latihan - KKO SMANDA</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Anybody:wght@400;500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
@@ -29,23 +41,30 @@
         body {
             background: #101415;
             color: #ffffff;
+
             margin: 0;
+
             font-family: 'Hanken Grotesk', sans-serif;
         }
 
         .training-barcode-page {
             max-width: 1000px;
+
             margin: 0 auto;
+
             padding: 35px 24px 80px;
         }
 
         .back-link {
             display: inline-flex;
             align-items: center;
+
             gap: 7px;
+
             margin-bottom: 24px;
 
             color: #9dcaff;
+
             text-decoration: none;
 
             font-family: 'JetBrains Mono', monospace;
@@ -55,11 +74,13 @@
 
         .barcode-heading {
             text-align: center;
+
             margin-bottom: 24px;
         }
 
         .barcode-heading-label {
             display: block;
+
             margin-bottom: 8px;
 
             color: #9dcaff;
@@ -81,13 +102,18 @@
 
         .barcode-heading p {
             margin: 7px 0 0;
+
             color: #89949e;
+
             font-size: 11px;
         }
 
         .session-info {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
             gap: 10px;
 
             margin-bottom: 20px;
@@ -106,6 +132,7 @@
 
         .session-item span {
             display: block;
+
             margin-bottom: 6px;
 
             color: #758390;
@@ -117,6 +144,7 @@
 
         .session-item strong {
             color: #e0e3e5;
+
             font-size: 11px;
         }
 
@@ -158,12 +186,14 @@
         .barcode-status.active {
             color: #8ce8c3;
             background: rgba(80, 200, 150, 0.08);
+
             border-color: rgba(80, 200, 150, 0.22);
         }
 
         .barcode-status.closed {
             color: #ffaaa5;
             background: rgba(231, 70, 70, 0.08);
+
             border-color: rgba(231, 70, 70, 0.22);
         }
 
@@ -180,6 +210,7 @@
             background: #ffffff;
 
             border-radius: 16px;
+
             overflow: hidden;
         }
 
@@ -210,12 +241,14 @@
             padding: 20px;
 
             color: #454d55;
+
             box-sizing: border-box;
         }
 
         .barcode-placeholder .material-symbols-outlined {
-            font-size: 42px;
             margin-bottom: 8px;
+
+            font-size: 42px;
         }
 
         .barcode-placeholder strong {
@@ -249,6 +282,7 @@
             margin: 6px 0 0;
 
             color: #75818c;
+
             font-size: 9px;
         }
 
@@ -287,7 +321,14 @@
             font-size: 7px;
         }
 
+        .rule-alpha {
+            color: #ffaaa5;
+
+            border-color: rgba(255, 100, 100, .20);
+        }
+
         @media (max-width: 650px) {
+
             .training-barcode-page {
                 padding: 25px 14px 70px;
             }
@@ -315,35 +356,99 @@
     </style>
 </head>
 
+
 <body>
 
+
 @php
-    $startTime = $trainingSession->start_time
-        ? \Carbon\Carbon::parse($trainingSession->start_time)->format('H:i')
-        : '-';
 
-    $endTime = $trainingSession->end_time
-        ? \Carbon\Carbon::parse($trainingSession->end_time)->format('H:i')
-        : '-';
+    /*
+    |--------------------------------------------------------------------------
+    | TRAINING ATTENDANCE SERVICE
+    |--------------------------------------------------------------------------
+    */
 
-    $lateLimit = $trainingSession->start_time
-        ? \Carbon\Carbon::parse($trainingSession->start_time)
-            ->addMinutes(10)
-            ->format('H:i')
-        : '-';
+    $trainingAttendanceService =
+        app(
+            \App\Services\TrainingAttendanceService::class
+        );
+
+
+    $times =
+        $trainingAttendanceService
+            ->getSessionTimes(
+                $trainingSession
+            );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMAT WAKTU
+    |--------------------------------------------------------------------------
+    */
+
+    $startTime =
+        isset(
+            $times['starts_at']
+        )
+            ? $times['starts_at']
+                ->format('H:i')
+            : '-';
+
+
+    $endTime =
+        isset(
+            $times['ends_at']
+        )
+            ? $times['ends_at']
+                ->format('H:i')
+            : '-';
+
+
+    $lateLimit =
+        isset(
+            $times['late_limit']
+        )
+            ? $times['late_limit']
+                ->format('H:i')
+            : '-';
+
+
+    $alphaLimit =
+        isset(
+            $times['alpha_at']
+        )
+            ? $times['alpha_at']
+                ->format('H:i')
+            : '-';
+
+
+    $closeTime =
+        isset(
+            $times['closes_at']
+        )
+            ? $times['closes_at']
+                ->format('H:i')
+            : '-';
+
 @endphp
 
+
 <header class="kko-header">
+
     <div class="kko-header-inner">
 
         <div class="kko-brand">
 
             <div class="kko-header-logo">
+
                 <img
                     src="{{ asset('images/logo-kko.png') }}"
                     alt="Logo KKO SMANDA"
                 >
+
             </div>
+
 
             <div class="kko-brand-text">
 
@@ -352,22 +457,34 @@
                 </div>
 
                 <div class="kko-role-badge">
+
                     {{ auth()->user()->role === 'guru'
                         ? 'GURU / ADMIN'
                         : 'PELATIH' }}
+
                 </div>
 
             </div>
 
         </div>
 
+
         <div class="kko-header-actions">
 
             <div class="header-profile">
 
                 <div class="header-avatar">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+
+                    {{ strtoupper(
+                        substr(
+                            auth()->user()->name,
+                            0,
+                            1
+                        )
+                    ) }}
+
                 </div>
+
 
                 <div class="header-user-info">
 
@@ -376,48 +493,64 @@
                     </strong>
 
                     <span>
+
                         {{ auth()->user()->role === 'guru'
                             ? 'Guru KKO'
                             : 'Pelatih KKO' }}
+
                     </span>
 
                 </div>
 
             </div>
 
+
             <form
                 method="POST"
                 action="{{ route('logout') }}"
             >
+
                 @csrf
 
                 <button
                     type="submit"
                     class="logout-icon-button"
                 >
+
                     <span class="material-symbols-outlined">
                         logout
                     </span>
+
                 </button>
+
             </form>
 
         </div>
 
     </div>
+
 </header>
+
 
 <main class="training-barcode-page">
 
+
     <a
-        href="{{ route('training.show', $trainingSession) }}"
+        href="{{ route(
+            'training.show',
+            $trainingSession
+        ) }}"
         class="back-link"
     >
+
         <span class="material-symbols-outlined">
             arrow_back
         </span>
 
         Kembali ke Detail Sesi
+
     </a>
+
 
     <section class="barcode-heading">
 
@@ -435,38 +568,61 @@
 
     </section>
 
+
     <section class="session-info">
 
         <div class="session-item">
-            <span>TANGGAL</span>
+
+            <span>
+                TANGGAL
+            </span>
 
             <strong>
-                {{ $trainingSession->training_date
+
+                {{ $trainingSession
+                    ->training_date
                     ->copy()
                     ->locale('id')
                     ->translatedFormat('d F Y') }}
+
             </strong>
+
         </div>
 
+
         <div class="session-item">
-            <span>JAM LATIHAN</span>
+
+            <span>
+                JAM LATIHAN
+            </span>
 
             <strong>
-                {{ $startTime }} - {{ $endTime }} WIB
+                {{ $startTime }}
+                -
+                {{ $endTime }}
+                WIB
             </strong>
+
         </div>
 
+
         <div class="session-item">
-            <span>LOKASI</span>
+
+            <span>
+                LOKASI
+            </span>
 
             <strong>
                 {{ $trainingSession->location ?? '-' }}
             </strong>
+
         </div>
 
     </section>
 
+
     <section class="barcode-card">
+
 
         <div
             class="barcode-status"
@@ -474,6 +630,7 @@
         >
             MEMERIKSA SESI...
         </div>
+
 
         <div class="qr-shell">
 
@@ -499,6 +656,7 @@
 
         </div>
 
+
         <div class="barcode-footer">
 
             <strong id="barcodeTitle">
@@ -516,19 +674,38 @@
 
         </div>
 
+
         <div class="rules">
 
-            <span class="rule">
-                Hadir sampai {{ $lateLimit }} WIB
-            </span>
+            @if($lateLimit !== '-')
 
-            <span class="rule">
-                Lewat {{ $lateLimit }} WIB = Terlambat
-            </span>
+                <span class="rule">
+                    Hadir sampai {{ $lateLimit }} WIB
+                </span>
 
-            <span class="rule">
-                Ditutup {{ $endTime }} WIB
-            </span>
+                <span class="rule">
+                    Lewat {{ $lateLimit }} WIB = Terlambat
+                </span>
+
+            @endif
+
+
+            @if($closeTime !== '-')
+
+                <span class="rule">
+                    Ditutup {{ $closeTime }} WIB
+                </span>
+
+            @endif
+
+
+            @if($alphaLimit !== '-')
+
+                <span class="rule rule-alpha">
+                    Alfa setelah {{ $alphaLimit }} WIB
+                </span>
+
+            @endif
 
         </div>
 
@@ -536,39 +713,67 @@
 
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+></script>
+
 
 <script>
-    const currentUrl = @json(
-        route(
-            'training.barcode.current',
-            $trainingSession
-        )
-    );
+
+    const currentUrl =
+        @json(
+            route(
+                'training.barcode.current',
+                $trainingSession
+            )
+        );
+
 
     const qrContainer =
-        document.getElementById('trainingQr');
+        document.getElementById(
+            'trainingQr'
+        );
+
 
     const barcodeStatus =
-        document.getElementById('barcodeStatus');
+        document.getElementById(
+            'barcodeStatus'
+        );
+
 
     const barcodeTitle =
-        document.getElementById('barcodeTitle');
+        document.getElementById(
+            'barcodeTitle'
+        );
+
 
     const barcodeDescription =
-        document.getElementById('barcodeDescription');
+        document.getElementById(
+            'barcodeDescription'
+        );
+
 
     const barcodeCountdown =
-        document.getElementById('barcodeCountdown');
+        document.getElementById(
+            'barcodeCountdown'
+        );
 
-    let currentToken = null;
-    let secondsRemaining = 0;
+
+    let currentToken =
+        null;
+
+
+    let secondsRemaining =
+        0;
+
 
     function showPlaceholder(
         icon,
         title,
         description
     ) {
+
         qrContainer.innerHTML = `
             <div class="barcode-placeholder">
 
@@ -588,19 +793,35 @@
         `;
     }
 
-    function renderQr(token) {
+
+    function renderQr(
+        token
+    ) {
+
         if (
-            currentToken === token &&
-            qrContainer.querySelector('canvas, img')
+            currentToken === token
+            &&
+            qrContainer.querySelector(
+                'canvas, img'
+            )
         ) {
             return;
         }
 
-        currentToken = token;
 
-        qrContainer.innerHTML = '';
+        currentToken =
+            token;
 
-        if (typeof QRCode === 'undefined') {
+
+        qrContainer.innerHTML =
+            '';
+
+
+        if (
+            typeof QRCode ===
+            'undefined'
+        ) {
+
             showPlaceholder(
                 'error',
                 'QR Tidak Bisa Dimuat',
@@ -610,76 +831,135 @@
             return;
         }
 
+
         new QRCode(
             qrContainer,
             {
-                text: token,
-                width: 260,
-                height: 260,
-                correctLevel: QRCode.CorrectLevel.H
+                text:
+                    token,
+
+                width:
+                    260,
+
+                height:
+                    260,
+
+                correctLevel:
+                    QRCode.CorrectLevel.H,
             }
         );
     }
 
+
     async function fetchBarcode() {
+
         try {
-            const response = await fetch(
-                currentUrl,
-                {
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    cache: 'no-store'
-                }
-            );
+
+            const response =
+                await fetch(
+                    currentUrl,
+                    {
+                        headers: {
+                            'Accept':
+                                'application/json',
+                        },
+
+                        cache:
+                            'no-store',
+                    }
+                );
+
 
             if (!response.ok) {
+
                 throw new Error(
                     'Gagal mengambil barcode.'
                 );
             }
 
-            const data = await response.json();
 
-            if (data.status === 'active') {
+            const data =
+                await response.json();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | AKTIF
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                data.status ===
+                'active'
+            ) {
+
                 barcodeStatus.textContent =
                     'PRESENSI AKTIF';
+
 
                 barcodeStatus.className =
                     'barcode-status active';
 
+
                 barcodeTitle.textContent =
                     'Scan Barcode Sekarang';
+
 
                 barcodeDescription.textContent =
                     'Barcode berlaku sementara dan akan berganti otomatis.';
 
-                secondsRemaining = Number(
-                    data.seconds_remaining ?? 0
+
+                secondsRemaining =
+                    Number(
+                        data.seconds_remaining
+                        ?? 0
+                    );
+
+
+                renderQr(
+                    data.token
                 );
 
-                renderQr(data.token);
 
                 return;
             }
 
-            currentToken = null;
 
-            if (data.status === 'not_started') {
+            currentToken =
+                null;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BELUM DIMULAI
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                data.status ===
+                'not_started'
+            ) {
+
                 barcodeStatus.textContent =
                     'BELUM DIMULAI';
+
 
                 barcodeStatus.className =
                     'barcode-status';
 
+
                 barcodeTitle.textContent =
                     'Presensi Belum Dibuka';
 
+
                 barcodeDescription.textContent =
-                    data.message ?? 'Latihan belum dimulai.';
+                    data.message
+                    ?? 'Latihan belum dimulai.';
+
 
                 barcodeCountdown.textContent =
                     '';
+
 
                 showPlaceholder(
                     'schedule',
@@ -687,48 +967,80 @@
                     'Barcode aktif saat jam latihan dimulai.'
                 );
 
+
                 return;
             }
 
-            if (data.status === 'ended') {
+
+            /*
+            |--------------------------------------------------------------------------
+            | PRESENSI SELESAI
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                data.status ===
+                'ended'
+            ) {
+
                 barcodeStatus.textContent =
                     'PRESENSI DITUTUP';
+
 
                 barcodeStatus.className =
                     'barcode-status closed';
 
+
                 barcodeTitle.textContent =
-                    'Sesi Latihan Selesai';
+                    'Presensi Latihan Ditutup';
+
 
                 barcodeDescription.textContent =
-                    data.message ?? 'Presensi sudah ditutup.';
+                    data.message
+                    ?? 'Batas waktu presensi telah berakhir.';
+
 
                 barcodeCountdown.textContent =
                     '';
 
+
                 showPlaceholder(
                     'event_busy',
                     'Presensi Ditutup',
-                    'Jam latihan sudah selesai.'
+                    'Batas waktu presensi telah berakhir.'
                 );
+
 
                 return;
             }
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | TIDAK TERSEDIA
+            |--------------------------------------------------------------------------
+            */
+
             barcodeStatus.textContent =
                 'BARCODE TIDAK TERSEDIA';
+
 
             barcodeStatus.className =
                 'barcode-status closed';
 
+
             barcodeTitle.textContent =
                 'Barcode Tidak Tersedia';
 
+
             barcodeDescription.textContent =
-                data.message ?? 'Jadwal latihan belum lengkap.';
+                data.message
+                ?? 'Jadwal latihan belum lengkap.';
+
 
             barcodeCountdown.textContent =
                 '';
+
 
             showPlaceholder(
                 'warning',
@@ -736,23 +1048,37 @@
                 'Periksa jadwal sesi latihan.'
             );
 
+
         } catch (error) {
-            console.error(error);
+
+            console.error(
+                error
+            );
+
+
+            currentToken =
+                null;
+
 
             barcodeStatus.textContent =
                 'GAGAL MEMUAT';
 
+
             barcodeStatus.className =
                 'barcode-status closed';
+
 
             barcodeTitle.textContent =
                 'Terjadi Kesalahan';
 
+
             barcodeDescription.textContent =
                 'Barcode gagal dimuat dari server.';
 
+
             barcodeCountdown.textContent =
                 '';
+
 
             showPlaceholder(
                 'error',
@@ -762,25 +1088,63 @@
         }
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | COUNTDOWN
+    |--------------------------------------------------------------------------
+    */
+
     setInterval(
         function () {
-            if (secondsRemaining > 0) {
+
+            if (
+                secondsRemaining > 0
+            ) {
+
                 secondsRemaining--;
+
 
                 barcodeCountdown.textContent =
                     `QR berganti dalam ${secondsRemaining} detik`;
+
+
+                if (
+                    secondsRemaining <= 0
+                ) {
+
+                    fetchBarcode();
+                }
             }
+
         },
         1000
     );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | REFRESH SERVER
+    |--------------------------------------------------------------------------
+    */
 
     setInterval(
         fetchBarcode,
         3000
     );
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | PERTAMA KALI
+    |--------------------------------------------------------------------------
+    */
+
     fetchBarcode();
+
 </script>
 
+
 </body>
+
 </html>

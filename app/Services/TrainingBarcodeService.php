@@ -12,7 +12,7 @@ class TrainingBarcodeService
 {
     /*
     |--------------------------------------------------------------------------
-    | KONFIGURASI QR
+    | MASA AKTIF QR
     |--------------------------------------------------------------------------
     */
 
@@ -22,7 +22,19 @@ class TrainingBarcodeService
 
     /*
     |--------------------------------------------------------------------------
-    | AMBIL BARCODE AKTIF SESI LATIHAN
+    | CONSTRUCTOR
+    |--------------------------------------------------------------------------
+    */
+
+    public function __construct(
+        protected TrainingAttendanceService $trainingAttendanceService
+    ) {
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AMBIL BARCODE AKTIF
     |--------------------------------------------------------------------------
     */
 
@@ -30,30 +42,33 @@ class TrainingBarcodeService
         TrainingSession $trainingSession
     ): array {
 
-        $timezone =
-            TrainingAttendanceService::TIMEZONE;
-
+        /*
+        |--------------------------------------------------------------------------
+        | WAKTU SEKARANG
+        |--------------------------------------------------------------------------
+        */
 
         $now =
             Carbon::now(
-                $timezone
+                TrainingAttendanceService::TIMEZONE
             );
 
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI JADWAL
+        | SATU SUMBER WAKTU
         |--------------------------------------------------------------------------
         */
 
-        if (
-            !$trainingSession->training_date
-            ||
-            !$trainingSession->start_time
-            ||
-            !$trainingSession->end_time
-        ) {
+        $times =
+            $this
+                ->trainingAttendanceService
+                ->getSessionTimes(
+                    $trainingSession
+                );
 
+
+        if (!$times) {
             return [
                 'status' =>
                     'no_schedule',
@@ -64,124 +79,14 @@ class TrainingBarcodeService
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TANGGAL
-        |--------------------------------------------------------------------------
-        */
-
-        $date =
-            Carbon::parse(
-                $trainingSession->training_date,
-                $timezone
-            )->format(
-                'Y-m-d'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JAM MULAI
-        |--------------------------------------------------------------------------
-        */
-
-        $startTime =
-            Carbon::parse(
-                $trainingSession->start_time,
-                $timezone
-            )->format(
-                'H:i:s'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JAM SELESAI
-        |--------------------------------------------------------------------------
-        */
-
-        $endTime =
-            Carbon::parse(
-                $trainingSession->end_time,
-                $timezone
-            )->format(
-                'H:i:s'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | WAKTU MULAI
-        |--------------------------------------------------------------------------
-        */
-
         $startsAt =
-            Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                $date
-                .
-                ' '
-                .
-                $startTime,
-                $timezone
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | WAKTU SELESAI
-        |--------------------------------------------------------------------------
-        */
+            $times['starts_at'];
 
         $endsAt =
-            Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                $date
-                .
-                ' '
-                .
-                $endTime,
-                $timezone
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATAS ALFA
-        |--------------------------------------------------------------------------
-        |
-        | Menggunakan satu sumber konfigurasi:
-        |
-        | TrainingAttendanceService
-        |
-        */
-
-        $alphaAt =
-            $startsAt
-                ->copy()
-                ->addMinutes(
-                    TrainingAttendanceService::AUTO_ABSENT_AFTER_MINUTES
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATAS AKHIR PRESENSI
-        |--------------------------------------------------------------------------
-        |
-        | Ditutup pada waktu yang lebih dahulu antara:
-        |
-        | - jam selesai latihan
-        | - start +30 menit
-        |
-        */
+            $times['ends_at'];
 
         $closesAt =
-            $endsAt->lt(
-                $alphaAt
-            )
-                ? $endsAt->copy()
-                : $alphaAt->copy();
+            $times['closes_at'];
 
 
         /*
@@ -202,6 +107,7 @@ class TrainingBarcodeService
 
 
             return [
+
                 'status' =>
                     'not_started',
 
@@ -209,28 +115,27 @@ class TrainingBarcodeService
                     'Presensi latihan belum dibuka.',
 
                 'starts_at' =>
-                    $startsAt
-                        ->toIso8601String(),
+                    $startsAt->toIso8601String(),
 
                 'ends_at' =>
-                    $endsAt
-                        ->toIso8601String(),
+                    $endsAt->toIso8601String(),
 
                 'closes_at' =>
-                    $closesAt
-                        ->toIso8601String(),
+                    $closesAt->toIso8601String(),
+
             ];
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | PRESENSI SUDAH DITUTUP
+        | SUDAH LEWAT BATAS
         |--------------------------------------------------------------------------
         |
-        | Tepat closes_at masih boleh.
+        | Penting:
         |
-        | Setelah closes_at baru ditutup.
+        | Tepat pada closes_at masih diperbolehkan.
+        | Satu detik setelahnya ditutup.
         |
         */
 
@@ -246,6 +151,7 @@ class TrainingBarcodeService
 
 
             return [
+
                 'status' =>
                     'ended',
 
@@ -253,16 +159,14 @@ class TrainingBarcodeService
                     'Presensi latihan sudah ditutup karena batas waktu presensi telah berakhir.',
 
                 'starts_at' =>
-                    $startsAt
-                        ->toIso8601String(),
+                    $startsAt->toIso8601String(),
 
                 'ends_at' =>
-                    $endsAt
-                        ->toIso8601String(),
+                    $endsAt->toIso8601String(),
 
                 'closes_at' =>
-                    $closesAt
-                        ->toIso8601String(),
+                    $closesAt->toIso8601String(),
+
             ];
         }
 
@@ -284,7 +188,7 @@ class TrainingBarcodeService
 
                 /*
                 |--------------------------------------------------------------------------
-                | NONAKTIFKAN QR EXPIRED / SUDAH DIGUNAKAN
+                | MATIKAN QR EXPIRED / SUDAH DIPAKAI
                 |--------------------------------------------------------------------------
                 */
 
@@ -351,15 +255,7 @@ class TrainingBarcodeService
                 |--------------------------------------------------------------------------
                 */
 
-                if (
-                    !$barcode
-                ) {
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | EXPIRED NORMAL
-                    |--------------------------------------------------------------------------
-                    */
+                if (!$barcode) {
 
                     $expiredAt =
                         $now
@@ -371,22 +267,22 @@ class TrainingBarcodeService
 
                     /*
                     |--------------------------------------------------------------------------
-                    | BATAS MAKSIMAL EXPIRED
+                    | BATAS EXPIRED QR
                     |--------------------------------------------------------------------------
                     |
-                    | closes_at:
-                    | 14:30:00
+                    | Scanner masih mengizinkan tepat pada closes_at.
                     |
-                    | Tepat 14:30:00 masih boleh.
+                    | Karena expired_at bersifat eksklusif:
                     |
-                    | Karena pengecekan expired menggunakan >=,
-                    | expired_at dibuat maksimal:
+                    | now >= expired_at = expired
                     |
-                    | 14:30:01
+                    | maka QR diberi ceiling closes_at + 1 detik.
+                    |
+                    | Backend tetap menolak request setelah closes_at.
                     |
                     */
 
-                    $maximumExpiredAt =
+                    $expiryCeiling =
                         $closesAt
                             ->copy()
                             ->addSecond();
@@ -394,12 +290,11 @@ class TrainingBarcodeService
 
                     if (
                         $expiredAt->gt(
-                            $maximumExpiredAt
+                            $expiryCeiling
                         )
                     ) {
-
                         $expiredAt =
-                            $maximumExpiredAt;
+                            $expiryCeiling;
                     }
 
 
@@ -421,6 +316,7 @@ class TrainingBarcodeService
 
 
                         return [
+
                             'status' =>
                                 'ended',
 
@@ -430,6 +326,7 @@ class TrainingBarcodeService
                             'closes_at' =>
                                 $closesAt
                                     ->toIso8601String(),
+
                         ];
                     }
 
@@ -442,6 +339,7 @@ class TrainingBarcodeService
 
                     $barcode =
                         TrainingBarcode::create([
+
                             'training_session_id' =>
                                 $trainingSession->id,
 
@@ -461,13 +359,14 @@ class TrainingBarcodeService
 
                             'used_at' =>
                                 null,
+
                         ]);
                 }
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | HITUNG SISA WAKTU
+                | SISA WAKTU
                 |--------------------------------------------------------------------------
                 */
 
@@ -488,6 +387,7 @@ class TrainingBarcodeService
                 */
 
                 return [
+
                     'status' =>
                         'active',
 
@@ -516,6 +416,7 @@ class TrainingBarcodeService
                     'closes_at' =>
                         $closesAt
                             ->toIso8601String(),
+
                 ];
             }
         );

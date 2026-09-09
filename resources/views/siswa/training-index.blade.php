@@ -688,6 +688,28 @@
 <body>
 
 
+@php
+
+    /*
+    |--------------------------------------------------------------------------
+    | SATU SUMBER ATURAN WAKTU
+    |--------------------------------------------------------------------------
+    */
+
+    $trainingAttendanceService =
+        app(
+            \App\Services\TrainingAttendanceService::class
+        );
+
+
+    $now =
+        \Carbon\Carbon::now(
+            \App\Services\TrainingAttendanceService::TIMEZONE
+        );
+
+@endphp
+
+
 <header class="kko-header">
 
     <div class="kko-header-inner">
@@ -850,16 +872,6 @@
     </section>
 
 
-    @php
-
-        $now =
-            \Carbon\Carbon::now(
-                'Asia/Jakarta'
-            );
-
-    @endphp
-
-
     <section class="schedule-list">
 
         @forelse ($sessions as $session)
@@ -868,97 +880,40 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | WAKTU SESI
+                | AMBIL WAKTU SESI DARI SERVICE
                 |--------------------------------------------------------------------------
                 */
 
-                $date =
-                    \Carbon\Carbon::parse(
-                        $session->training_date
-                    )->format(
-                        'Y-m-d'
-                    );
-
-
-                $startTime =
-                    \Carbon\Carbon::parse(
-                        $session->start_time,
-                        'Asia/Jakarta'
-                    )->format(
-                        'H:i:s'
-                    );
-
-
-                $endTime =
-                    \Carbon\Carbon::parse(
-                        $session->end_time,
-                        'Asia/Jakarta'
-                    )->format(
-                        'H:i:s'
-                    );
+                $times =
+                    $trainingAttendanceService
+                        ->getSessionTimes(
+                            $session
+                        );
 
 
                 $startsAt =
-                    \Carbon\Carbon::createFromFormat(
-                        'Y-m-d H:i:s',
-                        $date
-                        . ' '
-                        . $startTime,
-                        'Asia/Jakarta'
-                    );
+                    $times['starts_at']
+                    ?? null;
 
 
                 $endsAt =
-                    \Carbon\Carbon::createFromFormat(
-                        'Y-m-d H:i:s',
-                        $date
-                        . ' '
-                        . $endTime,
-                        'Asia/Jakarta'
-                    );
+                    $times['ends_at']
+                    ?? null;
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | BATAS HADIR = +10 MENIT
-                |--------------------------------------------------------------------------
-                */
 
                 $lateLimit =
-                    $startsAt
-                        ->copy()
-                        ->addMinutes(10);
+                    $times['late_limit']
+                    ?? null;
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | BATAS ALFA = +30 MENIT
-                |--------------------------------------------------------------------------
-                */
 
                 $alphaAt =
-                    $startsAt
-                        ->copy()
-                        ->addMinutes(30);
+                    $times['alpha_at']
+                    ?? null;
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | BATAS AKHIR SCANNER
-                |--------------------------------------------------------------------------
-                |
-                | Backend juga menggunakan batas yang lebih dahulu:
-                |
-                | jam selesai
-                | atau
-                | +30 menit
-                |
-                */
 
                 $closesAt =
-                    $endsAt->lt($alphaAt)
-                        ? $endsAt->copy()
-                        : $alphaAt->copy();
+                    $times['closes_at']
+                    ?? null;
 
 
                 /*
@@ -979,21 +934,60 @@
                 |--------------------------------------------------------------------------
                 */
 
-                $canScan = false;
+                $canScan =
+                    false;
 
-                $cardClass = '';
 
-                $statusClass = '';
+                $cardClass =
+                    '';
 
-                $statusText = '';
 
-                $statusDescription = '';
+                $statusClass =
+                    '';
 
-                $attendanceClass = '';
 
-                $attendanceIcon = 'check_circle';
+                $statusText =
+                    '';
 
-                $attendanceLabel = null;
+
+                $statusDescription =
+                    '';
+
+
+                $attendanceClass =
+                    '';
+
+
+                $attendanceIcon =
+                    'check_circle';
+
+
+                $attendanceLabel =
+                    null;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | JADWAL BELUM LENGKAP
+                |--------------------------------------------------------------------------
+                */
+
+                if (!$times) {
+
+                    $cardClass =
+                        'closed-card';
+
+
+                    $statusClass =
+                        'status-ended';
+
+
+                    $statusText =
+                        'JADWAL BELUM LENGKAP';
+
+
+                    $statusDescription =
+                        'Jam mulai atau jam selesai latihan belum ditentukan.';
 
 
                 /*
@@ -1002,10 +996,12 @@
                 |--------------------------------------------------------------------------
                 */
 
-                if ($attendance) {
+                } elseif ($attendance) {
 
                     $attendanceLabel =
-                        match ($attendance->status) {
+                        match (
+                            $attendance->status
+                        ) {
 
                             'present' =>
                                 'Hadir',
@@ -1029,7 +1025,9 @@
                         };
 
 
-                    switch ($attendance->status) {
+                    switch (
+                        $attendance->status
+                    ) {
 
                         case 'present':
 
@@ -1166,8 +1164,10 @@
                     $statusClass =
                         'status-upcoming';
 
+
                     $statusText =
                         'BELUM DIMULAI';
+
 
                     $statusDescription =
                         'Presensi akan dibuka saat jadwal latihan dimulai.';
@@ -1178,7 +1178,7 @@
                 | HADIR
                 |--------------------------------------------------------------------------
                 |
-                | Mulai hingga tepat +10 menit.
+                | Mulai sesi sampai batas Hadir dari service.
                 |
                 */
 
@@ -1186,7 +1186,8 @@
                     $now->lte(
                         $lateLimit
                     )
-                    && $now->lte(
+                    &&
+                    $now->lte(
                         $closesAt
                     )
                 ) {
@@ -1194,14 +1195,18 @@
                     $cardClass =
                         'active-card';
 
+
                     $statusClass =
                         'status-active';
+
 
                     $statusText =
                         'PRESENSI AKTIF';
 
+
                     $statusDescription =
                         'Scan sekarang untuk tercatat Hadir.';
+
 
                     $canScan =
                         true;
@@ -1212,7 +1217,7 @@
                 | TERLAMBAT
                 |--------------------------------------------------------------------------
                 |
-                | Setelah +10 menit sampai batas presensi.
+                | Setelah batas Hadir sampai batas penutupan presensi.
                 |
                 */
 
@@ -1225,14 +1230,18 @@
                     $cardClass =
                         'active-card';
 
+
                     $statusClass =
                         'status-late';
+
 
                     $statusText =
                         'PRESENSI TERLAMBAT';
 
+
                     $statusDescription =
                         'Presensi masih dibuka, tetapi scan akan tercatat Terlambat.';
+
 
                     $canScan =
                         true;
@@ -1249,14 +1258,18 @@
                     $cardClass =
                         'closed-card';
 
+
                     $statusClass =
                         'status-ended';
+
 
                     $statusText =
                         'PRESENSI DITUTUP';
 
+
                     $statusDescription =
                         'Batas presensi telah berakhir. Jika tidak memiliki keterangan, sistem akan mencatat Alfa otomatis.';
+
 
                     $canScan =
                         false;
@@ -1302,8 +1315,6 @@
                 <div class="schedule-info">
 
 
-                    <!-- JAM LATIHAN -->
-
                     <div class="info-item">
 
                         <span>
@@ -1311,16 +1322,24 @@
                         </span>
 
                         <strong>
-                            {{ $startsAt->format('H:i') }}
-                            -
-                            {{ $endsAt->format('H:i') }}
-                            WIB
+
+                            @if($startsAt && $endsAt)
+
+                                {{ $startsAt->format('H:i') }}
+                                -
+                                {{ $endsAt->format('H:i') }}
+                                WIB
+
+                            @else
+
+                                -
+
+                            @endif
+
                         </strong>
 
                     </div>
 
-
-                    <!-- BATAS HADIR -->
 
                     <div class="info-item">
 
@@ -1329,14 +1348,22 @@
                         </span>
 
                         <strong>
-                            {{ $lateLimit->format('H:i') }}
-                            WIB
+
+                            @if($lateLimit)
+
+                                {{ $lateLimit->format('H:i') }}
+                                WIB
+
+                            @else
+
+                                -
+
+                            @endif
+
                         </strong>
 
                     </div>
 
-
-                    <!-- BATAS ALFA -->
 
                     <div class="info-item alpha-info">
 
@@ -1345,14 +1372,22 @@
                         </span>
 
                         <strong>
-                            {{ $alphaAt->format('H:i') }}
-                            WIB
+
+                            @if($alphaAt)
+
+                                {{ $alphaAt->format('H:i') }}
+                                WIB
+
+                            @else
+
+                                -
+
+                            @endif
+
                         </strong>
 
                     </div>
 
-
-                    <!-- LOKASI -->
 
                     <div class="info-item">
 
@@ -1410,7 +1445,9 @@
 
                                 {{ $attendance
                                     ->checked_in_at
-                                    ->timezone('Asia/Jakarta')
+                                    ->timezone(
+                                        \App\Services\TrainingAttendanceService::TIMEZONE
+                                    )
                                     ->format('H:i:s') }}
 
                                 WIB

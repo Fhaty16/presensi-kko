@@ -25,13 +25,8 @@ class TrainingAttendanceService
     | BATAS HADIR
     |--------------------------------------------------------------------------
     |
-    | Mulai latihan sampai tepat +10 menit:
-    |
-    | status = present
-    |
-    | Setelah +10 menit:
-    |
-    | status = late
+    | Mulai sampai tepat +10 menit = Hadir.
+    | Setelah +10 menit = Terlambat.
     |
     */
 
@@ -41,14 +36,10 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
-    | BATAS ALFA
+    | BATAS MAKSIMAL PRESENSI
     |--------------------------------------------------------------------------
     |
-    | Tepat +30 menit masih boleh presensi.
-    |
-    | Setelah +30 menit:
-    |
-    | status = absent
+    | Presensi maksimal dibuka sampai +30 menit setelah latihan dimulai.
     |
     */
 
@@ -58,11 +49,25 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
-    | CATATAN ALFA OTOMATIS
+    | CATATAN AUTO ALFA
     |--------------------------------------------------------------------------
     */
 
     public const AUTO_ABSENT_NOTE =
+        'Alfa otomatis karena tidak melakukan presensi sampai batas waktu presensi latihan berakhir.';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CATATAN AUTO ALFA VERSI LAMA
+    |--------------------------------------------------------------------------
+    |
+    | Dipertahankan supaya Alfa otomatis yang sudah pernah tersimpan
+    | masih dapat dikenali ketika jadwal latihan diedit.
+    |
+    */
+
+    public const LEGACY_AUTO_ABSENT_NOTE =
         'Alfa otomatis karena tidak melakukan presensi lebih dari 30 menit setelah latihan dimulai.';
 
 
@@ -76,12 +81,6 @@ class TrainingAttendanceService
         TrainingSession $trainingSession
     ): ?Carbon {
 
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI DATA
-        |--------------------------------------------------------------------------
-        */
-
         if (
             !$trainingSession->training_date
             ||
@@ -91,51 +90,72 @@ class TrainingAttendanceService
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TANGGAL
-        |--------------------------------------------------------------------------
-        */
-
         $date =
             Carbon::parse(
                 $trainingSession->training_date,
                 self::TIMEZONE
-            )
-                ->format(
-                    'Y-m-d'
-                );
+            )->format(
+                'Y-m-d'
+            );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | JAM MULAI
-        |--------------------------------------------------------------------------
-        */
 
         $startTime =
             Carbon::parse(
                 $trainingSession->start_time,
                 self::TIMEZONE
-            )
-                ->format(
-                    'H:i:s'
-                );
+            )->format(
+                'H:i:s'
+            );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | WAKTU MULAI LENGKAP
-        |--------------------------------------------------------------------------
-        */
 
         return Carbon::createFromFormat(
             'Y-m-d H:i:s',
-            $date
-            .
-            ' '
-            .
-            $startTime,
+            $date . ' ' . $startTime,
+            self::TIMEZONE
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | WAKTU SELESAI SESI
+    |--------------------------------------------------------------------------
+    */
+
+    public function getSessionEndsAt(
+        TrainingSession $trainingSession
+    ): ?Carbon {
+
+        if (
+            !$trainingSession->training_date
+            ||
+            !$trainingSession->end_time
+        ) {
+            return null;
+        }
+
+
+        $date =
+            Carbon::parse(
+                $trainingSession->training_date,
+                self::TIMEZONE
+            )->format(
+                'Y-m-d'
+            );
+
+
+        $endTime =
+            Carbon::parse(
+                $trainingSession->end_time,
+                self::TIMEZONE
+            )->format(
+                'H:i:s'
+            );
+
+
+        return Carbon::createFromFormat(
+            'Y-m-d H:i:s',
+            $date . ' ' . $endTime,
             self::TIMEZONE
         );
     }
@@ -148,8 +168,8 @@ class TrainingAttendanceService
     |
     | Contoh:
     |
-    | Mulai latihan : 14:00
-    | Batas hadir   : 14:10
+    | Mulai       : 14:00:00
+    | Batas hadir : 14:10:00
     |
     | Tepat 14:10:00 masih Hadir.
     |
@@ -180,17 +200,11 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
-    | WAKTU ALFA
+    | BATAS MAKSIMAL +30 MENIT
     |--------------------------------------------------------------------------
-    |
-    | Contoh:
-    |
-    | Mulai latihan : 14:00
-    | Batas Alfa    : 14:30
-    |
     */
 
-    public function getAutomaticAbsentAt(
+    public function getMaximumAttendanceLimitAt(
         TrainingSession $trainingSession
     ): ?Carbon {
 
@@ -215,14 +229,189 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
-    | CEK APAKAH SUDAH WAKTUNYA ALFA
+    | BATAS AKHIR PRESENSI
     |--------------------------------------------------------------------------
     |
-    | 14:30:00
-    | => belum Alfa
+    | Ambil waktu yang lebih dahulu:
     |
-    | 14:30:01
-    | => sudah dapat diproses menjadi Alfa
+    | 1. end_time
+    | 2. start_time + 30 menit
+    |
+    | Contoh:
+    |
+    | 14:00 - 16:00
+    | closes_at = 14:30
+    |
+    | 14:00 - 14:20
+    | closes_at = 14:20
+    |
+    */
+
+    public function getAttendanceClosesAt(
+        TrainingSession $trainingSession
+    ): ?Carbon {
+
+        $endsAt =
+            $this->getSessionEndsAt(
+                $trainingSession
+            );
+
+
+        $maximumLimitAt =
+            $this->getMaximumAttendanceLimitAt(
+                $trainingSession
+            );
+
+
+        if (
+            !$endsAt
+            ||
+            !$maximumLimitAt
+        ) {
+            return null;
+        }
+
+
+        return $endsAt->lt(
+            $maximumLimitAt
+        )
+            ? $endsAt->copy()
+            : $maximumLimitAt->copy();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEMUA WAKTU SESI
+    |--------------------------------------------------------------------------
+    |
+    | Ini menjadi SATU SUMBER WAKTU untuk:
+    |
+    | - Scanner siswa
+    | - QR / Barcode latihan
+    | - Auto Alfa
+    |
+    */
+
+    public function getSessionTimes(
+        TrainingSession $trainingSession
+    ): ?array {
+
+        $startsAt =
+            $this->getSessionStartsAt(
+                $trainingSession
+            );
+
+
+        $endsAt =
+            $this->getSessionEndsAt(
+                $trainingSession
+            );
+
+
+        $lateLimit =
+            $this->getLateLimitAt(
+                $trainingSession
+            );
+
+
+        $maximumAttendanceLimitAt =
+            $this->getMaximumAttendanceLimitAt(
+                $trainingSession
+            );
+
+
+        $closesAt =
+            $this->getAttendanceClosesAt(
+                $trainingSession
+            );
+
+
+        if (
+            !$startsAt
+            ||
+            !$endsAt
+            ||
+            !$lateLimit
+            ||
+            !$maximumAttendanceLimitAt
+            ||
+            !$closesAt
+        ) {
+            return null;
+        }
+
+
+        return [
+
+            'starts_at' =>
+                $startsAt,
+
+            'late_limit' =>
+                $lateLimit,
+
+            /*
+            |--------------------------------------------------------------------------
+            | ALPHA_AT
+            |--------------------------------------------------------------------------
+            |
+            | Ini adalah batas Alfa aktual.
+            |
+            | Jika sesi selesai sebelum +30 menit,
+            | alpha_at mengikuti end_time.
+            |
+            */
+
+            'alpha_at' =>
+                $closesAt,
+
+            /*
+            |--------------------------------------------------------------------------
+            | BATAS MAKSIMAL +30
+            |--------------------------------------------------------------------------
+            */
+
+            'maximum_attendance_limit_at' =>
+                $maximumAttendanceLimitAt,
+
+            'ends_at' =>
+                $endsAt,
+
+            'closes_at' =>
+                $closesAt,
+
+        ];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | WAKTU AUTO ALFA
+    |--------------------------------------------------------------------------
+    |
+    | Menggunakan closes_at agar sama dengan scanner dan barcode.
+    |
+    */
+
+    public function getAutomaticAbsentAt(
+        TrainingSession $trainingSession
+    ): ?Carbon {
+
+        return $this->getAttendanceClosesAt(
+            $trainingSession
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CEK AUTO ALFA SUDAH DUE
+    |--------------------------------------------------------------------------
+    |
+    | Tepat di batas masih boleh presensi.
+    |
+    | 14:30:00 = belum Alfa
+    | 14:30:01 = Alfa
     |
     */
 
@@ -230,13 +419,13 @@ class TrainingAttendanceService
         TrainingSession $trainingSession
     ): bool {
 
-        $alphaAt =
-            $this->getAutomaticAbsentAt(
+        $closesAt =
+            $this->getAttendanceClosesAt(
                 $trainingSession
             );
 
 
-        if (!$alphaAt) {
+        if (!$closesAt) {
             return false;
         }
 
@@ -248,21 +437,22 @@ class TrainingAttendanceService
 
 
         return $now->gt(
-            $alphaAt
+            $closesAt
         );
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | AMBIL SISWA CALON ALFA
+    | CALON AUTO ALFA
     |--------------------------------------------------------------------------
     |
-    | Siswa harus:
+    | Syarat:
     |
-    | - status active
-    | - cabang olahraga sama dengan sesi
-    | - belum memiliki TrainingAttendance
+    | - siswa active
+    | - cabang olahraga sama
+    | - belum memiliki record presensi pada sesi tersebut
+    | - sudah melewati batas presensi
     |
     */
 
@@ -270,28 +460,18 @@ class TrainingAttendanceService
         TrainingSession $trainingSession
     ): Collection {
 
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI SESI
-        |--------------------------------------------------------------------------
-        */
-
         if (
             !$trainingSession->sport
             ||
             !$trainingSession->training_date
             ||
             !$trainingSession->start_time
+            ||
+            !$trainingSession->end_time
         ) {
             return collect();
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | BELUM LEWAT BATAS ALFA
-        |--------------------------------------------------------------------------
-        */
 
         if (
             !$this->isAutomaticAbsentDue(
@@ -304,7 +484,7 @@ class TrainingAttendanceService
 
         /*
         |--------------------------------------------------------------------------
-        | SISWA YANG SUDAH MEMILIKI PRESENSI
+        | SISWA YANG SUDAH PUNYA PRESENSI
         |--------------------------------------------------------------------------
         */
 
@@ -321,7 +501,7 @@ class TrainingAttendanceService
 
         /*
         |--------------------------------------------------------------------------
-        | QUERY SISWA SESUAI CABANG
+        | SISWA ACTIVE SESUAI CABANG
         |--------------------------------------------------------------------------
         */
 
@@ -365,7 +545,7 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
-    | BUAT ALFA OTOMATIS
+    | BUAT AUTO ALFA
     |--------------------------------------------------------------------------
     */
 
@@ -400,8 +580,8 @@ class TrainingAttendanceService
             | FIRST OR CREATE
             |--------------------------------------------------------------------------
             |
-            | Menjaga agar tidak terjadi duplikasi jika scheduler/controller
-            | berjalan hampir bersamaan.
+            | Mencegah duplikasi jika scheduler/controller berjalan
+            | hampir bersamaan.
             |
             */
 
@@ -441,13 +621,12 @@ class TrainingAttendanceService
 
     /*
     |--------------------------------------------------------------------------
-    | HAPUS ALFA OTOMATIS
+    | HAPUS AUTO ALFA
     |--------------------------------------------------------------------------
     |
     | Digunakan ketika jadwal latihan berubah.
     |
-    | Hanya Alfa otomatis yang dihapus.
-    | Alfa manual tetap dipertahankan.
+    | Alfa manual tidak dihapus.
     |
     */
 
@@ -461,9 +640,12 @@ class TrainingAttendanceService
                 'status',
                 'absent'
             )
-            ->where(
+            ->whereIn(
                 'notes',
-                self::AUTO_ABSENT_NOTE
+                [
+                    self::AUTO_ABSENT_NOTE,
+                    self::LEGACY_AUTO_ABSENT_NOTE,
+                ]
             )
             ->delete();
     }

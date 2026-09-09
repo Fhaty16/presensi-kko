@@ -1858,3 +1858,312 @@ test(
         );
     }
 );
+
+/*
+|--------------------------------------------------------------------------
+| SESI PENDEK: TEPAT END TIME MASIH BOLEH PRESENSI
+|--------------------------------------------------------------------------
+|
+| Sesi:
+|
+| 14:00 - 14:20
+|
+| Karena end_time lebih dahulu daripada +30 menit,
+| batas presensi menjadi 14:20:00.
+|
+*/
+
+test(
+    'student can still scan exactly at short training session end time',
+    function () {
+
+        $now =
+            Carbon::create(
+                2026,
+                9,
+                5,
+                14,
+                20,
+                0,
+                'Asia/Jakarta'
+            );
+
+
+        Carbon::setTestNow(
+            $now
+        );
+
+
+        [$user, $student] =
+            createTrainingTestStudent(
+                '1000000017',
+                'Atletik'
+            );
+
+
+        $session =
+            createTrainingTestSession(
+                startTime:
+                    '14:00:00',
+
+                endTime:
+                    '14:20:00',
+
+                sport:
+                    'Atletik'
+            );
+
+
+        $barcodeData =
+            app(
+                TrainingBarcodeService::class
+            )->getCurrent(
+                $session
+            );
+
+
+        expect(
+            $barcodeData['status']
+        )->toBe(
+            'active'
+        );
+
+
+        $barcode =
+            TrainingBarcode::findOrFail(
+                $barcodeData['barcode_id']
+            );
+
+
+        $response =
+            scanTrainingBarcode(
+                $this,
+                $user,
+                $session,
+                $barcode
+            );
+
+
+        $response
+            ->assertOk()
+            ->assertJsonPath(
+                'attendance.status',
+                'late'
+            );
+
+
+        $this->assertDatabaseHas(
+            'training_attendances',
+            [
+                'training_session_id' =>
+                    $session->id,
+
+                'student_id' =>
+                    $student->id,
+
+                'status' =>
+                    'late',
+            ]
+        );
+    }
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| SESI PENDEK: AUTO ALFA SETELAH END TIME
+|--------------------------------------------------------------------------
+|
+| Sesi:
+|
+| 14:00 - 14:20
+|
+| Tepat 14:20:00:
+|
+| belum Alfa.
+|
+| 14:20:01:
+|
+| Auto Alfa boleh dibuat.
+|
+*/
+
+test(
+    'short training session triggers automatic absence after session end',
+    function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | TEPAT END TIME
+        |--------------------------------------------------------------------------
+        */
+
+        $endTime =
+            Carbon::create(
+                2026,
+                9,
+                5,
+                14,
+                20,
+                0,
+                'Asia/Jakarta'
+            );
+
+
+        Carbon::setTestNow(
+            $endTime
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        [, $student] =
+            createTrainingTestStudent(
+                '1000000018',
+                'Atletik'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SESI PENDEK
+        |--------------------------------------------------------------------------
+        */
+
+        $session =
+            createTrainingTestSession(
+                startTime:
+                    '14:00:00',
+
+                endTime:
+                    '14:20:00',
+
+                sport:
+                    'Atletik'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SERVICE
+        |--------------------------------------------------------------------------
+        */
+
+        $service =
+            app(
+                TrainingAttendanceService::class
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PASTIKAN BATAS = END TIME
+        |--------------------------------------------------------------------------
+        */
+
+        $closesAt =
+            $service
+                ->getAttendanceClosesAt(
+                    $session
+                );
+
+
+        expect(
+            $closesAt
+                ?->format(
+                    'H:i:s'
+                )
+        )->toBe(
+            '14:20:00'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TEPAT END TIME BELUM AUTO ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        expect(
+            $service
+                ->isAutomaticAbsentDue(
+                    $session
+                )
+        )->toBeFalse();
+
+
+        expect(
+            $service
+                ->markAutomaticAbsencesIfDue(
+                    $session
+                )
+        )->toBe(
+            0
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MAJU SATU DETIK
+        |--------------------------------------------------------------------------
+        */
+
+        Carbon::setTestNow(
+            $endTime
+                ->copy()
+                ->addSecond()
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEKARANG AUTO ALFA DUE
+        |--------------------------------------------------------------------------
+        */
+
+        expect(
+            $service
+                ->isAutomaticAbsentDue(
+                    $session
+                )
+        )->toBeTrue();
+
+
+        expect(
+            $service
+                ->markAutomaticAbsencesIfDue(
+                    $session
+                )
+        )->toBe(
+            1
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATABASE
+        |--------------------------------------------------------------------------
+        */
+
+        $this->assertDatabaseHas(
+            'training_attendances',
+            [
+                'training_session_id' =>
+                    $session->id,
+
+                'student_id' =>
+                    $student->id,
+
+                'status' =>
+                    'absent',
+
+                'notes' =>
+                    TrainingAttendanceService::AUTO_ABSENT_NOTE,
+            ]
+        );
+    }
+);

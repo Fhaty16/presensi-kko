@@ -18,26 +18,26 @@ class TrainingScanController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | KONFIGURASI PRESENSI
+    | CONSTRUCTOR
     |--------------------------------------------------------------------------
     |
-    | Seluruh aturan waktu mengambil dari TrainingAttendanceService.
+    | Semua aturan waktu presensi latihan diambil dari
+    | TrainingAttendanceService.
     |
     | Dengan begitu:
     |
-    | Scanner
-    | Barcode
-    | Auto Alfa
+    | - Scanner siswa
+    | - Barcode latihan
+    | - Auto Alfa
     |
-    | selalu menggunakan konfigurasi yang sama.
+    | menggunakan aturan waktu yang sama.
     |
     */
 
-    private const LATE_LIMIT_MINUTES =
-        TrainingAttendanceService::LATE_LIMIT_MINUTES;
-
-    private const ABSENT_LIMIT_MINUTES =
-        TrainingAttendanceService::AUTO_ABSENT_AFTER_MINUTES;
+    public function __construct(
+        protected TrainingAttendanceService $trainingAttendanceService
+    ) {
+    }
 
 
     /*
@@ -105,210 +105,6 @@ class TrainingScanController extends Controller
         ) === $this->normalizeSport(
             $trainingSession->sport
         );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | BENTUK WAKTU SESI
-    |--------------------------------------------------------------------------
-    */
-
-    private function getSessionTimes(
-        TrainingSession $trainingSession
-    ): ?array {
-
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI JADWAL
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            !$trainingSession->training_date
-            ||
-            !$trainingSession->start_time
-            ||
-            !$trainingSession->end_time
-        ) {
-            return null;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | TIMEZONE
-        |--------------------------------------------------------------------------
-        */
-
-        $timezone =
-            TrainingAttendanceService::TIMEZONE;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | TANGGAL LATIHAN
-        |--------------------------------------------------------------------------
-        */
-
-        $date =
-            Carbon::parse(
-                $trainingSession->training_date,
-                $timezone
-            )->format(
-                'Y-m-d'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JAM MULAI
-        |--------------------------------------------------------------------------
-        */
-
-        $startTime =
-            Carbon::parse(
-                $trainingSession->start_time,
-                $timezone
-            )->format(
-                'H:i:s'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JAM SELESAI
-        |--------------------------------------------------------------------------
-        */
-
-        $endTime =
-            Carbon::parse(
-                $trainingSession->end_time,
-                $timezone
-            )->format(
-                'H:i:s'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | WAKTU MULAI
-        |--------------------------------------------------------------------------
-        */
-
-        $startsAt =
-            Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                $date
-                .
-                ' '
-                .
-                $startTime,
-                $timezone
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | WAKTU SELESAI
-        |--------------------------------------------------------------------------
-        */
-
-        $endsAt =
-            Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                $date
-                .
-                ' '
-                .
-                $endTime,
-                $timezone
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATAS HADIR
-        |--------------------------------------------------------------------------
-        |
-        | Mulai sampai tepat +10 menit:
-        |
-        | HADIR
-        |
-        */
-
-        $lateLimit =
-            $startsAt
-                ->copy()
-                ->addMinutes(
-                    self::LATE_LIMIT_MINUTES
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATAS ALFA
-        |--------------------------------------------------------------------------
-        |
-        | Tepat +30 menit masih boleh presensi.
-        |
-        | Setelah +30 menit:
-        |
-        | ALFA
-        |
-        */
-
-        $alphaAt =
-            $startsAt
-                ->copy()
-                ->addMinutes(
-                    self::ABSENT_LIMIT_MINUTES
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATAS AKHIR SCANNER
-        |--------------------------------------------------------------------------
-        |
-        | Scanner ditutup pada waktu yang lebih dahulu antara:
-        |
-        | - jam selesai latihan
-        | - batas +30 menit
-        |
-        */
-
-        $closesAt =
-            $endsAt->lt(
-                $alphaAt
-            )
-                ? $endsAt->copy()
-                : $alphaAt->copy();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | HASIL
-        |--------------------------------------------------------------------------
-        */
-
-        return [
-
-            'starts_at' =>
-                $startsAt,
-
-            'late_limit' =>
-                $lateLimit,
-
-            'alpha_at' =>
-                $alphaAt,
-
-            'ends_at' =>
-                $endsAt,
-
-            'closes_at' =>
-                $closesAt,
-        ];
     }
 
 
@@ -442,7 +238,7 @@ class TrainingScanController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | BELUM PUNYA CABANG
+        | CABANG BELUM DITENTUKAN
         |--------------------------------------------------------------------------
         */
 
@@ -500,15 +296,23 @@ class TrainingScanController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI JADWAL
+        | AMBIL ATURAN WAKTU DARI SERVICE
         |--------------------------------------------------------------------------
         */
 
         $times =
-            $this->getSessionTimes(
-                $trainingSession
-            );
+            $this
+                ->trainingAttendanceService
+                ->getSessionTimes(
+                    $trainingSession
+                );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | JADWAL BELUM LENGKAP
+        |--------------------------------------------------------------------------
+        */
 
         if (!$times) {
 
@@ -537,7 +341,7 @@ class TrainingScanController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | BELUM DIMULAI
+        | PRESENSI BELUM DIMULAI
         |--------------------------------------------------------------------------
         */
 
@@ -560,12 +364,17 @@ class TrainingScanController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | SUDAH LEWAT BATAS PRESENSI
+        | PRESENSI SUDAH DITUTUP
         |--------------------------------------------------------------------------
         |
-        | Gunakan GT.
+        | Tepat pada closes_at masih boleh.
         |
-        | Tepat +30 menit masih diperbolehkan.
+        | Contoh:
+        |
+        | closes_at = 14:30:00
+        |
+        | 14:30:00 -> masih boleh
+        | 14:30:01 -> ditolak
         |
         */
 
@@ -581,16 +390,14 @@ class TrainingScanController extends Controller
                 )
                 ->with(
                     'training_info',
-                    'Presensi latihan sudah ditutup. Batas presensi adalah '
-                    . self::ABSENT_LIMIT_MINUTES
-                    . ' menit setelah latihan dimulai.'
+                    'Presensi latihan sudah ditutup karena batas waktu presensi telah berakhir.'
                 );
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | CEK SUDAH PUNYA PRESENSI
+        | CEK PRESENSI YANG SUDAH ADA
         |--------------------------------------------------------------------------
         */
 
@@ -605,6 +412,12 @@ class TrainingScanController extends Controller
                 )
                 ->first();
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUDAH PUNYA PRESENSI
+        |--------------------------------------------------------------------------
+        */
 
         if ($existingAttendance) {
 
@@ -681,6 +494,12 @@ class TrainingScanController extends Controller
             )->first();
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | SISWA TIDAK DITEMUKAN
+        |--------------------------------------------------------------------------
+        */
+
         if (!$student) {
 
             return response()->json([
@@ -746,6 +565,10 @@ class TrainingScanController extends Controller
                     |--------------------------------------------------------------------------
                     | AMBIL DAN KUNCI QR
                     |--------------------------------------------------------------------------
+                    |
+                    | lockForUpdate digunakan untuk mencegah QR yang sama
+                    | berhasil digunakan oleh dua request secara bersamaan.
+                    |
                     */
 
                     $barcode =
@@ -779,7 +602,7 @@ class TrainingScanController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
-                    | AMBIL SESI QR
+                    | AMBIL SESI DARI QR
                     |--------------------------------------------------------------------------
                     */
 
@@ -787,6 +610,12 @@ class TrainingScanController extends Controller
                         $barcode
                             ->trainingSession;
 
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SESI TIDAK DITEMUKAN
+                    |--------------------------------------------------------------------------
+                    */
 
                     if (!$session) {
 
@@ -804,7 +633,7 @@ class TrainingScanController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
-                    | COCOKKAN SESI
+                    | COCOKKAN SESSION ID
                     |--------------------------------------------------------------------------
                     */
 
@@ -829,7 +658,7 @@ class TrainingScanController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
-                    | VALIDASI CABANG
+                    | VALIDASI CABANG OLAHRAGA
                     |--------------------------------------------------------------------------
                     */
 
@@ -856,15 +685,23 @@ class TrainingScanController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
-                    | VALIDASI JADWAL
+                    | AMBIL ATURAN WAKTU DARI SERVICE
                     |--------------------------------------------------------------------------
                     */
 
                     $times =
-                        $this->getSessionTimes(
-                            $session
-                        );
+                        $this
+                            ->trainingAttendanceService
+                            ->getSessionTimes(
+                                $session
+                            );
 
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | JADWAL TIDAK LENGKAP
+                    |--------------------------------------------------------------------------
+                    */
 
                     if (!$times) {
 
@@ -906,12 +743,11 @@ class TrainingScanController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
-                    | LEWAT BATAS PRESENSI
+                    | SUDAH LEWAT BATAS PRESENSI
                     |--------------------------------------------------------------------------
                     |
-                    | Tepat +30 menit masih diperbolehkan.
-                    |
-                    | Setelah +30 menit request ditolak.
+                    | Backend tetap melakukan validasi meskipun QR lama
+                    | masih tampil pada perangkat siswa.
                     |
                     */
 
@@ -928,10 +764,8 @@ class TrainingScanController extends Controller
                         */
 
                         $barcode->update([
-
                             'is_active' =>
                                 false,
-
                         ]);
 
 
@@ -941,9 +775,7 @@ class TrainingScanController extends Controller
                                 false,
 
                             'message' =>
-                                'Presensi latihan sudah ditutup. Kamu sudah melewati batas presensi '
-                                . self::ABSENT_LIMIT_MINUTES
-                                . ' menit.',
+                                'Presensi latihan sudah ditutup karena batas waktu presensi telah berakhir.',
 
                         ], 422);
                     }
@@ -991,15 +823,13 @@ class TrainingScanController extends Controller
 
                         /*
                         |--------------------------------------------------------------------------
-                        | NONAKTIFKAN QR
+                        | NONAKTIFKAN
                         |--------------------------------------------------------------------------
                         */
 
                         $barcode->update([
-
                             'is_active' =>
                                 false,
-
                         ]);
 
 
@@ -1020,7 +850,7 @@ class TrainingScanController extends Controller
                     | CEK PRESENSI YANG SUDAH ADA
                     |--------------------------------------------------------------------------
                     |
-                    | Status apa pun dianggap sudah tercatat:
+                    | Semua status dianggap sudah tercatat:
                     |
                     | present
                     | late
@@ -1042,6 +872,12 @@ class TrainingScanController extends Controller
                             ->lockForUpdate()
                             ->first();
 
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SUDAH PUNYA PRESENSI
+                    |--------------------------------------------------------------------------
+                    */
 
                     if ($existingAttendance) {
 
@@ -1077,12 +913,6 @@ class TrainingScanController extends Controller
                                     ),
                             };
 
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | RESPONSE SUDAH PRESENSI
-                        |--------------------------------------------------------------------------
-                        */
 
                         return response()->json([
 
@@ -1127,11 +957,11 @@ class TrainingScanController extends Controller
                     | TENTUKAN HADIR / TERLAMBAT
                     |--------------------------------------------------------------------------
                     |
-                    | Mulai sampai tepat +10 menit:
+                    | start_time sampai tepat late_limit:
                     |
                     | HADIR
                     |
-                    | Setelah +10 sampai tepat +30 menit:
+                    | setelah late_limit sampai closes_at:
                     |
                     | TERLAMBAT
                     |
@@ -1194,6 +1024,18 @@ class TrainingScanController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
+                    | LABEL STATUS
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $statusLabel =
+                        $status === 'present'
+                            ? 'Hadir'
+                            : 'Terlambat';
+
+
+                    /*
+                    |--------------------------------------------------------------------------
                     | RESPONSE BERHASIL
                     |--------------------------------------------------------------------------
                     */
@@ -1220,9 +1062,7 @@ class TrainingScanController extends Controller
                                 $status,
 
                             'status_label' =>
-                                $status === 'present'
-                                    ? 'Hadir'
-                                    : 'Terlambat',
+                                $statusLabel,
 
                             'checked_in_at' =>
                                 $now->format(
@@ -1238,7 +1078,8 @@ class TrainingScanController extends Controller
 
                             'training_date' =>
                                 Carbon::parse(
-                                    $session->training_date
+                                    $session->training_date,
+                                    TrainingAttendanceService::TIMEZONE
                                 )->format(
                                     'Y-m-d'
                                 ),
@@ -1267,6 +1108,12 @@ class TrainingScanController extends Controller
                                         'H:i'
                                     ),
 
+                            'closes_at' =>
+                                $times['closes_at']
+                                    ->format(
+                                        'H:i:s'
+                                    ),
+
                         ],
 
                     ]);
@@ -1277,7 +1124,7 @@ class TrainingScanController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | LAPORKAN ERROR
+            | LOG ERROR
             |--------------------------------------------------------------------------
             */
 

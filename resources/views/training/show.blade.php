@@ -1152,89 +1152,91 @@
 
     /*
     |--------------------------------------------------------------------------
-    | WAKTU SESI
+    | TRAINING ATTENDANCE SERVICE
+    |--------------------------------------------------------------------------
+    |
+    | Semua aturan waktu presensi latihan mengambil dari satu sumber:
+    |
+    | App\Services\TrainingAttendanceService
+    |
+    | Service yang sama digunakan oleh:
+    |
+    | - Scanner siswa
+    | - Barcode latihan
+    | - Auto Alfa
+    | - Tampilan detail latihan
+    |
+    */
+
+    $trainingAttendanceService =
+        app(
+            \App\Services\TrainingAttendanceService::class
+        );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AMBIL SELURUH WAKTU SESI
     |--------------------------------------------------------------------------
     */
 
-    $date =
-        \Carbon\Carbon::parse(
-            $trainingSession->training_date
-        )->format('Y-m-d');
+    $times =
+        $trainingAttendanceService
+            ->getSessionTimes(
+                $trainingSession
+            );
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | WAKTU MENTAH
+    |--------------------------------------------------------------------------
+    */
 
     $startsAt =
-        $trainingSession->start_time
-            ? \Carbon\Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                $date . ' ' . $trainingSession->start_time,
-                'Asia/Jakarta'
-            )
-            : null;
+        $times['starts_at']
+        ?? null;
 
 
     $endsAt =
-        $trainingSession->end_time
-            ? \Carbon\Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                $date . ' ' . $trainingSession->end_time,
-                'Asia/Jakarta'
-            )
-            : null;
+        $times['ends_at']
+        ?? null;
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | BATAS HADIR +10 MENIT
-    |--------------------------------------------------------------------------
-    */
 
     $lateLimitAt =
-        $startsAt
-            ? $startsAt
-                ->copy()
-                ->addMinutes(10)
-            : null;
+        $times['late_limit']
+        ?? null;
 
 
     /*
     |--------------------------------------------------------------------------
-    | BATAS ALFA +30 MENIT
+    | BATAS ALFA AKTUAL
     |--------------------------------------------------------------------------
+    |
+    | Untuk sesi normal, batas Alfa mengikuti batas maksimal presensi.
+    | Untuk sesi pendek, batas Alfa mengikuti jam selesai sesi.
+    |
     */
 
     $alphaAt =
-        $startsAt
-            ? $startsAt
-                ->copy()
-                ->addMinutes(30)
-            : null;
+        $times['alpha_at']
+        ?? null;
 
 
     /*
     |--------------------------------------------------------------------------
-    | BATAS PRESENSI
+    | BATAS AKHIR PRESENSI
     |--------------------------------------------------------------------------
     */
 
-    if (
-        $endsAt
-        && $alphaAt
-    ) {
-
-        $closesAt =
-            $endsAt->lt($alphaAt)
-                ? $endsAt->copy()
-                : $alphaAt->copy();
-
-    } else {
-
-        $closesAt = null;
-    }
+    $closesAt =
+        $times['closes_at']
+        ?? null;
 
 
     /*
     |--------------------------------------------------------------------------
-    | FORMAT
+    | FORMAT UNTUK TAMPILAN
     |--------------------------------------------------------------------------
     */
 
@@ -1270,15 +1272,25 @@
 
     /*
     |--------------------------------------------------------------------------
-    | STATUS PRESENSI
+    | WAKTU SEKARANG
     |--------------------------------------------------------------------------
     */
 
     $now =
         \Carbon\Carbon::now(
-            'Asia/Jakarta'
+            \App\Services\TrainingAttendanceService::TIMEZONE
         );
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS PRESENSI
+    |--------------------------------------------------------------------------
+    |
+    | Tepat pada closes_at masih diperbolehkan.
+    | Setelah closes_at baru dinyatakan tutup.
+    |
+    */
 
     $attendanceClosed =
         $closesAt
