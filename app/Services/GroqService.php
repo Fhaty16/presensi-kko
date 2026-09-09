@@ -30,24 +30,54 @@ class GroqService
 
     public function __construct()
     {
+        /*
+        |--------------------------------------------------------------------------
+        | API KEY
+        |--------------------------------------------------------------------------
+        |
+        | Sesuai config/services.php:
+        |
+        | services.groq.api_key
+        |
+        */
+
         $this->apiKey =
             (string) config(
-                'services.groq.key'
+                'services.groq.api_key'
             );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BASE URL
+        |--------------------------------------------------------------------------
+        |
+        | Sesuai config/services.php:
+        |
+        | services.groq.base_url
+        |
+        */
 
         $this->baseUrl =
             rtrim(
                 (string) config(
-                    'services.groq.url',
+                    'services.groq.base_url',
                     'https://api.groq.com/openai/v1'
                 ),
                 '/'
             );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODEL
+        |--------------------------------------------------------------------------
+        */
+
         $this->model =
             (string) config(
                 'services.groq.model',
-                'llama-3.3-70b-versatile'
+                'openai/gpt-oss-20b'
             );
     }
 
@@ -58,17 +88,10 @@ class GroqService
     |--------------------------------------------------------------------------
     |
     | $message
-    | Pertanyaan yang dikirim oleh siswa.
+    | Pertanyaan yang dikirim siswa.
     |
     | $context
     | Data resmi yang sudah disiapkan Laravel.
-    |
-    | Contoh:
-    | - identitas siswa
-    | - kelas
-    | - jadwal
-    | - presensi
-    | - waktu sistem
     |
     */
 
@@ -96,6 +119,40 @@ class GroqService
 
         /*
         |--------------------------------------------------------------------------
+        | VALIDASI BASE URL
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            blank(
+                $this->baseUrl
+            )
+        ) {
+            throw new RuntimeException(
+                'GROQ_BASE_URL belum dikonfigurasi.'
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI MODEL
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            blank(
+                $this->model
+            )
+        ) {
+            throw new RuntimeException(
+                'GROQ_MODEL belum dikonfigurasi.'
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
         | VALIDASI PESAN
         |--------------------------------------------------------------------------
         */
@@ -104,6 +161,7 @@ class GroqService
             trim(
                 $message
             );
+
 
         if (
             $message === ''
@@ -147,8 +205,7 @@ class GroqService
                     )
                     ->post(
                         $this->baseUrl
-                        .
-                        '/chat/completions',
+                        . '/chat/completions',
                         [
                             'model' =>
                                 $this->model,
@@ -173,11 +230,11 @@ class GroqService
 
                             /*
                             |--------------------------------------------------------------------------
-                            | TEMPERATURE RENDAH
+                            | TEMPERATURE
                             |--------------------------------------------------------------------------
                             |
-                            | Karena KKO AI adalah assistant berbasis data,
-                            | kita tidak ingin AI terlalu kreatif.
+                            | Dibuat rendah karena AI menggunakan data sistem
+                            | dan tidak boleh terlalu kreatif / mengarang.
                             |
                             */
 
@@ -186,7 +243,7 @@ class GroqService
 
                             /*
                             |--------------------------------------------------------------------------
-                            | BATAS JAWABAN
+                            | BATAS OUTPUT
                             |--------------------------------------------------------------------------
                             */
 
@@ -211,8 +268,12 @@ class GroqService
 
                     'model' =>
                         $this->model,
+
+                    'base_url' =>
+                        $this->baseUrl,
                 ]
             );
+
 
             throw new RuntimeException(
                 'Tidak dapat terhubung ke Groq API.',
@@ -224,7 +285,7 @@ class GroqService
 
         /*
         |--------------------------------------------------------------------------
-        | CEK RESPONSE API
+        | CEK RESPONSE GROQ
         |--------------------------------------------------------------------------
         */
 
@@ -246,10 +307,10 @@ class GroqService
                 ]
             );
 
+
             throw new RuntimeException(
                 'Groq API error. HTTP '
-                .
-                $response->status()
+                . $response->status()
             );
         }
 
@@ -294,6 +355,7 @@ class GroqService
                 ]
             );
 
+
             throw new RuntimeException(
                 'Groq tidak mengembalikan jawaban.'
             );
@@ -317,8 +379,6 @@ class GroqService
     | SYSTEM PROMPT
     |--------------------------------------------------------------------------
     |
-    | Ini sangat penting.
-    |
     | AI tidak boleh menebak data sekolah.
     |
     */
@@ -326,6 +386,12 @@ class GroqService
     protected function buildSystemPrompt(
         string $context
     ): string {
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMALISASI CONTEXT
+        |--------------------------------------------------------------------------
+        */
 
         $context =
             trim(
@@ -340,6 +406,12 @@ class GroqService
                 'Tidak ada data sistem yang tersedia.';
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | PROMPT
+        |--------------------------------------------------------------------------
+        */
 
         return <<<PROMPT
 Kamu adalah KKO AI Assistant milik Sistem Presensi KKO SMANDA.
