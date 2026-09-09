@@ -29,10 +29,12 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $student = Student::where(
-            'user_id',
-            auth()->id()
-        )->firstOrFail();
+        $student =
+            Student::where(
+                'user_id',
+                auth()->id()
+            )
+                ->firstOrFail();
 
 
         /*
@@ -41,15 +43,18 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $todayAttendance = Attendance::where(
-            'student_id',
-            $student->id
-        )
-            ->whereDate(
-                'attendance_date',
-                now()->toDateString()
+        $todayAttendance =
+            Attendance::where(
+                'student_id',
+                $student->id
             )
-            ->first();
+                ->whereDate(
+                    'attendance_date',
+                    now(
+                        'Asia/Jakarta'
+                    )->toDateString()
+                )
+                ->first();
 
 
         /*
@@ -130,7 +135,8 @@ class AttendanceController extends Controller
             )
         ) {
             return response()->json([
-                'success' => false,
+                'success' =>
+                    false,
 
                 'message' =>
                     'Barcode tidak dikenali.',
@@ -144,10 +150,11 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $token = substr(
-            $request->token,
-            4
-        );
+        $token =
+            substr(
+                $request->token,
+                4
+            );
 
 
         /*
@@ -156,45 +163,47 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $student = Student::where(
-            'user_id',
-            auth()->id()
-        )
-            ->where(
-                'status',
-                'active'
+        $student =
+            Student::where(
+                'user_id',
+                auth()->id()
             )
-            ->firstOrFail();
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->firstOrFail();
 
 
         /*
         |--------------------------------------------------------------------------
         | SETTING PRESENSI
         |--------------------------------------------------------------------------
-        |
-        | Ketentuan:
-        |
-        | 07:00:59 = masih boleh
-        | 07:01:00 = sudah ditutup
-        |
         */
 
-        $settings = AttendanceSetting::firstOrCreate(
-            [],
-            [
-                'cutoff_time' =>
-                    '07:01:00',
+        $settings =
+            AttendanceSetting::firstOrCreate(
+                [],
+                [
+                    'attendance_start_time' =>
+                        '06:50:00',
 
-                'auto_alpha' =>
-                    true,
+                    'late_after_minutes' =>
+                        10,
 
-                'location_radius_meters' =>
-                    120,
+                    'cutoff_time' =>
+                        '07:01:00',
 
-                'barcode_lifetime_seconds' =>
-                    60,
-            ]
-        );
+                    'auto_alpha' =>
+                        true,
+
+                    'location_radius_meters' =>
+                        120,
+
+                    'barcode_lifetime_seconds' =>
+                        60,
+                ]
+            );
 
 
         /*
@@ -209,7 +218,8 @@ class AttendanceController extends Controller
             $settings->school_longitude === null
         ) {
             return response()->json([
-                'success' => false,
+                'success' =>
+                    false,
 
                 'message' =>
                     'Lokasi sekolah belum dikonfigurasi oleh admin.',
@@ -223,25 +233,129 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $now = now();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATAS PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        $cutoff = $now
-            ->copy()
-            ->setTimeFromTimeString(
-                $settings->cutoff_time
+        $now =
+            now(
+                'Asia/Jakarta'
             );
 
 
         /*
         |--------------------------------------------------------------------------
-        | JIKA SUDAH 07:01
+        | JAM MULAI PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceStart =
+            $now
+                ->copy()
+                ->setTimeFromTimeString(
+                    $settings->attendance_start_time
+                    ?? '06:50:00'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS HADIR
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Jam mulai       : 06:50
+        | Toleransi       : 10 menit
+        |
+        | 06:50:00        : Hadir
+        | 07:00:00        : masih Hadir
+        | 07:00:01        : Terlambat
+        |
+        */
+
+        $lateLimit =
+            $attendanceStart
+                ->copy()
+                ->addMinutes(
+                    (int) (
+                        $settings->late_after_minutes
+                        ?? 10
+                    )
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM BATAS ALFA / PENUTUPAN PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        $cutoff =
+            $now
+                ->copy()
+                ->setTimeFromTimeString(
+                    $settings->cutoff_time
+                    ?? '07:01:00'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI KONFIGURASI WAKTU
+        |--------------------------------------------------------------------------
+        |
+        | Urutan harus:
+        |
+        | Jam Mulai
+        |     ↓
+        | Batas Hadir
+        |     ↓
+        | Jam Batas Alfa
+        |
+        */
+
+        if (
+            !$cutoff->gt(
+                $attendanceStart
+            )
+            ||
+            !$lateLimit->lt(
+                $cutoff
+            )
+        ) {
+            return response()->json([
+                'success' =>
+                    false,
+
+                'message' =>
+                    'Pengaturan waktu presensi sekolah tidak valid. Hubungi Guru KKO.',
+            ], 422);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI BELUM DIBUKA
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $now->lt(
+                $attendanceStart
+            )
+        ) {
+            return response()->json([
+                'success' =>
+                    false,
+
+                'message' =>
+                    'Presensi belum dibuka. Presensi mulai pukul '
+                    . $attendanceStart->format('H:i')
+                    . ' WIB.',
+            ], 422);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRESENSI SUDAH DITUTUP
         |--------------------------------------------------------------------------
         */
 
@@ -250,13 +364,43 @@ class AttendanceController extends Controller
                 $cutoff
             )
         ) {
+            $message =
+                $settings->auto_alpha
+                    ? 'Presensi sudah ditutup. Mulai pukul '
+                        . $cutoff->format('H:i')
+                        . ' WIB siswa yang belum memiliki presensi diproses sebagai Alfa otomatis.'
+                    : 'Presensi sudah ditutup pada pukul '
+                        . $cutoff->format('H:i')
+                        . ' WIB. Auto Alfa sedang dinonaktifkan.';
+
+
             return response()->json([
-                'success' => false,
+                'success' =>
+                    false,
 
                 'message' =>
-                    'Presensi sudah ditutup. Mulai pukul 07:01 WIB siswa yang belum presensi dinyatakan Alfa.',
+                    $message,
             ], 422);
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TENTUKAN HADIR / TERLAMBAT
+        |--------------------------------------------------------------------------
+        |
+        | Tepat pada batas toleransi masih Hadir.
+        |
+        | Setelah melewati batas toleransi menjadi Terlambat.
+        |
+        */
+
+        $status =
+            $now->lte(
+                $lateLimit
+            )
+                ? 'present'
+                : 'late';
 
 
         /*
@@ -265,15 +409,16 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $distance = $this->distanceInMeters(
-            (float) $request->latitude,
+        $distance =
+            $this->distanceInMeters(
+                (float) $request->latitude,
 
-            (float) $request->longitude,
+                (float) $request->longitude,
 
-            (float) $settings->school_latitude,
+                (float) $settings->school_latitude,
 
-            (float) $settings->school_longitude
-        );
+                (float) $settings->school_longitude
+            );
 
 
         /*
@@ -316,7 +461,8 @@ class AttendanceController extends Controller
         |
         */
 
-        $attendance = null;
+        $attendance =
+            null;
 
 
         /*
@@ -326,213 +472,218 @@ class AttendanceController extends Controller
         */
 
         try {
-            $attendance = DB::transaction(
-                function () use (
-                    $student,
-                    $token,
-                    $now
-                ) {
-                    /*
-                    |--------------------------------------------------------------------------
-                    | CEK SUDAH PRESENSI
-                    |--------------------------------------------------------------------------
-                    */
 
-                    $alreadyAttendance =
-                        Attendance::where(
-                            'student_id',
-                            $student->id
-                        )
-                            ->whereDate(
-                                'attendance_date',
-                                $now->toDateString()
+            $attendance =
+                DB::transaction(
+                    function () use (
+                        $student,
+                        $token,
+                        $now,
+                        $status
+                    ) {
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | CEK SUDAH PRESENSI
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $alreadyAttendance =
+                            Attendance::where(
+                                'student_id',
+                                $student->id
                             )
-                            ->lockForUpdate()
-                            ->exists();
+                                ->whereDate(
+                                    'attendance_date',
+                                    $now->toDateString()
+                                )
+                                ->lockForUpdate()
+                                ->exists();
 
 
-                    if (
-                        $alreadyAttendance
-                    ) {
-                        throw new \RuntimeException(
-                            'Kamu sudah melakukan presensi hari ini.'
-                        );
-                    }
+                        if (
+                            $alreadyAttendance
+                        ) {
+                            throw new \RuntimeException(
+                                'Kamu sudah melakukan presensi hari ini.'
+                            );
+                        }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | AMBIL BARCODE
-                    |--------------------------------------------------------------------------
-                    |
-                    | Barcode dikunci agar tidak dapat digunakan
-                    | dua siswa secara bersamaan.
-                    |
-                    */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | AMBIL BARCODE
+                        |--------------------------------------------------------------------------
+                        |
+                        | Barcode dikunci agar tidak dapat digunakan
+                        | dua siswa secara bersamaan.
+                        |
+                        */
 
-                    $barcode =
-                        Barcode::where(
-                            'token',
-                            $token
-                        )
-                            ->lockForUpdate()
-                            ->first();
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BARCODE TIDAK DITEMUKAN
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (
-                        !$barcode
-                    ) {
-                        throw new \RuntimeException(
-                            'Barcode tidak ditemukan.'
-                        );
-                    }
+                        $barcode =
+                            Barcode::where(
+                                'token',
+                                $token
+                            )
+                                ->lockForUpdate()
+                                ->first();
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BARCODE TIDAK AKTIF
-                    |--------------------------------------------------------------------------
-                    */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | BARCODE TIDAK DITEMUKAN
+                        |--------------------------------------------------------------------------
+                        */
 
-                    if (
-                        !$barcode->is_active
-                    ) {
-                        throw new \RuntimeException(
-                            'Barcode sudah digunakan. Silakan scan barcode terbaru.'
-                        );
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BARCODE SUDAH DIGUNAKAN
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (
-                        $barcode->used_at !== null
-                    ) {
-                        throw new \RuntimeException(
-                            'Barcode sudah digunakan oleh siswa lain.'
-                        );
-                    }
+                        if (
+                            !$barcode
+                        ) {
+                            throw new \RuntimeException(
+                                'Barcode tidak ditemukan.'
+                            );
+                        }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | BARCODE KEDALUWARSA
-                    |--------------------------------------------------------------------------
-                    */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | BARCODE TIDAK AKTIF
+                        |--------------------------------------------------------------------------
+                        */
 
-                    if (
-                        !$barcode->expired_at
-                        ||
-                        $barcode->expired_at->lte(
-                            $now
-                        )
-                    ) {
+                        if (
+                            !$barcode->is_active
+                        ) {
+                            throw new \RuntimeException(
+                                'Barcode sudah digunakan. Silakan scan barcode terbaru.'
+                            );
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | BARCODE SUDAH DIGUNAKAN
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            $barcode->used_at !== null
+                        ) {
+                            throw new \RuntimeException(
+                                'Barcode sudah digunakan oleh siswa lain.'
+                            );
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | BARCODE KEDALUWARSA
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            !$barcode->expired_at
+                            ||
+                            $barcode->expired_at->lte(
+                                $now
+                            )
+                        ) {
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | MATIKAN BARCODE
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $barcode->update([
+                                'is_active' =>
+                                    false,
+                            ]);
+
+
+                            throw new \RuntimeException(
+                                'Barcode sudah kedaluwarsa. Silakan scan barcode terbaru.'
+                            );
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | SIMPAN PRESENSI
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $attendance =
+                            Attendance::create([
+                                'student_id' =>
+                                    $student->id,
+
+                                'barcode_id' =>
+                                    $barcode->id,
+
+                                'attendance_date' =>
+                                    $now->toDateString(),
+
+                                'check_in_time' =>
+                                    $now->format(
+                                        'H:i:s'
+                                    ),
+
+                                'status' =>
+                                    $status,
+
+                                'notes' =>
+                                    $status === 'present'
+                                        ? 'Presensi barcode dinamis - Hadir'
+                                        : 'Presensi barcode dinamis - Terlambat',
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | WA BELUM TERKIRIM
+                                |--------------------------------------------------------------------------
+                                */
+
+                                'wa_sent' =>
+                                    false,
+                            ]);
+
+
                         /*
                         |--------------------------------------------------------------------------
                         | MATIKAN BARCODE
                         |--------------------------------------------------------------------------
+                        |
+                        | Barcode hanya boleh digunakan satu kali.
+                        |
                         */
 
                         $barcode->update([
                             'is_active' =>
                                 false,
-                        ]);
 
-
-                        throw new \RuntimeException(
-                            'Barcode sudah kedaluwarsa. Silakan scan barcode terbaru.'
-                        );
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SIMPAN PRESENSI
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $attendance =
-                        Attendance::create([
-                            'student_id' =>
+                            'used_by_student_id' =>
                                 $student->id,
 
-                            'barcode_id' =>
-                                $barcode->id,
-
-                            'attendance_date' =>
-                                $now->toDateString(),
-
-                            'check_in_time' =>
-                                $now->format(
-                                    'H:i:s'
-                                ),
-
-                            'status' =>
-                                'present',
-
-                            'notes' =>
-                                'Presensi barcode dinamis',
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | WA BELUM TERKIRIM
-                            |--------------------------------------------------------------------------
-                            |
-                            | Saat ini kita masih TEST MODE.
-                            |
-                            */
-
-                            'wa_sent' =>
-                                false,
+                            'used_at' =>
+                                $now,
                         ]);
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | MATIKAN BARCODE
-                    |--------------------------------------------------------------------------
-                    |
-                    | Barcode hanya boleh digunakan satu kali.
-                    |
-                    */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | RETURN ATTENDANCE
+                        |--------------------------------------------------------------------------
+                        |
+                        | Object ini dibawa keluar dari transaction
+                        | untuk membuat WhatsApp Notification.
+                        |
+                        */
 
-                    $barcode->update([
-                        'is_active' =>
-                            false,
-
-                        'used_by_student_id' =>
-                            $student->id,
-
-                        'used_at' =>
-                            $now,
-                    ]);
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | RETURN ATTENDANCE
-                    |--------------------------------------------------------------------------
-                    |
-                    | Object ini dibawa keluar dari transaction
-                    | untuk membuat WhatsApp Notification.
-                    |
-                    */
-
-                    return $attendance;
-                }
-            );
+                        return $attendance;
+                    }
+                );
 
         } catch (\RuntimeException $e) {
+
             /*
             |--------------------------------------------------------------------------
             | ERROR PRESENSI
@@ -558,7 +709,8 @@ class AttendanceController extends Controller
         |
         */
 
-        $barcodeService->current();
+        $barcodeService
+            ->current();
 
 
         /*
@@ -574,8 +726,6 @@ class AttendanceController extends Controller
         |
         | - Presensi tidak bergantung pada WhatsApp.
         | - Jika WhatsApp error, presensi tetap berhasil.
-        | - Untuk sekarang hanya membuat log status PENDING.
-        | - Belum mengirim pesan WhatsApp sungguhan.
         |
         */
 
@@ -583,6 +733,7 @@ class AttendanceController extends Controller
             $attendance
         ) {
             try {
+
                 $whatsAppService
                     ->createAttendanceNotification(
                         $student,
@@ -590,14 +741,11 @@ class AttendanceController extends Controller
                     );
 
             } catch (\Throwable $e) {
+
                 /*
                 |--------------------------------------------------------------------------
                 | JANGAN GAGALKAN PRESENSI
                 |--------------------------------------------------------------------------
-                |
-                | Jika sistem WhatsApp bermasalah,
-                | siswa tetap dianggap berhasil presensi.
-                |
                 */
 
                 Log::error(
@@ -611,6 +759,9 @@ class AttendanceController extends Controller
 
                         'attendance_id' =>
                             $attendance->id,
+
+                        'attendance_status' =>
+                            $attendance->status,
 
                         'error' =>
                             $e->getMessage(),
@@ -631,7 +782,9 @@ class AttendanceController extends Controller
                 true,
 
             'message' =>
-                'Presensi berhasil.',
+                $status === 'present'
+                    ? 'Presensi berhasil. Kamu tercatat Hadir.'
+                    : 'Presensi berhasil. Kamu tercatat Terlambat.',
 
             'student' =>
                 auth()->user()->name,
@@ -645,7 +798,38 @@ class AttendanceController extends Controller
                 ),
 
             'status' =>
-                'HADIR',
+                $status === 'present'
+                    ? 'HADIR'
+                    : 'TERLAMBAT',
+
+            'attendance' => [
+                'id' =>
+                    $attendance->id,
+
+                'status' =>
+                    $status,
+
+                'status_label' =>
+                    $status === 'present'
+                        ? 'Hadir'
+                        : 'Terlambat',
+
+                'attendance_start_time' =>
+                    $attendanceStart
+                        ->format('H:i'),
+
+                'late_limit' =>
+                    $lateLimit
+                        ->format('H:i'),
+
+                'cutoff_time' =>
+                    $cutoff
+                        ->format('H:i'),
+
+                'auto_alpha' =>
+                    (bool) $settings
+                        ->auto_alpha,
+            ],
         ]);
     }
 
@@ -662,6 +846,7 @@ class AttendanceController extends Controller
         float $lat2,
         float $lon2
     ): float {
+
         /*
         |--------------------------------------------------------------------------
         | RADIUS BUMI

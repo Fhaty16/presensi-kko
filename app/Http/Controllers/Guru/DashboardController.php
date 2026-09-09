@@ -24,13 +24,23 @@ class DashboardController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
+        | TIMEZONE
+        |--------------------------------------------------------------------------
+        */
+
+        $timezone =
+            'Asia/Jakarta';
+
+
+        /*
+        |--------------------------------------------------------------------------
         | WAKTU SEKARANG
         |--------------------------------------------------------------------------
         */
 
         $now =
             Carbon::now(
-                'Asia/Jakarta'
+                $timezone
             );
 
 
@@ -46,48 +56,179 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | JAM BATAS PRESENSI SEKOLAH
+        | PENGATURAN PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
         */
 
         $attendanceSetting =
-            AttendanceSetting::query()
-                ->first();
+            AttendanceSetting::firstOrCreate(
+                [],
+                [
+                    'attendance_start_time' =>
+                        '06:50:00',
+
+                    'late_after_minutes' =>
+                        10,
+
+                    'cutoff_time' =>
+                        '07:01:00',
+
+                    'auto_alpha' =>
+                        true,
+
+                    'location_radius_meters' =>
+                        120,
+
+                    'barcode_lifetime_seconds' =>
+                        60,
+                ]
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | JAM BATAS RAW
+        | JAM MULAI PRESENSI RAW
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceStartRaw =
+            (string) (
+                $attendanceSetting
+                    ->attendance_start_time
+                ?? '06:50:00'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMALISASI JAM MULAI
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceStartTime =
+            strlen(
+                $attendanceStartRaw
+            ) === 5
+                ? $attendanceStartRaw
+                    . ':00'
+                : substr(
+                    $attendanceStartRaw,
+                    0,
+                    8
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TAMPILAN JAM MULAI
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceStartDisplay =
+            substr(
+                $attendanceStartTime,
+                0,
+                5
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOLERANSI HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        $lateAfterMinutes =
+            max(
+                0,
+                (int) (
+                    $attendanceSetting
+                        ->late_after_minutes
+                    ?? 10
+                )
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATETIME JAM MULAI
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceStartDateTime =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $today
+                    . ' '
+                    . $attendanceStartTime,
+                $timezone
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM MULAI TERLAMBAT
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Jam mulai       : 06:50
+        | Toleransi       : 10 menit
+        |
+        | Maka:
+        |
+        | Batas Hadir     : 07:00
+        | Setelah 07:00   : Terlambat
+        |
+        */
+
+        $lateStartDateTime =
+            $attendanceStartDateTime
+                ->copy()
+                ->addMinutes(
+                    $lateAfterMinutes
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TAMPILAN BATAS HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        $lateStartDisplay =
+            $lateStartDateTime
+                ->format(
+                    'H:i'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM BATAS ALFA RAW
         |--------------------------------------------------------------------------
         */
 
         $cutoffRaw =
             (string) (
-                $attendanceSetting?->cutoff_time
+                $attendanceSetting
+                    ->cutoff_time
                 ?? '07:01:00'
             );
 
 
         /*
         |--------------------------------------------------------------------------
-        | NORMALISASI FORMAT JAM
+        | NORMALISASI JAM BATAS
         |--------------------------------------------------------------------------
-        |
-        | Misalnya database berisi:
-        |
-        | 07:01
-        |
-        | akan diubah menjadi:
-        |
-        | 07:01:00
-        |
         */
 
         $cutoffTime =
             strlen(
                 $cutoffRaw
             ) === 5
-                ? $cutoffRaw . ':00'
+                ? $cutoffRaw
+                    . ':00'
                 : substr(
                     $cutoffRaw,
                     0,
@@ -111,7 +252,7 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | WAKTU BATAS HARI INI
+        | DATETIME JAM BATAS HARI INI
         |--------------------------------------------------------------------------
         */
 
@@ -121,8 +262,19 @@ class DashboardController extends Controller
                 $today
                     . ' '
                     . $cutoffTime,
-                'Asia/Jakarta'
+                $timezone
             );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS AUTO ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        $autoAlphaEnabled =
+            (bool) $attendanceSetting
+                ->auto_alpha;
 
 
         /*
@@ -132,24 +284,22 @@ class DashboardController extends Controller
         |
         | Tujuan:
         |
-        | - Tidak perlu menjalankan schedule:work secara manual.
+        | - Tetap ada fallback jika scheduler belum berjalan.
         |
-        | - Hanya berlaku Senin sampai Jumat.
+        | - Hanya Senin sampai Jumat.
         |
-        | - Sebelum jam batas tidak melakukan apa-apa.
+        | - Hanya berjalan jika Auto Alfa AKTIF.
         |
-        | - Setelah jam batas, ketika Dashboard Guru dibuka,
-        |   command attendance:mark-absent otomatis dijalankan.
+        | - Hanya berjalan setelah Jam Batas Alfa.
         |
-        | - Sabtu dan Minggu tidak dijalankan.
-        |
-        | Command attendance:mark-absent sendiri sudah menangani
-        | siswa yang sudah memiliki presensi, sehingga tidak
-        | membuat data presensi ganda.
+        | - Command sendiri tetap mengecek siswa yang sudah punya presensi
+        |   agar tidak membuat data ganda.
         |
         */
 
         if (
+            $autoAlphaEnabled
+            &&
             $now->isWeekday()
             &&
             $now->greaterThanOrEqualTo(
@@ -163,16 +313,14 @@ class DashboardController extends Controller
                     'attendance:mark-absent'
                 );
 
-            } catch (Throwable $exception) {
+            } catch (
+                Throwable $exception
+            ) {
 
                 /*
                 |--------------------------------------------------------------------------
                 | JANGAN BUAT DASHBOARD ERROR
                 |--------------------------------------------------------------------------
-                |
-                | Kalau Auto-Alfa mengalami masalah, halaman Guru
-                | tetap dapat dibuka dan error dicatat ke Laravel log.
-                |
                 */
 
                 report(
@@ -201,12 +349,6 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         | PRESENSI HARI INI
         |--------------------------------------------------------------------------
-        |
-        | Query dilakukan SETELAH Auto-Alfa dijalankan.
-        |
-        | Jadi kalau Auto-Alfa baru saja membuat data,
-        | angka dashboard langsung ikut diperbarui.
-        |
         */
 
         $todayAttendances =
@@ -220,20 +362,52 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | HADIR + TERLAMBAT
+        | HADIR
         |--------------------------------------------------------------------------
+        |
+        | Hanya siswa yang tepat waktu.
+        |
         */
 
         $hadir =
             $todayAttendances
-                ->whereIn(
+                ->where(
                     'status',
-                    [
-                        'present',
-                        'late',
-                    ]
+                    'present'
                 )
                 ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TERLAMBAT
+        |--------------------------------------------------------------------------
+        */
+
+        $terlambat =
+            $todayAttendances
+                ->where(
+                    'status',
+                    'late'
+                )
+                ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL HADIR
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan untuk persentase kehadiran.
+        |
+        | Hadir + Terlambat tetap dianggap datang ke sekolah.
+        |
+        */
+
+        $totalHadir =
+            $hadir
+            +
+            $terlambat;
 
 
         /*
@@ -285,15 +459,21 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         | PERSENTASE HADIR
         |--------------------------------------------------------------------------
+        |
+        | Hadir + Terlambat dihitung sebagai kehadiran.
+        |
         */
 
         $persentaseHadir =
             $totalSiswa > 0
                 ? round(
                     (
-                        $hadir
-                        / $totalSiswa
-                    ) * 100
+                        $totalHadir
+                        /
+                        $totalSiswa
+                    )
+                    *
+                    100
                 )
                 : 0;
 
@@ -331,7 +511,9 @@ class DashboardController extends Controller
                     'pending'
                 )
                 ->latest()
-                ->limit(6)
+                ->limit(
+                    6
+                )
                 ->get();
 
 
@@ -345,12 +527,22 @@ class DashboardController extends Controller
             'guru.dashboard',
             compact(
                 'totalSiswa',
+
                 'hadir',
+                'terlambat',
                 'sakit',
                 'izin',
                 'alfa',
+
                 'persentaseHadir',
+
+                'attendanceStartDisplay',
+                'lateAfterMinutes',
+                'lateStartDisplay',
+
                 'cutoffDisplay',
+                'autoAlphaEnabled',
+
                 'pendingLeaveCount',
                 'pendingLeaveNotifications'
             )

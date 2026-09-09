@@ -21,6 +21,7 @@ use App\Http\Controllers\Guru\SchoolAttendanceDetailController;
 use App\Http\Controllers\Guru\StudentSchoolAttendanceDetailExportController;
 use App\Http\Controllers\Guru\StudentSchoolAttendanceDetailPrintController;
 use App\Http\Controllers\Guru\NewsController;
+use App\Http\Controllers\Guru\AttendanceSettingController;
 
 
 /*
@@ -164,6 +165,32 @@ Route::middleware([
         )
             ->name(
                 'dashboard'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PENGATURAN PRESENSI SEKOLAH
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan Guru untuk mengatur:
+        |
+        | - Jam mulai presensi
+        | - Toleransi Hadir
+        | - Jam batas Alfa
+        | - Auto Alfa aktif / nonaktif
+        |
+        */
+
+        Route::put(
+            '/pengaturan-presensi',
+            [
+                AttendanceSettingController::class,
+                'update',
+            ]
+        )
+            ->name(
+                'attendance.settings.update'
             );
 
 
@@ -674,23 +701,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | KKO AI ASSISTANT - PROSES CHAT
         |--------------------------------------------------------------------------
-        |
-        | Alur:
-        |
-        | Siswa Login
-        |      ↓
-        | Student
-        |      ↓
-        | Class
-        |      ↓
-        | Jadwal + Presensi
-        |      ↓
-        | AiAssistantController
-        |      ↓
-        | GroqService
-        |      ↓
-        | Groq API
-        |
         */
 
         Route::post(
@@ -709,11 +719,6 @@ Route::middleware([
         |--------------------------------------------------------------------------
         | SCANNER PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
-        |
-        | Siswa hanya melakukan scan.
-        |
-        | Siswa TIDAK dapat membuka barcode global sekolah.
-        |
         */
 
         Route::get(
@@ -932,17 +937,6 @@ Route::middleware([
 |--------------------------------------------------------------------------
 | PENGELOLAAN LATIHAN KKO
 |--------------------------------------------------------------------------
-|
-| Digunakan oleh:
-|
-| - Guru
-| - Pelatih
-|
-| Validasi role juga dilakukan di TrainingController.
-|
-| Siswa memiliki route latihan sendiri di prefix /siswa.
-|
-|--------------------------------------------------------------------------
 */
 
 Route::middleware(
@@ -1062,11 +1056,6 @@ Route::middleware(
         |--------------------------------------------------------------------------
         | BARCODE PRESENSI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Barcode ini BERBEDA dengan barcode presensi sekolah.
-        |
-        | Setiap barcode terikat pada satu TrainingSession.
-        |
         */
 
         Route::get(
@@ -1139,10 +1128,6 @@ Route::middleware(
         |--------------------------------------------------------------------------
         | DETAIL SESI LATIHAN
         |--------------------------------------------------------------------------
-        |
-        | Route parameter dinamis diletakkan paling bawah
-        | agar tidak bentrok dengan /buat dan /barcode.
-        |
         */
 
         Route::get(
@@ -1161,12 +1146,6 @@ Route::middleware(
 /*
 |--------------------------------------------------------------------------
 | DATA CABANG OLAHRAGA SISWA
-|--------------------------------------------------------------------------
-|
-| Digunakan untuk pengelolaan atlet KKO serta rekap latihan.
-|
-| Controller melakukan validasi role Guru / Pelatih.
-|
 |--------------------------------------------------------------------------
 */
 
@@ -1266,15 +1245,6 @@ Route::middleware(
 |--------------------------------------------------------------------------
 |
 | KHUSUS GURU.
-|
-| Barcode ini digunakan untuk presensi masuk sekolah.
-|
-| Hak akses:
-|
-| Guru      : boleh menampilkan barcode.
-| Siswa     : hanya melakukan scan.
-| Pelatih   : tidak memiliki akses.
-|
 |--------------------------------------------------------------------------
 */
 

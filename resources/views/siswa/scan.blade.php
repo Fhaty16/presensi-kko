@@ -14,10 +14,19 @@
         content="{{ csrf_token() }}"
     >
 
-    <title>Scan Presensi - KKO SMANDA</title>
+    <title>
+        Scan Presensi - KKO SMANDA
+    </title>
 
-    <!-- FONT -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <!-- =====================================================
+         FONT
+    ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -30,22 +39,136 @@
         rel="stylesheet"
     >
 
-    <!-- CSS KKO -->
+
+    <!-- =====================================================
+         CSS KKO
+    ====================================================== -->
+
     <link
         rel="stylesheet"
         href="{{ asset('css/kko.css') }}"
     >
 
-    <!-- QR SCANNER -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <!-- =====================================================
+         QR SCANNER
+    ====================================================== -->
+
+    <script
+        src="https://unpkg.com/html5-qrcode"
+    ></script>
+
+
+    <style>
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS TERLAMBAT
+        |--------------------------------------------------------------------------
+        */
+
+        .attendance-success-status.attendance-status-late {
+            color: #ffb866;
+
+            background:
+                rgba(255, 184, 102, .10);
+
+            border:
+                1px solid
+                rgba(255, 184, 102, .25);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        .attendance-success-status.attendance-status-present {
+            color: #8ce8c3;
+
+            background:
+                rgba(80, 200, 150, .10);
+
+            border:
+                1px solid
+                rgba(80, 200, 150, .22);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DETAIL WAKTU PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        .attendance-success-rules {
+            width: 100%;
+
+            margin-top: 14px;
+            padding: 12px;
+
+            background:
+                rgba(157, 202, 255, .05);
+
+            border:
+                1px solid
+                rgba(157, 202, 255, .12);
+
+            border-radius: 10px;
+        }
+
+
+        .attendance-success-rule-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            padding: 4px 0;
+
+            color: #7f8c96;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+        }
+
+
+        .attendance-success-rule-row strong {
+            color: #c8d2d9;
+
+            font-size: 7px;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .attendance-success-rules {
+                padding: 10px;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 
 <body class="scanner-page">
 
+
 <main class="scanner-container">
 
-    <!-- KEMBALI -->
+
+    <!-- =====================================================
+         KEMBALI
+    ====================================================== -->
+
     <a
         href="{{ route('siswa.dashboard') }}"
         class="scanner-back"
@@ -54,7 +177,10 @@
     </a>
 
 
-    <!-- LOGO -->
+    <!-- =====================================================
+         LOGO
+    ====================================================== -->
+
     <img
         src="{{ asset('images/logo-kko.png') }}"
         alt="Logo KKO SMANDA"
@@ -78,36 +204,104 @@
     </p>
 
 
-    <!-- SUDAH PRESENSI -->
+    <!-- =====================================================
+         SUDAH PRESENSI
+    ====================================================== -->
+
     @if($todayAttendance)
+
+        @php
+
+            $statusLabel =
+                match (
+                    $todayAttendance->status
+                ) {
+                    'present' =>
+                        'HADIR',
+
+                    'late' =>
+                        'TERLAMBAT',
+
+                    'permission' =>
+                        'IZIN',
+
+                    'sick' =>
+                        'SAKIT',
+
+                    'absent' =>
+                        'ALFA',
+
+                    default =>
+                        strtoupper(
+                            $todayAttendance->status
+                        ),
+                };
+
+
+            $statusClass =
+                match (
+                    $todayAttendance->status
+                ) {
+                    'present' =>
+                        'attendance-status-present',
+
+                    'late' =>
+                        'attendance-status-late',
+
+                    default =>
+                        '',
+                };
+
+        @endphp
+
 
         <div class="scanner-already">
 
             <strong>
-                Kamu sudah melakukan presensi hari ini.
+                Kamu sudah memiliki presensi hari ini.
             </strong>
+
 
             <br><br>
 
+
             Status:
-            {{ strtoupper($todayAttendance->status) }}
+
+            <span
+                class="{{ $statusClass }}"
+            >
+                {{ $statusLabel }}
+            </span>
+
 
             @if($todayAttendance->check_in_time)
 
                 <br>
 
                 Jam:
-                {{ substr($todayAttendance->check_in_time, 0, 5) }}
+
+                {{
+                    substr(
+                        $todayAttendance->check_in_time,
+                        0,
+                        5
+                    )
+                }}
+
                 WIB
 
             @endif
 
         </div>
 
+
     @else
 
 
-        <!-- CAMERA -->
+        <!-- =====================================================
+             CAMERA
+        ====================================================== -->
+
         <section class="scanner-card">
 
             <div id="reader"></div>
@@ -115,7 +309,10 @@
         </section>
 
 
-        <!-- MESSAGE -->
+        <!-- =====================================================
+             MESSAGE
+        ====================================================== -->
+
         <div
             id="scannerMessage"
             class="scanner-message"
@@ -129,14 +326,22 @@
 </main>
 
 
-
 @if(!$todayAttendance)
 
 <script>
 
-    let processing = false;
+    /*
+    |--------------------------------------------------------------------------
+    | STATE
+    |--------------------------------------------------------------------------
+    */
 
-    let qrScanner = null;
+    let processing =
+        false;
+
+
+    let qrScanner =
+        null;
 
 
     /*
@@ -156,6 +361,11 @@
             );
 
 
+        if (!element) {
+            return;
+        }
+
+
         element.textContent =
             message;
 
@@ -164,16 +374,15 @@
             'scanner-message';
 
 
-        if (type === 'error') {
+        if (
+            type === 'error'
+        ) {
 
             element.classList.add(
                 'scanner-message-error'
             );
-
         }
-
     }
-
 
 
     /*
@@ -182,8 +391,8 @@
     |--------------------------------------------------------------------------
     */
 
-    async function startScanner() {
-
+    async function startScanner()
+    {
         try {
 
             qrScanner =
@@ -215,9 +424,16 @@
                 onScanSuccess,
 
                 function () {
-                    // Scan gagal sementara, abaikan.
-                }
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SCAN GAGAL SEMENTARA
+                    |--------------------------------------------------------------------------
+                    |
+                    | Diabaikan karena kamera terus mencoba membaca QR.
+                    |
+                    */
+                }
             );
 
 
@@ -228,18 +444,17 @@
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
 
             setMessage(
                 'Kamera tidak dapat dibuka. Pastikan izin kamera sudah diberikan.',
                 'error'
             );
-
         }
-
     }
-
 
 
     /*
@@ -252,16 +467,25 @@
         decodedText
     ) {
 
-        if (processing) {
+        /*
+        |--------------------------------------------------------------------------
+        | SEDANG DIPROSES
+        |--------------------------------------------------------------------------
+        */
 
+        if (
+            processing
+        ) {
             return;
-
         }
 
 
         /*
-         * Hanya menerima QR milik sistem KKO.
-         */
+        |--------------------------------------------------------------------------
+        | VALIDASI PREFIX
+        |--------------------------------------------------------------------------
+        */
+
         if (
             !decodedText.startsWith(
                 'KKO:'
@@ -274,9 +498,14 @@
             );
 
             return;
-
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | LOCK PROCESS
+        |--------------------------------------------------------------------------
+        */
 
         processing =
             true;
@@ -289,7 +518,7 @@
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL GPS SISWA
+        | GEOLOCATION TIDAK TERSEDIA
         |--------------------------------------------------------------------------
         */
 
@@ -307,25 +536,35 @@
             );
 
             return;
-
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL GPS
+        |--------------------------------------------------------------------------
+        */
+
         navigator.geolocation.getCurrentPosition(
 
-            function(position) {
+            function (
+                position
+            ) {
 
                 sendAttendance(
                     decodedText,
                     position
                 );
-
             },
 
 
-            function(error) {
+            function (
+                error
+            ) {
 
-                console.error(error);
+                console.error(
+                    error
+                );
 
 
                 processing =
@@ -336,7 +575,6 @@
                     'Lokasi tidak dapat diakses. Aktifkan GPS dan izinkan akses lokasi.',
                     'error'
                 );
-
             },
 
 
@@ -350,11 +588,8 @@
                 maximumAge:
                     0
             }
-
         );
-
     }
-
 
 
     /*
@@ -375,26 +610,36 @@
             );
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | CSRF
+            |--------------------------------------------------------------------------
+            */
+
             const csrfToken =
                 document
                     .querySelector(
                         'meta[name="csrf-token"]'
                     )
-                    .getAttribute(
+                    ?.getAttribute(
                         'content'
                     );
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | REQUEST
+            |--------------------------------------------------------------------------
+            */
 
             const response =
                 await fetch(
                     "{{ route('siswa.presensi.store') }}",
                     {
-
                         method:
                             'POST',
 
                         headers: {
-
                             'Content-Type':
                                 'application/json',
 
@@ -403,13 +648,10 @@
 
                             'X-CSRF-TOKEN':
                                 csrfToken
-
                         },
-
 
                         body:
                             JSON.stringify({
-
                                 token:
                                     token,
 
@@ -421,16 +663,19 @@
 
                                 accuracy:
                                     position.coords.accuracy
-
                             })
-
                     }
                 );
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | RESPONSE JSON
+            |--------------------------------------------------------------------------
+            */
+
             const data =
                 await response.json();
-
 
 
             /*
@@ -439,16 +684,16 @@
             |--------------------------------------------------------------------------
             */
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     data.message
                     ||
                     'Presensi gagal.'
                 );
-
             }
-
 
 
             /*
@@ -457,12 +702,76 @@
             |--------------------------------------------------------------------------
             */
 
-            if (qrScanner) {
+            if (
+                qrScanner
+            ) {
 
-                await qrScanner.stop();
+                try {
 
+                    await qrScanner.stop();
+
+                } catch (
+                    stopError
+                ) {
+
+                    console.warn(
+                        'Scanner sudah berhenti.',
+                        stopError
+                    );
+                }
             }
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATA STATUS
+            |--------------------------------------------------------------------------
+            */
+
+            const attendanceStatus =
+                data.status
+                ||
+                'HADIR';
+
+
+            const attendanceStatusClass =
+                attendanceStatus
+                === 'TERLAMBAT'
+                    ? 'attendance-status-late'
+                    : 'attendance-status-present';
+
+
+            const attendanceData =
+                data.attendance
+                ||
+                {};
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | DETAIL WAKTU
+            |--------------------------------------------------------------------------
+            */
+
+            const attendanceStart =
+                attendanceData
+                    .attendance_start_time
+                ||
+                '-';
+
+
+            const lateLimit =
+                attendanceData
+                    .late_limit
+                ||
+                '-';
+
+
+            const cutoffTime =
+                attendanceData
+                    .cutoff_time
+                ||
+                '-';
 
 
             /*
@@ -471,11 +780,17 @@
             |--------------------------------------------------------------------------
             */
 
-            document
-                .querySelector(
+            const scannerCard =
+                document.querySelector(
                     '.scanner-card'
-                )
-                .innerHTML = `
+                );
+
+
+            if (
+                scannerCard
+            ) {
+
+                scannerCard.innerHTML = `
 
                     <div class="attendance-success">
 
@@ -488,20 +803,87 @@
                         </span>
 
                         <h2>
-                            ${data.student}
+                            ${escapeHtml(
+                                data.student
+                                || ''
+                            )}
                         </h2>
 
                         <p>
-                            NIS ${data.nis}
+                            NIS ${escapeHtml(
+                                data.nis
+                                || '-'
+                            )}
                         </p>
 
                         <strong>
-                            ${data.time} WIB
+                            ${escapeHtml(
+                                data.time
+                                || '-'
+                            )} WIB
                         </strong>
 
-                        <div class="attendance-success-status">
-                            HADIR
+
+                        <div
+                            class="
+                                attendance-success-status
+                                ${attendanceStatusClass}
+                            "
+                        >
+                            ${escapeHtml(
+                                attendanceStatus
+                            )}
                         </div>
+
+
+                        <div class="attendance-success-rules">
+
+                            <div class="attendance-success-rule-row">
+
+                                <span>
+                                    Mulai Presensi
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(
+                                        attendanceStart
+                                    )} WIB
+                                </strong>
+
+                            </div>
+
+
+                            <div class="attendance-success-rule-row">
+
+                                <span>
+                                    Batas Hadir
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(
+                                        lateLimit
+                                    )} WIB
+                                </strong>
+
+                            </div>
+
+
+                            <div class="attendance-success-rule-row">
+
+                                <span>
+                                    Batas Presensi
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(
+                                        cutoffTime
+                                    )} WIB
+                                </strong>
+
+                            </div>
+
+                        </div>
+
 
                         <a href="{{ route('siswa.dashboard') }}">
                             Kembali ke Dashboard
@@ -509,34 +891,97 @@
 
                     </div>
                 `;
+            }
 
 
-            document
-                .getElementById(
+            /*
+            |--------------------------------------------------------------------------
+            | SEMBUNYIKAN MESSAGE
+            |--------------------------------------------------------------------------
+            */
+
+            const scannerMessage =
+                document.getElementById(
                     'scannerMessage'
-                )
-                .style.display =
+                );
+
+
+            if (
+                scannerMessage
+            ) {
+
+                scannerMessage.style.display =
                     'none';
+            }
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | BUKA LOCK SUPAYA BISA SCAN ULANG
+            |--------------------------------------------------------------------------
+            */
 
             processing =
                 false;
 
 
             setMessage(
-                error.message,
+                error.message
+                ||
+                'Presensi gagal.',
                 'error'
             );
-
         }
-
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | ESCAPE HTML
+    |--------------------------------------------------------------------------
+    |
+    | Data siswa berasal dari backend.
+    | Tetap di-escape sebelum dimasukkan ke innerHTML.
+    |
+    */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value
+        )
+            .replaceAll(
+                '&',
+                '&amp;'
+            )
+            .replaceAll(
+                '<',
+                '&lt;'
+            )
+            .replaceAll(
+                '>',
+                '&gt;'
+            )
+            .replaceAll(
+                '"',
+                '&quot;'
+            )
+            .replaceAll(
+                "'",
+                '&#039;'
+            );
+    }
 
 
     /*
@@ -550,7 +995,6 @@
         function () {
 
             startScanner();
-
         }
     );
 
