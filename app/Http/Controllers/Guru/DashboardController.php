@@ -56,7 +56,7 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | PENGATURAN PRESENSI SEKOLAH
+        | PENGATURAN PRESENSI
         |--------------------------------------------------------------------------
         */
 
@@ -65,13 +65,16 @@ class DashboardController extends Controller
                 [],
                 [
                     'attendance_start_time' =>
-                        '06:50:00',
+                        '06:00:00',
+
+                    'attendance_end_time' =>
+                        '07:00:00',
 
                     'late_after_minutes' =>
                         10,
 
                     'cutoff_time' =>
-                        '07:01:00',
+                        '07:11:00',
 
                     'auto_alpha' =>
                         true,
@@ -87,7 +90,7 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | JAM MULAI PRESENSI RAW
+        | JAM MULAI RAW
         |--------------------------------------------------------------------------
         */
 
@@ -95,7 +98,7 @@ class DashboardController extends Controller
             (string) (
                 $attendanceSetting
                     ->attendance_start_time
-                ?? '06:50:00'
+                ?? '06:00:00'
             );
 
 
@@ -120,16 +123,35 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | TAMPILAN JAM MULAI
+        | JAM SELESAI RAW
         |--------------------------------------------------------------------------
         */
 
-        $attendanceStartDisplay =
-            substr(
-                $attendanceStartTime,
-                0,
-                5
+        $attendanceEndRaw =
+            (string) (
+                $attendanceSetting
+                    ->attendance_end_time
+                ?? '07:00:00'
             );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMALISASI JAM SELESAI
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceEndTime =
+            strlen(
+                $attendanceEndRaw
+            ) === 5
+                ? $attendanceEndRaw
+                    . ':00'
+                : substr(
+                    $attendanceEndRaw,
+                    0,
+                    8
+                );
 
 
         /*
@@ -167,37 +189,48 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | JAM MULAI TERLAMBAT
+        | DATETIME JAM SELESAI
         |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | Jam mulai       : 06:50
-        | Toleransi       : 10 menit
-        |
-        | Maka:
-        |
-        | Batas Hadir     : 07:00
-        | Setelah 07:00   : Terlambat
-        |
         */
 
-        $lateStartDateTime =
-            $attendanceStartDateTime
-                ->copy()
-                ->addMinutes(
-                    $lateAfterMinutes
-                );
+        $attendanceEndDateTime =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $today
+                    . ' '
+                    . $attendanceEndTime,
+                $timezone
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | TAMPILAN BATAS HADIR
+        | FALLBACK JIKA DATA JAM TIDAK VALID
         |--------------------------------------------------------------------------
         */
 
-        $lateStartDisplay =
-            $lateStartDateTime
+        if (
+            $attendanceEndDateTime
+                ->lessThanOrEqualTo(
+                    $attendanceStartDateTime
+                )
+        ) {
+
+            $attendanceEndDateTime =
+                $attendanceStartDateTime
+                    ->copy()
+                    ->addHour();
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISPLAY JAM MULAI
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceStartDisplay =
+            $attendanceStartDateTime
                 ->format(
                     'H:i'
                 );
@@ -205,65 +238,114 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | JAM BATAS ALFA RAW
+        | DISPLAY JAM SELESAI
         |--------------------------------------------------------------------------
         */
 
-        $cutoffRaw =
-            (string) (
-                $attendanceSetting
-                    ->cutoff_time
-                ?? '07:01:00'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | NORMALISASI JAM BATAS
-        |--------------------------------------------------------------------------
-        */
-
-        $cutoffTime =
-            strlen(
-                $cutoffRaw
-            ) === 5
-                ? $cutoffRaw
-                    . ':00'
-                : substr(
-                    $cutoffRaw,
-                    0,
-                    8
+        $attendanceEndDisplay =
+            $attendanceEndDateTime
+                ->format(
+                    'H:i'
                 );
 
 
         /*
         |--------------------------------------------------------------------------
-        | TAMPILAN JAM BATAS
+        | MULAI TOLERANSI
         |--------------------------------------------------------------------------
+        |
+        | Jam selesai 07:00 berarti:
+        |
+        | 07:00:59 masih masuk waktu presensi utama.
+        |
+        | Menit toleransi pertama:
+        |
+        | 07:01
+        |
         */
 
-        $cutoffDisplay =
-            substr(
-                $cutoffTime,
-                0,
-                5
-            );
+        $toleranceStartDateTime =
+            $attendanceEndDateTime
+                ->copy()
+                ->addMinute()
+                ->startOfMinute();
 
 
         /*
         |--------------------------------------------------------------------------
-        | DATETIME JAM BATAS HARI INI
+        | AKHIR TOLERANSI
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Jam selesai : 07:00
+        | Toleransi   : 10 menit
+        |
+        | Akhir toleransi:
+        |
+        | 07:10:59
+        |
+        */
+
+        $toleranceEndDateTime =
+            $attendanceEndDateTime
+                ->copy()
+                ->addMinutes(
+                    $lateAfterMinutes
+                )
+                ->endOfMinute();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISPLAY TOLERANSI
         |--------------------------------------------------------------------------
         */
 
-        $cutoffDateTime =
-            Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                $today
-                    . ' '
-                    . $cutoffTime,
-                $timezone
-            );
+        $toleranceStartDisplay =
+            $toleranceStartDateTime
+                ->format(
+                    'H:i'
+                );
+
+
+        $toleranceEndDisplay =
+            $toleranceEndDateTime
+                ->format(
+                    'H:i'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MULAI PRESENSI DITUTUP / ALFA
+        |--------------------------------------------------------------------------
+        |
+        | 07:10:59
+        | +
+        | 1 detik
+        |
+        | = 07:11:00
+        |
+        */
+
+        $alphaStartDateTime =
+            $toleranceEndDateTime
+                ->copy()
+                ->addSecond();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISPLAY ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        $alphaStartDisplay =
+            $alphaStartDateTime
+                ->format(
+                    'H:i'
+                );
 
 
         /*
@@ -282,18 +364,9 @@ class DashboardController extends Controller
         | AUTO ALFA FALLBACK
         |--------------------------------------------------------------------------
         |
-        | Tujuan:
+        | Scheduler tetap menjadi mekanisme utama.
         |
-        | - Tetap ada fallback jika scheduler belum berjalan.
-        |
-        | - Hanya Senin sampai Jumat.
-        |
-        | - Hanya berjalan jika Auto Alfa AKTIF.
-        |
-        | - Hanya berjalan setelah Jam Batas Alfa.
-        |
-        | - Command sendiri tetap mengecek siswa yang sudah punya presensi
-        |   agar tidak membuat data ganda.
+        | Dashboard hanya menjadi fallback jika scheduler belum berjalan.
         |
         */
 
@@ -303,7 +376,7 @@ class DashboardController extends Controller
             $now->isWeekday()
             &&
             $now->greaterThanOrEqualTo(
-                $cutoffDateTime
+                $alphaStartDateTime
             )
         ) {
 
@@ -316,12 +389,6 @@ class DashboardController extends Controller
             } catch (
                 Throwable $exception
             ) {
-
-                /*
-                |--------------------------------------------------------------------------
-                | JANGAN BUAT DASHBOARD ERROR
-                |--------------------------------------------------------------------------
-                */
 
                 report(
                     $exception
@@ -365,11 +432,14 @@ class DashboardController extends Controller
         | HADIR
         |--------------------------------------------------------------------------
         |
-        | Hanya siswa yang tepat waktu.
+        | Status late lama tetap dimasukkan ke Hadir agar data lama
+        | tidak hilang dari statistik.
+        |
+        | Scanner sekolah baru nantinya tidak lagi membuat status late.
         |
         */
 
-        $hadir =
+        $presentCount =
             $todayAttendances
                 ->where(
                     'status',
@@ -378,13 +448,7 @@ class DashboardController extends Controller
                 ->count();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TERLAMBAT
-        |--------------------------------------------------------------------------
-        */
-
-        $terlambat =
+        $legacyLateCount =
             $todayAttendances
                 ->where(
                     'status',
@@ -393,21 +457,10 @@ class DashboardController extends Controller
                 ->count();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TOTAL HADIR
-        |--------------------------------------------------------------------------
-        |
-        | Digunakan untuk persentase kehadiran.
-        |
-        | Hadir + Terlambat tetap dianggap datang ke sekolah.
-        |
-        */
-
-        $totalHadir =
-            $hadir
+        $hadir =
+            $presentCount
             +
-            $terlambat;
+            $legacyLateCount;
 
 
         /*
@@ -459,16 +512,13 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         | PERSENTASE HADIR
         |--------------------------------------------------------------------------
-        |
-        | Hadir + Terlambat dihitung sebagai kehadiran.
-        |
         */
 
         $persentaseHadir =
             $totalSiswa > 0
                 ? round(
                     (
-                        $totalHadir
+                        $hadir
                         /
                         $totalSiswa
                     )
@@ -480,7 +530,7 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | JUMLAH PENGAJUAN YANG MASIH MENUNGGU
+        | PENDING LEAVE
         |--------------------------------------------------------------------------
         */
 
@@ -495,7 +545,7 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | NOTIFIKASI PENGAJUAN TERBARU
+        | NOTIFIKASI LEAVE
         |--------------------------------------------------------------------------
         */
 
@@ -529,7 +579,6 @@ class DashboardController extends Controller
                 'totalSiswa',
 
                 'hadir',
-                'terlambat',
                 'sakit',
                 'izin',
                 'alfa',
@@ -537,10 +586,15 @@ class DashboardController extends Controller
                 'persentaseHadir',
 
                 'attendanceStartDisplay',
-                'lateAfterMinutes',
-                'lateStartDisplay',
+                'attendanceEndDisplay',
 
-                'cutoffDisplay',
+                'lateAfterMinutes',
+
+                'toleranceStartDisplay',
+                'toleranceEndDisplay',
+
+                'alphaStartDisplay',
+
                 'autoAlphaEnabled',
 
                 'pendingLeaveCount',

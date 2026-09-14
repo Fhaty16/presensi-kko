@@ -3,25 +3,61 @@
 namespace App\Http\Controllers;
 
 use App\Models\AttendanceSetting;
+use App\Models\Barcode;
 use App\Services\DynamicBarcodeService;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class BarcodeDisplayController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | TIMEZONE
+    |--------------------------------------------------------------------------
+    */
+
+    private const TIMEZONE =
+        'Asia/Jakarta';
+
+
     /*
     |--------------------------------------------------------------------------
     | HALAMAN BARCODE PRESENSI SEKOLAH
     |--------------------------------------------------------------------------
     */
 
-    public function index()
+    public function index(): View
     {
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI ROLE
+        | HANYA GURU
         |--------------------------------------------------------------------------
         */
 
-        $this->authorizeRole();
+        $this->authorizeGuru();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SETTING
+        |--------------------------------------------------------------------------
+        */
+
+        $settings =
+            $this->getSettings();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | WAKTU
+        |--------------------------------------------------------------------------
+        */
+
+        $times =
+            $this->getAttendanceTimes(
+                $settings
+            );
 
 
         /*
@@ -31,229 +67,191 @@ class BarcodeDisplayController extends Controller
         */
 
         return view(
-            'barcode.display'
+            'barcode.display',
+            [
+                'attendanceStartDisplay' =>
+                    $times[
+                        'starts_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
+
+                'attendanceEndDisplay' =>
+                    $times[
+                        'ends_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
+
+                'toleranceMinutes' =>
+                    $times[
+                        'tolerance_minutes'
+                    ],
+
+                'toleranceEndDisplay' =>
+                    $times[
+                        'tolerance_ends_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
+
+                'attendanceCloseDisplay' =>
+                    $times[
+                        'closes_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
+
+                'autoAlphaEnabled' =>
+                    (bool) $settings
+                        ->auto_alpha,
+            ]
         );
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | BARCODE AKTIF SAAT INI
+    | BARCODE SEKOLAH AKTIF
     |--------------------------------------------------------------------------
+    |
+    | Endpoint ini dipanggil berkala oleh JavaScript halaman barcode.
+    |
+    | Status response:
+    |
+    | not_started = belum masuk Jam Mulai
+    | active      = barcode dapat digunakan
+    | ended       = toleransi sudah selesai
+    |
     */
 
     public function current(
         DynamicBarcodeService $barcodeService
-    ) {
+    ): JsonResponse {
+
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI ROLE
+        | HANYA GURU
         |--------------------------------------------------------------------------
         */
 
-        $this->authorizeRole();
+        $this->authorizeGuru();
 
 
         /*
         |--------------------------------------------------------------------------
-        | SETTING PRESENSI
+        | SETTING
         |--------------------------------------------------------------------------
         */
 
         $settings =
-            AttendanceSetting::firstOrCreate(
-                [],
-                [
-                    'attendance_start_time' =>
-                        '06:50:00',
-
-                    'late_after_minutes' =>
-                        10,
-
-                    'cutoff_time' =>
-                        '07:01:00',
-
-                    'auto_alpha' =>
-                        true,
-
-                    'location_radius_meters' =>
-                        120,
-
-                    'barcode_lifetime_seconds' =>
-                        60,
-                ]
-            );
+            $this->getSettings();
 
 
         /*
         |--------------------------------------------------------------------------
-        | WAKTU SEKARANG
+        | HITUNG WAKTU
         |--------------------------------------------------------------------------
         */
+
+        $times =
+            $this->getAttendanceTimes(
+                $settings
+            );
+
 
         $now =
-            now(
-                'Asia/Jakarta'
+            Carbon::now(
+                self::TIMEZONE
             );
 
 
         /*
         |--------------------------------------------------------------------------
-        | JAM MULAI PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        $attendanceStart =
-            $now
-                ->copy()
-                ->setTimeFromTimeString(
-                    $settings->attendance_start_time
-                    ?? '06:50:00'
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | TOLERANSI HADIR
-        |--------------------------------------------------------------------------
-        */
-
-        $lateAfterMinutes =
-            max(
-                0,
-                (int) (
-                    $settings->late_after_minutes
-                    ?? 10
-                )
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATAS HADIR
+        | BELUM DIMULAI
         |--------------------------------------------------------------------------
         |
-        | Contoh:
+        | Jangan menampilkan QR sebelum Jam Mulai Presensi.
         |
-        | Jam mulai     : 06:50
-        | Toleransi     : 10 menit
-        |
-        | Batas Hadir   : 07:00
-        |
-        */
-
-        $lateLimit =
-            $attendanceStart
-                ->copy()
-                ->addMinutes(
-                    $lateAfterMinutes
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JAM BATAS PRESENSI / ALFA
-        |--------------------------------------------------------------------------
-        */
-
-        $cutoff =
-            $now
-                ->copy()
-                ->setTimeFromTimeString(
-                    $settings->cutoff_time
-                    ?? '07:01:00'
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI KONFIGURASI WAKTU
-        |--------------------------------------------------------------------------
-        |
-        | Harus:
-        |
-        | Jam Mulai
-        |     <
-        | Batas Hadir
-        |     <
-        | Jam Batas
-        |
-        */
-
-        if (
-            !$cutoff->gt(
-                $attendanceStart
-            )
-            ||
-            !$lateLimit->lt(
-                $cutoff
-            )
-        ) {
-            return response()->json([
-                'success' =>
-                    false,
-
-                'closed' =>
-                    true,
-
-                'reason' =>
-                    'invalid_settings',
-
-                'message' =>
-                    'Pengaturan waktu presensi sekolah tidak valid. Silakan periksa Pengaturan Presensi.',
-
-                'seconds_remaining' =>
-                    0,
-            ], 422);
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | PRESENSI BELUM DIBUKA
-        |--------------------------------------------------------------------------
         */
 
         if (
             $now->lt(
-                $attendanceStart
+                $times[
+                    'starts_at'
+                ]
             )
         ) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | NONAKTIFKAN QR LAMA
+            |--------------------------------------------------------------------------
+            */
+
+            $this->deactivateActiveBarcodes();
+
+
             return response()->json([
-                'success' =>
-                    true,
-
-                'closed' =>
-                    true,
-
-                'reason' =>
+                'status' =>
                     'not_started',
 
                 'message' =>
-                    'Presensi belum dibuka. Presensi mulai pukul '
-                    . $attendanceStart->format('H:i')
-                    . ' WIB.',
-
-                'seconds_remaining' =>
-                    0,
+                    'Presensi sekolah belum dibuka. Barcode akan aktif mulai pukul '
+                    .
+                    $times[
+                        'starts_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        )
+                    .
+                    ' WIB.',
 
                 'attendance_start_time' =>
-                    $attendanceStart->format(
-                        'H:i'
-                    ),
+                    $times[
+                        'starts_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
 
-                'late_limit' =>
-                    $lateLimit->format(
-                        'H:i'
-                    ),
+                'attendance_end_time' =>
+                    $times[
+                        'ends_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
 
-                'cutoff_time' =>
-                    $cutoff->format(
-                        'H:i'
-                    ),
+                'tolerance_minutes' =>
+                    $times[
+                        'tolerance_minutes'
+                    ],
+
+                'tolerance_end_time' =>
+                    $times[
+                        'tolerance_ends_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
+
+                'closes_at' =>
+                    $times[
+                        'closes_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
 
                 'auto_alpha' =>
-                    (bool) $settings->auto_alpha,
+                    (bool) $settings
+                        ->auto_alpha,
             ]);
         }
 
@@ -262,70 +260,116 @@ class BarcodeDisplayController extends Controller
         |--------------------------------------------------------------------------
         | PRESENSI SUDAH DITUTUP
         |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Selesai   : 07:00
+        | Toleransi : 10 menit
+        |
+        | 07:10:59 = masih aktif
+        | 07:11:00 = ditutup
+        |
         */
 
         if (
             $now->gte(
-                $cutoff
+                $times[
+                    'closes_at'
+                ]
             )
         ) {
 
             /*
             |--------------------------------------------------------------------------
-            | PESAN SESUAI AUTO ALFA
+            | MATIKAN SEMUA BARCODE AKTIF
             |--------------------------------------------------------------------------
             */
 
+            $this->deactivateActiveBarcodes();
+
+
             $message =
                 $settings->auto_alpha
-                    ? 'Presensi sudah ditutup. Mulai pukul '
-                        . $cutoff->format('H:i')
-                        . ' WIB siswa yang belum memiliki presensi diproses sebagai Alfa otomatis.'
-                    : 'Presensi sudah ditutup pada pukul '
-                        . $cutoff->format('H:i')
-                        . ' WIB. Auto Alfa sedang dinonaktifkan.';
+                    ? (
+                        'Presensi sekolah ditutup mulai pukul '
+                        .
+                        $times[
+                            'closes_at'
+                        ]
+                            ->format(
+                                'H:i'
+                            )
+                        .
+                        ' WIB. Siswa yang belum memiliki presensi akan diproses sebagai Alfa otomatis.'
+                    )
+                    : (
+                        'Presensi sekolah ditutup mulai pukul '
+                        .
+                        $times[
+                            'closes_at'
+                        ]
+                            ->format(
+                                'H:i'
+                            )
+                        .
+                        ' WIB. Auto Alfa sedang dinonaktifkan.'
+                    );
 
 
             return response()->json([
-                'success' =>
-                    true,
-
-                'closed' =>
-                    true,
-
-                'reason' =>
-                    'cutoff',
+                'status' =>
+                    'ended',
 
                 'message' =>
                     $message,
 
-                'seconds_remaining' =>
-                    0,
-
                 'attendance_start_time' =>
-                    $attendanceStart->format(
-                        'H:i'
-                    ),
+                    $times[
+                        'starts_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
 
-                'late_limit' =>
-                    $lateLimit->format(
-                        'H:i'
-                    ),
+                'attendance_end_time' =>
+                    $times[
+                        'ends_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
 
-                'cutoff_time' =>
-                    $cutoff->format(
-                        'H:i'
-                    ),
+                'tolerance_minutes' =>
+                    $times[
+                        'tolerance_minutes'
+                    ],
+
+                'tolerance_end_time' =>
+                    $times[
+                        'tolerance_ends_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
+
+                'closes_at' =>
+                    $times[
+                        'closes_at'
+                    ]
+                        ->format(
+                            'H:i'
+                        ),
 
                 'auto_alpha' =>
-                    (bool) $settings->auto_alpha,
+                    (bool) $settings
+                        ->auto_alpha,
             ]);
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL / GENERATE BARCODE AKTIF
+        | AMBIL / BUAT BARCODE AKTIF
         |--------------------------------------------------------------------------
         */
 
@@ -336,14 +380,229 @@ class BarcodeDisplayController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | HITUNG SISA WAKTU BARCODE
+        | SERVICE TIDAK MENGEMBALIKAN BARCODE
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$barcode
+        ) {
+
+            return response()->json([
+                'status' =>
+                    'unavailable',
+
+                'message' =>
+                    'Barcode belum tersedia. Silakan tunggu beberapa saat.',
+            ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUPPORT RETURN MODEL / ARRAY
+        |--------------------------------------------------------------------------
+        |
+        | Bagian ini dibuat aman jika DynamicBarcodeService::current()
+        | mengembalikan Model Barcode atau array.
+        |
+        */
+
+        if (
+            is_array(
+                $barcode
+            )
+        ) {
+
+            $rawToken =
+                $barcode[
+                    'token'
+                ]
+                ??
+                null;
+
+
+            $expiredAtRaw =
+                $barcode[
+                    'expired_at'
+                ]
+                ??
+                null;
+
+
+            $barcodeId =
+                $barcode[
+                    'id'
+                ]
+                ??
+                $barcode[
+                    'barcode_id'
+                ]
+                ??
+                null;
+
+        } else {
+
+            $rawToken =
+                $barcode
+                    ->token
+                ??
+                null;
+
+
+            $expiredAtRaw =
+                $barcode
+                    ->expired_at
+                ??
+                null;
+
+
+            $barcodeId =
+                $barcode
+                    ->id
+                ??
+                null;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOKEN TIDAK VALID
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            blank(
+                $rawToken
+            )
+        ) {
+
+            return response()->json([
+                'status' =>
+                    'unavailable',
+
+                'message' =>
+                    'Token barcode tidak tersedia.',
+            ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EXPIRED AT
+        |--------------------------------------------------------------------------
+        */
+
+        $expiredAt =
+            $expiredAtRaw
+                ? Carbon::parse(
+                    $expiredAtRaw,
+                    self::TIMEZONE
+                )
+                : $now
+                    ->copy()
+                    ->addSeconds(
+                        max(
+                            1,
+                            (int) (
+                                $settings
+                                    ->barcode_lifetime_seconds
+                                ??
+                                60
+                            )
+                        )
+                    );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | QR TIDAK BOLEH MELEWATI WAKTU PENUTUPAN
+        |--------------------------------------------------------------------------
+        |
+        | Misalnya sekarang 07:10:45 dan QR normal berlaku 60 detik.
+        |
+        | QR tidak boleh aktif sampai 07:11:45.
+        |
+        | QR harus berakhir tepat maksimal 07:11:00.
+        |
+        */
+
+        if (
+            $expiredAt->gt(
+                $times[
+                    'closes_at'
+                ]
+            )
+        ) {
+
+            $expiredAt =
+                $times[
+                    'closes_at'
+                ]
+                    ->copy();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE MODEL BARCODE
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                !is_array(
+                    $barcode
+                )
+                &&
+                method_exists(
+                    $barcode,
+                    'update'
+                )
+            ) {
+
+                $barcode->update([
+                    'expired_at' =>
+                        $expiredAt,
+                ]);
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PENGAMAN JIKA QR SUDAH TIDAK PUNYA WAKTU
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $expiredAt->lte(
+                $now
+            )
+        ) {
+
+            $this->deactivateActiveBarcodes();
+
+
+            return response()->json([
+                'status' =>
+                    'ended',
+
+                'message' =>
+                    'Presensi sekolah sudah ditutup.',
+            ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SISA WAKTU BARCODE
         |--------------------------------------------------------------------------
         */
 
         $secondsRemaining =
-            (int) ceil(
+            (int) max(
+                0,
                 $now->diffInSeconds(
-                    $barcode->expired_at,
+                    $expiredAt,
                     false
                 )
             );
@@ -351,88 +610,53 @@ class BarcodeDisplayController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | LIFETIME BARCODE
+        | PERIODE SEKARANG
         |--------------------------------------------------------------------------
-        */
-
-        $barcodeLifetime =
-            max(
-                1,
-                (int) (
-                    $settings->barcode_lifetime_seconds
-                    ?? 60
-                )
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BATASI SISA WAKTU
-        |--------------------------------------------------------------------------
-        */
-
-        $secondsRemaining =
-            max(
-                0,
-                min(
-                    $barcodeLifetime,
-                    $secondsRemaining
-                )
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | STATUS PERIODE PRESENSI
-        |--------------------------------------------------------------------------
+        |
+        | Seluruh periode tetap menghasilkan status HADIR.
+        |
+        | Kita hanya membedakan label UI:
+        |
+        | main      = Jam Mulai sampai Jam Selesai
+        | tolerance = setelah Jam Selesai sampai batas toleransi
+        |
         */
 
         $attendancePeriod =
             $now->lte(
-                $lateLimit
+                $times[
+                    'ends_at'
+                ]
+                    ->copy()
+                    ->endOfMinute()
             )
-                ? 'present'
-                : 'late';
+                ? 'main'
+                : 'tolerance';
 
 
         /*
         |--------------------------------------------------------------------------
-        | LABEL PERIODE
+        | RESPONSE ACTIVE
         |--------------------------------------------------------------------------
-        */
-
-        $attendancePeriodLabel =
-            $attendancePeriod === 'present'
-                ? 'HADIR'
-                : 'TERLAMBAT';
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESPONSE BARCODE
-        |--------------------------------------------------------------------------
+        |
+        | AttendanceController membutuhkan prefix KKO:
+        |
         */
 
         return response()->json([
-            'success' =>
-                true,
+            'status' =>
+                'active',
 
-            'closed' =>
-                false,
-
-            'reason' =>
-                null,
+            'token' =>
+                'KKO:'
+                .
+                $rawToken,
 
             'barcode_id' =>
-                $barcode->id,
+                $barcodeId,
 
-            'payload' =>
-                'KKO:'
-                . $barcode->token,
-
-            'expires_at' =>
-                $barcode
-                    ->expired_at
+            'expired_at' =>
+                $expiredAt
                     ->toIso8601String(),
 
             'seconds_remaining' =>
@@ -440,37 +664,7 @@ class BarcodeDisplayController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | INFORMASI PENGATURAN
-            |--------------------------------------------------------------------------
-            */
-
-            'attendance_start_time' =>
-                $attendanceStart
-                    ->format(
-                        'H:i'
-                    ),
-
-            'late_limit' =>
-                $lateLimit
-                    ->format(
-                        'H:i'
-                    ),
-
-            'cutoff_time' =>
-                $cutoff
-                    ->format(
-                        'H:i'
-                    ),
-
-            'late_after_minutes' =>
-                $lateAfterMinutes,
-
-            'auto_alpha' =>
-                (bool) $settings->auto_alpha,
-
-            /*
-            |--------------------------------------------------------------------------
-            | PERIODE SEKARANG
+            | ATURAN PRESENSI
             |--------------------------------------------------------------------------
             */
 
@@ -478,34 +672,310 @@ class BarcodeDisplayController extends Controller
                 $attendancePeriod,
 
             'attendance_period_label' =>
-                $attendancePeriodLabel,
+                $attendancePeriod === 'main'
+                    ? 'WAKTU PRESENSI'
+                    : 'TOLERANSI HADIR',
+
+            'attendance_start_time' =>
+                $times[
+                    'starts_at'
+                ]
+                    ->format(
+                        'H:i'
+                    ),
+
+            'attendance_end_time' =>
+                $times[
+                    'ends_at'
+                ]
+                    ->format(
+                        'H:i'
+                    ),
+
+            'tolerance_minutes' =>
+                $times[
+                    'tolerance_minutes'
+                ],
+
+            'tolerance_start_time' =>
+                $times[
+                    'tolerance_starts_at'
+                ]
+                    ->format(
+                        'H:i'
+                    ),
+
+            'tolerance_end_time' =>
+                $times[
+                    'tolerance_ends_at'
+                ]
+                    ->format(
+                        'H:i'
+                    ),
+
+            'closes_at' =>
+                $times[
+                    'closes_at'
+                ]
+                    ->format(
+                        'H:i'
+                    ),
+
+            'auto_alpha' =>
+                (bool) $settings
+                    ->auto_alpha,
         ]);
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | HANYA GURU
+    | AMBIL SETTING
+    |--------------------------------------------------------------------------
+    */
+
+    private function getSettings(): AttendanceSetting
+    {
+        return AttendanceSetting::firstOrCreate(
+            [],
+            [
+                'attendance_start_time' =>
+                    '06:00:00',
+
+                'attendance_end_time' =>
+                    '07:00:00',
+
+                'late_after_minutes' =>
+                    10,
+
+                'cutoff_time' =>
+                    '07:11:00',
+
+                'auto_alpha' =>
+                    true,
+
+                'location_radius_meters' =>
+                    120,
+
+                'barcode_lifetime_seconds' =>
+                    60,
+            ]
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HITUNG SEMUA WAKTU PRESENSI
+    |--------------------------------------------------------------------------
+    */
+
+    private function getAttendanceTimes(
+        AttendanceSetting $settings
+    ): array {
+
+        $now =
+            Carbon::now(
+                self::TIMEZONE
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM MULAI
+        |--------------------------------------------------------------------------
+        */
+
+        $startsAt =
+            $now
+                ->copy()
+                ->setTimeFromTimeString(
+                    $settings
+                        ->attendance_start_time
+                    ??
+                    '06:00:00'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM SELESAI
+        |--------------------------------------------------------------------------
+        */
+
+        $endsAt =
+            $now
+                ->copy()
+                ->setTimeFromTimeString(
+                    $settings
+                        ->attendance_end_time
+                    ??
+                    '07:00:00'
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $endsAt->lte(
+                $startsAt
+            )
+        ) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | FALLBACK AMAN
+            |--------------------------------------------------------------------------
+            */
+
+            $endsAt =
+                $startsAt
+                    ->copy()
+                    ->addHour();
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOLERANSI
+        |--------------------------------------------------------------------------
+        */
+
+        $toleranceMinutes =
+            max(
+                0,
+                (int) (
+                    $settings
+                        ->late_after_minutes
+                    ??
+                    0
+                )
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MULAI TOLERANSI
+        |--------------------------------------------------------------------------
+        */
+
+        $toleranceStartsAt =
+            $endsAt
+                ->copy()
+                ->addMinute()
+                ->startOfMinute();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AKHIR TOLERANSI
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | selesai 07:00
+        | toleransi 10
+        |
+        | akhir = 07:10:59
+        |
+        */
+
+        $toleranceEndsAt =
+            $endsAt
+                ->copy()
+                ->addMinutes(
+                    $toleranceMinutes
+                )
+                ->endOfMinute();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MULAI DITUTUP
+        |--------------------------------------------------------------------------
+        */
+
+        $closesAt =
+            $toleranceEndsAt
+                ->copy()
+                ->addSecond();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN
+        |--------------------------------------------------------------------------
+        */
+
+        return [
+            'starts_at' =>
+                $startsAt,
+
+            'ends_at' =>
+                $endsAt,
+
+            'tolerance_minutes' =>
+                $toleranceMinutes,
+
+            'tolerance_starts_at' =>
+                $toleranceStartsAt,
+
+            'tolerance_ends_at' =>
+                $toleranceEndsAt,
+
+            'closes_at' =>
+                $closesAt,
+        ];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MATIKAN BARCODE AKTIF
+    |--------------------------------------------------------------------------
+    */
+
+    private function deactivateActiveBarcodes(): void
+    {
+        Barcode::query()
+            ->where(
+                'is_active',
+                true
+            )
+            ->update([
+                'is_active' =>
+                    false,
+            ]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAK AKSES
     |--------------------------------------------------------------------------
     |
-    | Barcode presensi sekolah hanya boleh ditampilkan Guru.
-    |
-    | Siswa:
-    | - hanya melakukan scan.
-    |
-    | Pelatih:
-    | - tidak memiliki akses ke barcode sekolah.
+    | Barcode sekolah hanya boleh ditampilkan Guru.
     |
     */
 
-    private function authorizeRole(): void
+    private function authorizeGuru(): void
     {
-        abort_unless(
-            auth()->check()
-            &&
+        if (
+            !auth()->check()
+            ||
             auth()->user()->role
-                === 'guru',
-            403
-        );
+            !==
+            'guru'
+        ) {
+
+            abort(
+                403,
+                'Hanya Guru yang dapat menampilkan barcode presensi sekolah.'
+            );
+        }
     }
 }

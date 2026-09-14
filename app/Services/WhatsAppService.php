@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Jobs\SendWhatsAppNotification;
 use App\Models\Attendance;
+use App\Models\AttendanceSetting;
 use App\Models\Student;
 use App\Models\WhatsAppNotification;
 use Carbon\Carbon;
@@ -16,771 +17,982 @@ class WhatsAppService
 {
     /*
     |--------------------------------------------------------------------------
+    | TIMEZONE
+    |--------------------------------------------------------------------------
+    */
+
+    private const TIMEZONE =
+        'Asia/Jakarta';
+
+
+    /*
+    |--------------------------------------------------------------------------
     | BUAT NOTIFIKASI PRESENSI
     |--------------------------------------------------------------------------
-    |
-    | Status yang dikirim:
-    | present = Hadir
-    | late    = Terlambat
-    | absent  = Alfa
-    |
     */
+
     public function createAttendanceNotification(
         Student $student,
         Attendance $attendance
     ): ?WhatsAppNotification {
-        $parentPhone = $this->normalizePhone($student->parent_phone);
 
-        if (!$parentPhone) {
+        /*
+        |--------------------------------------------------------------------------
+        | NOMOR ORANG TUA
+        |--------------------------------------------------------------------------
+        */
+
+        $parentPhone =
+            $this->normalizePhone(
+                $student->parent_phone
+            );
+
+
+        if (
+            !$parentPhone
+        ) {
+
             Log::warning(
                 'WhatsApp tidak dibuat karena parent_phone kosong.',
                 [
-                    'student_id' => $student->id,
-                    'nis' => $student->nis,
-                    'attendance_id' => $attendance->id,
+                    'student_id' =>
+                        $student->id,
+
+                    'nis' =>
+                        $student->nis,
+
+                    'attendance_id' =>
+                        $attendance->id,
                 ]
             );
+
 
             return null;
         }
 
-        $attendanceStatus = strtolower((string) $attendance->status);
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS PRESENSI
+        |--------------------------------------------------------------------------
+        */
+
+        $attendanceStatus =
+            strtolower(
+                (string) $attendance->status
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS YANG MENDAPAT WHATSAPP
+        |--------------------------------------------------------------------------
+        |
+        | present = Hadir
+        | late    = Data lama Terlambat
+        | absent  = Alfa
+        |
+        */
 
         if (
             !in_array(
                 $attendanceStatus,
-                ['present', 'late', 'absent'],
+                [
+                    'present',
+                    'late',
+                    'absent',
+                ],
                 true
             )
         ) {
+
             Log::info(
                 'Status presensi tidak membutuhkan WhatsApp.',
                 [
-                    'student_id' => $student->id,
-                    'attendance_id' => $attendance->id,
-                    'status' => $attendanceStatus,
+                    'student_id' =>
+                        $student->id,
+
+                    'attendance_id' =>
+                        $attendance->id,
+
+                    'status' =>
+                        $attendanceStatus,
                 ]
             );
+
 
             return null;
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | EVENT KEY
+        |--------------------------------------------------------------------------
+        */
+
         $eventKey =
             'school_attendance:'
-            . $attendance->id
-            . ':'
-            . $attendanceStatus;
+            .
+            $attendance->id
+            .
+            ':'
+            .
+            $attendanceStatus;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TYPE
+        |--------------------------------------------------------------------------
+        */
 
         $notificationType =
             $attendanceStatus === 'absent'
                 ? 'absent'
                 : 'check_in';
 
-        $message = $this->buildAttendanceMessage(
-            $student,
-            $attendance
-        );
 
-        $notification = WhatsAppNotification::firstOrCreate(
-            [
-                'event_key' => $eventKey,
-            ],
-            [
-                'student_id' => $student->id,
-                'attendance_id' => $attendance->id,
-                'notification_type' => $notificationType,
-                'attendance_status' => $attendanceStatus,
-                'recipient_phone' => $parentPhone,
-                'message' => $message,
-                'status' => 'pending',
-                'attempts' => 0,
-            ]
-        );
+        /*
+        |--------------------------------------------------------------------------
+        | PESAN
+        |--------------------------------------------------------------------------
+        */
 
-        if ($notification->wasRecentlyCreated) {
+        $message =
+            $this->buildAttendanceMessage(
+                $student,
+                $attendance
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FIRST OR CREATE
+        |--------------------------------------------------------------------------
+        |
+        | event_key mencegah notifikasi ganda.
+        |
+        */
+
+        $notification =
+            WhatsAppNotification::firstOrCreate(
+                [
+                    'event_key' =>
+                        $eventKey,
+                ],
+                [
+                    'student_id' =>
+                        $student->id,
+
+                    'attendance_id' =>
+                        $attendance->id,
+
+                    'notification_type' =>
+                        $notificationType,
+
+                    'attendance_status' =>
+                        $attendanceStatus,
+
+                    'recipient_phone' =>
+                        $parentPhone,
+
+                    'message' =>
+                        $message,
+
+                    'status' =>
+                        'pending',
+
+                    'attempts' =>
+                        0,
+                ]
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFIKASI BARU
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $notification
+                ->wasRecentlyCreated
+        ) {
+
             Log::info(
                 'WHATSAPP NOTIFICATION CREATED',
                 [
-                    'notification_id' => $notification->id,
-                    'student_id' => $student->id,
-                    'nis' => $student->nis,
-                    'attendance_id' => $attendance->id,
-                    'recipient_phone' => $this->maskPhone(
-                        $notification->recipient_phone
-                    ),
-                    'attendance_status' => $notification->attendance_status,
+                    'notification_id' =>
+                        $notification->id,
+
+                    'student_id' =>
+                        $student->id,
+
+                    'nis' =>
+                        $student->nis,
+
+                    'attendance_id' =>
+                        $attendance->id,
+
+                    'recipient_phone' =>
+                        $this->maskPhone(
+                            $notification
+                                ->recipient_phone
+                        ),
+
+                    'attendance_status' =>
+                        $notification
+                            ->attendance_status,
                 ]
             );
 
-            $this->dispatchNotificationJob(
-                $notification,
-                'WhatsApp Job berhasil didispatch.',
-                'Gagal dispatch WhatsApp Job.'
-            );
-        } else {
-            Log::info(
-                'WhatsApp Notification sudah ada. Duplikat tidak dibuat.',
-                [
-                    'notification_id' => $notification->id,
-                    'event_key' => $notification->event_key,
-                    'status' => $notification->status,
-                ]
-            );
-        }
 
-        return $notification;
-    }
+            /*
+            |--------------------------------------------------------------------------
+            | DISPATCH JOB
+            |--------------------------------------------------------------------------
+            */
 
-    /*
-    |--------------------------------------------------------------------------
-    | BUAT NOTIFIKASI KOREKSI ALFA
-    |--------------------------------------------------------------------------
-    |
-    | Digunakan ketika:
-    |
-    | absent -> permission
-    | absent -> sick
-    |
-    | Jika pesan Alfa sebelumnya belum terkirim, pesan Alfa tersebut
-    | dibatalkan dan tidak perlu mengirim correction.
-    |
-    */
-    public function createAttendanceCorrectionNotification(
-        Student $student,
-        Attendance $attendance,
-        string $previousStatus
-    ): ?WhatsAppNotification {
-        $previousStatus = strtolower(trim($previousStatus));
-        $newStatus = strtolower((string) $attendance->status);
+            try {
 
-        if (
-            $previousStatus !== 'absent'
-            ||
-            !in_array(
-                $newStatus,
-                ['permission', 'sick'],
-                true
-            )
-        ) {
-            return null;
-        }
+                SendWhatsAppNotification::dispatch(
+                    $notification->id
+                )
+                    ->afterCommit();
 
-        /*
-        |--------------------------------------------------------------------------
-        | CARI NOTIFIKASI ALFA SEBELUMNYA
-        |--------------------------------------------------------------------------
-        */
-        $previousNotification = WhatsAppNotification::query()
-            ->where('attendance_id', $attendance->id)
-            ->where('notification_type', 'absent')
-            ->where('attendance_status', 'absent')
-            ->latest('id')
-            ->first();
 
-        /*
-        |--------------------------------------------------------------------------
-        | TIDAK ADA NOTIFIKASI ALFA
-        |--------------------------------------------------------------------------
-        */
-        if (!$previousNotification) {
-            Log::info(
-                'WhatsApp correction tidak dibuat karena notification Alfa sebelumnya tidak ditemukan.',
-                [
-                    'student_id' => $student->id,
-                    'attendance_id' => $attendance->id,
-                    'new_status' => $newStatus,
-                ]
-            );
+                Log::info(
+                    'WhatsApp Job berhasil didispatch.',
+                    [
+                        'notification_id' =>
+                            $notification->id,
+                    ]
+                );
 
-            return null;
-        }
+            } catch (
+                Throwable $exception
+            ) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | ALFA BELUM TERKIRIM
-        |--------------------------------------------------------------------------
-        |
-        | Jika masih pending/failed/skipped, jangan kirim correction.
-        |
-        | Pending/failed diubah menjadi skipped agar Job lama tidak lagi
-        | mengirim informasi Alfa yang sudah tidak berlaku.
-        |
-        */
-        if (
-            in_array(
-                $previousNotification->status,
-                ['pending', 'failed', 'skipped'],
-                true
-            )
-        ) {
-            if ($previousNotification->status !== 'skipped') {
-                $previousNotification->markAsSkipped(
-                    'Notifikasi Alfa dibatalkan karena status presensi telah dikoreksi menjadi '
-                    . strtoupper($newStatus)
-                    . '.'
+                Log::error(
+                    'Gagal dispatch WhatsApp Job.',
+                    [
+                        'notification_id' =>
+                            $notification->id,
+
+                        'error' =>
+                            $exception
+                                ->getMessage(),
+                    ]
                 );
             }
 
-            Log::info(
-                'WhatsApp Alfa dibatalkan karena belum terkirim dan presensi sudah dikoreksi.',
-                [
-                    'notification_id' => $previousNotification->id,
-                    'student_id' => $student->id,
-                    'attendance_id' => $attendance->id,
-                    'new_status' => $newStatus,
-                ]
-            );
-
-            return null;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | ALFA SUDAH / SEDANG DIPROSES
-        |--------------------------------------------------------------------------
-        */
-        if (
-            !in_array(
-                $previousNotification->status,
-                ['sent', 'processing'],
-                true
-            )
-        ) {
-            return null;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | NOMOR PENERIMA
-        |--------------------------------------------------------------------------
-        |
-        | Prioritaskan nomor yang menerima pesan Alfa sebelumnya.
-        |
-        */
-        $recipientPhone = $previousNotification->recipient_phone;
-
-        if (!$recipientPhone) {
-            $recipientPhone = $this->normalizePhone(
-                $student->parent_phone
-            );
-        }
-
-        if (!$recipientPhone) {
-            Log::warning(
-                'WhatsApp correction tidak dibuat karena nomor tujuan kosong.',
-                [
-                    'student_id' => $student->id,
-                    'attendance_id' => $attendance->id,
-                ]
-            );
-
-            return null;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | EVENT KEY
-        |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | school_attendance:190:correction:permission
-        |
-        */
-        $eventKey =
-            'school_attendance:'
-            . $attendance->id
-            . ':correction:'
-            . $newStatus;
-
-        $message = $this->buildAttendanceCorrectionMessage(
-            $student,
-            $attendance
-        );
-
-        $notification = WhatsAppNotification::firstOrCreate(
-            [
-                'event_key' => $eventKey,
-            ],
-            [
-                'student_id' => $student->id,
-                'attendance_id' => $attendance->id,
-                'notification_type' => 'correction',
-                'attendance_status' => $newStatus,
-                'recipient_phone' => $recipientPhone,
-                'message' => $message,
-                'status' => 'pending',
-                'attempts' => 0,
-            ]
-        );
-
-        if ($notification->wasRecentlyCreated) {
-            Log::info(
-                'WHATSAPP CORRECTION CREATED',
-                [
-                    'notification_id' => $notification->id,
-                    'student_id' => $student->id,
-                    'attendance_id' => $attendance->id,
-                    'previous_status' => $previousStatus,
-                    'new_status' => $newStatus,
-                    'recipient_phone' => $this->maskPhone(
-                        $recipientPhone
-                    ),
-                ]
-            );
-
-            $this->dispatchNotificationJob(
-                $notification,
-                'WhatsApp Correction Job berhasil didispatch.',
-                'Gagal dispatch WhatsApp Correction Job.'
-            );
         } else {
+
             Log::info(
-                'WhatsApp Correction sudah ada. Duplikat tidak dibuat.',
+                'WhatsApp Notification sudah ada. Duplikat tidak dibuat.',
                 [
-                    'notification_id' => $notification->id,
-                    'event_key' => $notification->event_key,
-                    'status' => $notification->status,
+                    'notification_id' =>
+                        $notification->id,
+
+                    'event_key' =>
+                        $notification->event_key,
+
+                    'status' =>
+                        $notification->status,
                 ]
             );
         }
+
 
         return $notification;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | DISPATCH JOB
-    |--------------------------------------------------------------------------
-    */
-    private function dispatchNotificationJob(
-        WhatsAppNotification $notification,
-        string $successLog,
-        string $failureLog
-    ): void {
-        try {
-            SendWhatsAppNotification::dispatch(
-                $notification->id
-            )->afterCommit();
-
-            Log::info(
-                $successLog,
-                [
-                    'notification_id' => $notification->id,
-                ]
-            );
-        } catch (Throwable $exception) {
-            Log::error(
-                $failureLog,
-                [
-                    'notification_id' => $notification->id,
-                    'error' => $exception->getMessage(),
-                ]
-            );
-        }
-    }
 
     /*
     |--------------------------------------------------------------------------
-    | SEND NOTIFICATION KE FONNTE
+    | KIRIM NOTIFIKASI
     |--------------------------------------------------------------------------
     */
+
     public function sendNotification(
         WhatsAppNotification $notification
     ): void {
+
+        /*
+        |--------------------------------------------------------------------------
+        | REFRESH
+        |--------------------------------------------------------------------------
+        */
+
         $notification->refresh();
+
 
         /*
         |--------------------------------------------------------------------------
         | SUDAH SENT
         |--------------------------------------------------------------------------
         */
-        if ($notification->status === 'sent') {
+
+        if (
+            $notification->status
+            ===
+            'sent'
+        ) {
+
             Log::info(
                 'WhatsApp tidak dikirim ulang karena sudah SENT.',
                 [
-                    'notification_id' => $notification->id,
+                    'notification_id' =>
+                        $notification->id,
                 ]
             );
 
+
             return;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | SKIPPED
         |--------------------------------------------------------------------------
         */
-        if ($notification->status === 'skipped') {
+
+        if (
+            $notification->status
+            ===
+            'skipped'
+        ) {
+
             Log::info(
                 'WhatsApp tidak diproses karena status SKIPPED.',
                 [
-                    'notification_id' => $notification->id,
+                    'notification_id' =>
+                        $notification->id,
                 ]
             );
 
+
             return;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | VALIDASI NOMOR
         |--------------------------------------------------------------------------
         */
-        if (empty($notification->recipient_phone)) {
-            $notification->markAsSkipped(
-                'Nomor orang tua/wali kosong.'
-            );
+
+        if (
+            empty(
+                $notification
+                    ->recipient_phone
+            )
+        ) {
+
+            $notification
+                ->markAsSkipped(
+                    'Nomor orang tua/wali kosong.'
+                );
+
 
             Log::warning(
                 'WhatsApp dilewati karena nomor tujuan kosong.',
                 [
-                    'notification_id' => $notification->id,
+                    'notification_id' =>
+                        $notification->id,
                 ]
             );
 
+
             return;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | VALIDASI PESAN
         |--------------------------------------------------------------------------
         */
-        if (empty($notification->message)) {
-            $notification->markAsSkipped(
-                'Isi pesan WhatsApp kosong.'
-            );
+
+        if (
+            empty(
+                $notification
+                    ->message
+            )
+        ) {
+
+            $notification
+                ->markAsSkipped(
+                    'Isi pesan WhatsApp kosong.'
+                );
+
 
             Log::warning(
                 'WhatsApp dilewati karena isi pesan kosong.',
                 [
-                    'notification_id' => $notification->id,
+                    'notification_id' =>
+                        $notification->id,
                 ]
             );
 
+
             return;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | FONNTE ENABLED
         |--------------------------------------------------------------------------
         */
-        $fonnteEnabled = (bool) config(
-            'services.fonnte.enabled',
-            false
-        );
 
-        if (!$fonnteEnabled) {
+        $fonnteEnabled =
+            (bool) config(
+                'services.fonnte.enabled',
+                false
+            );
+
+
+        if (
+            !$fonnteEnabled
+        ) {
+
             Log::warning(
                 'Fonnte belum diaktifkan. WhatsApp tetap PENDING.',
                 [
-                    'notification_id' => $notification->id,
-                    'recipient_phone' => $this->maskPhone(
-                        $notification->recipient_phone
-                    ),
+                    'notification_id' =>
+                        $notification->id,
+
+                    'recipient_phone' =>
+                        $this->maskPhone(
+                            $notification
+                                ->recipient_phone
+                        ),
                 ]
             );
 
+
             return;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | TOKEN
         |--------------------------------------------------------------------------
         */
-        $token = trim(
-            (string) config(
-                'services.fonnte.token',
-                ''
-            )
-        );
 
-        if ($token === '') {
-            $errorMessage = 'FONNTE_TOKEN belum dikonfigurasi.';
-
-            $notification->markAsFailed(
-                $errorMessage
+        $token =
+            trim(
+                (string) config(
+                    'services.fonnte.token',
+                    ''
+                )
             );
+
+
+        if (
+            $token === ''
+        ) {
+
+            $errorMessage =
+                'FONNTE_TOKEN belum dikonfigurasi.';
+
+
+            $notification
+                ->markAsFailed(
+                    $errorMessage
+                );
+
 
             Log::error(
                 'WhatsApp gagal karena token Fonnte kosong.',
                 [
-                    'notification_id' => $notification->id,
+                    'notification_id' =>
+                        $notification->id,
                 ]
             );
+
 
             throw new RuntimeException(
                 $errorMessage
             );
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | ENDPOINT
+        | BASE URL
         |--------------------------------------------------------------------------
         */
-        $baseUrl = rtrim(
+
+        $baseUrl =
+            rtrim(
+                (string) config(
+                    'services.fonnte.base_url',
+                    'https://api.fonnte.com'
+                ),
+                '/'
+            );
+
+
+        $endpoint =
+            $baseUrl
+            .
+            '/send';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | COUNTRY CODE
+        |--------------------------------------------------------------------------
+        */
+
+        $countryCode =
             (string) config(
-                'services.fonnte.base_url',
-                'https://api.fonnte.com'
-            ),
-            '/'
-        );
+                'services.fonnte.country_code',
+                '62'
+            );
 
-        $endpoint = $baseUrl . '/send';
-
-        $countryCode = (string) config(
-            'services.fonnte.country_code',
-            '62'
-        );
 
         /*
         |--------------------------------------------------------------------------
         | PROCESSING
         |--------------------------------------------------------------------------
         */
-        $notification->markAsProcessing();
+
+        $notification
+            ->markAsProcessing();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LOG
+        |--------------------------------------------------------------------------
+        */
 
         Log::info(
             'WHATSAPP FONNTE SEND START',
             [
-                'notification_id' => $notification->id,
-                'student_id' => $notification->student_id,
-                'attendance_id' => $notification->attendance_id,
-                'notification_type' => $notification->notification_type,
-                'recipient_phone' => $this->maskPhone(
-                    $notification->recipient_phone
-                ),
-                'attendance_status' => $notification->attendance_status,
-                'attempts' => $notification->attempts,
+                'notification_id' =>
+                    $notification->id,
+
+                'student_id' =>
+                    $notification->student_id,
+
+                'attendance_id' =>
+                    $notification->attendance_id,
+
+                'recipient_phone' =>
+                    $this->maskPhone(
+                        $notification
+                            ->recipient_phone
+                    ),
+
+                'attendance_status' =>
+                    $notification
+                        ->attendance_status,
+
+                'attempts' =>
+                    $notification
+                        ->attempts,
             ]
         );
 
+
         /*
         |--------------------------------------------------------------------------
-        | REQUEST KE FONNTE
+        | REQUEST FONNTE
         |--------------------------------------------------------------------------
         */
+
         try {
-            $response = Http::withHeaders(
-                [
-                    'Authorization' => $token,
-                    'Accept' => 'application/json',
-                ]
-            )
-                ->asMultipart()
-                ->connectTimeout(10)
-                ->timeout(30)
-                ->post(
-                    $endpoint,
-                    [
-                        'target' =>
-                            (string) $notification->recipient_phone,
 
-                        'message' =>
-                            (string) $notification->message,
+            $response =
+                Http::withHeaders([
+                    'Authorization' =>
+                        $token,
 
-                        'countryCode' =>
-                            $countryCode,
-                    ]
-                );
-        } catch (Throwable $exception) {
+                    'Accept' =>
+                        'application/json',
+                ])
+                    ->asMultipart()
+                    ->connectTimeout(
+                        10
+                    )
+                    ->timeout(
+                        30
+                    )
+                    ->post(
+                        $endpoint,
+                        [
+                            'target' =>
+                                (string) $notification
+                                    ->recipient_phone,
+
+                            'message' =>
+                                (string) $notification
+                                    ->message,
+
+                            'countryCode' =>
+                                $countryCode,
+                        ]
+                    );
+
+        } catch (
+            Throwable $exception
+        ) {
+
             $errorMessage =
                 'Gagal terhubung ke Fonnte: '
-                . $exception->getMessage();
+                .
+                $exception
+                    ->getMessage();
 
-            $notification->markAsFailed(
-                $errorMessage
-            );
+
+            $notification
+                ->markAsFailed(
+                    $errorMessage
+                );
+
 
             Log::error(
                 'WHATSAPP FONNTE CONNECTION ERROR',
                 [
-                    'notification_id' => $notification->id,
-                    'recipient_phone' => $this->maskPhone(
-                        $notification->recipient_phone
-                    ),
-                    'error' => $exception->getMessage(),
+                    'notification_id' =>
+                        $notification->id,
+
+                    'recipient_phone' =>
+                        $this->maskPhone(
+                            $notification
+                                ->recipient_phone
+                        ),
+
+                    'error' =>
+                        $exception
+                            ->getMessage(),
                 ]
             );
 
+
             throw $exception;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | HTTP ERROR
         |--------------------------------------------------------------------------
         */
-        if (!$response->successful()) {
+
+        if (
+            !$response
+                ->successful()
+        ) {
+
             $errorMessage =
                 'Fonnte HTTP Error '
-                . $response->status()
-                . '.';
+                .
+                $response
+                    ->status()
+                .
+                '.';
 
-            $notification->markAsFailed(
-                $errorMessage
-            );
+
+            $notification
+                ->markAsFailed(
+                    $errorMessage
+                );
+
 
             Log::error(
                 'WHATSAPP FONNTE HTTP ERROR',
                 [
-                    'notification_id' => $notification->id,
-                    'http_status' => $response->status(),
-                    'response' => $response->body(),
+                    'notification_id' =>
+                        $notification->id,
+
+                    'http_status' =>
+                        $response
+                            ->status(),
+
+                    'response' =>
+                        $response
+                            ->body(),
                 ]
             );
+
 
             throw new RuntimeException(
                 $errorMessage
             );
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | RESPONSE JSON
+        | JSON RESPONSE
         |--------------------------------------------------------------------------
         */
-        $responseData = $response->json();
 
-        if (!is_array($responseData)) {
+        $responseData =
+            $response
+                ->json();
+
+
+        if (
+            !is_array(
+                $responseData
+            )
+        ) {
+
             $errorMessage =
                 'Response Fonnte bukan JSON yang valid.';
 
-            $notification->markAsFailed(
-                $errorMessage
-            );
+
+            $notification
+                ->markAsFailed(
+                    $errorMessage
+                );
+
 
             Log::error(
                 'WHATSAPP FONNTE INVALID RESPONSE',
                 [
-                    'notification_id' => $notification->id,
-                    'response' => $response->body(),
+                    'notification_id' =>
+                        $notification->id,
+
+                    'response' =>
+                        $response
+                            ->body(),
                 ]
             );
+
 
             throw new RuntimeException(
                 $errorMessage
             );
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | CEK STATUS FONNTE
+        | STATUS FONNTE
         |--------------------------------------------------------------------------
         */
+
+        $isSuccess =
+            $this
+                ->isSuccessfulFonnteResponse(
+                    $responseData
+                );
+
+
         if (
-            !$this->isSuccessfulFonnteResponse(
-                $responseData
-            )
+            !$isSuccess
         ) {
+
             $reason =
-                $responseData['reason']
-                ?? $responseData['detail']
-                ?? $responseData['message']
-                ?? 'Fonnte menolak request pengiriman.';
+                $responseData[
+                    'reason'
+                ]
+                ??
+                $responseData[
+                    'detail'
+                ]
+                ??
+                $responseData[
+                    'message'
+                ]
+                ??
+                'Fonnte menolak request pengiriman.';
+
 
             $errorMessage =
                 'Fonnte gagal: '
-                . (string) $reason;
+                .
+                (string) $reason;
 
-            $notification->markAsFailed(
-                $errorMessage
-            );
+
+            $notification
+                ->markAsFailed(
+                    $errorMessage
+                );
+
 
             Log::error(
                 'WHATSAPP FONNTE REJECTED',
                 [
-                    'notification_id' => $notification->id,
-                    'recipient_phone' => $this->maskPhone(
-                        $notification->recipient_phone
-                    ),
-                    'reason' => (string) $reason,
-                    'process' => $responseData['process'] ?? null,
-                    'request_id' => $responseData['requestid'] ?? null,
+                    'notification_id' =>
+                        $notification->id,
+
+                    'recipient_phone' =>
+                        $this->maskPhone(
+                            $notification
+                                ->recipient_phone
+                        ),
+
+                    'reason' =>
+                        (string) $reason,
+
+                    'process' =>
+                        $responseData[
+                            'process'
+                        ]
+                        ??
+                        null,
+
+                    'request_id' =>
+                        $responseData[
+                            'requestid'
+                        ]
+                        ??
+                        null,
                 ]
             );
+
 
             throw new RuntimeException(
                 $errorMessage
             );
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | PROVIDER MESSAGE ID
         |--------------------------------------------------------------------------
         */
+
         $providerMessageId =
-            $this->extractProviderMessageId(
-                $responseData,
-                $notification
-            );
+            $this
+                ->extractProviderMessageId(
+                    $responseData,
+                    $notification
+                );
+
 
         /*
         |--------------------------------------------------------------------------
         | SENT
         |--------------------------------------------------------------------------
         */
-        $notification->markAsSent(
-            $providerMessageId
-        );
 
-        if ($notification->error_message !== null) {
-            $notification->forceFill(
-                [
-                    'error_message' => null,
-                ]
-            )->save();
-        }
+        $notification
+            ->markAsSent(
+                $providerMessageId
+            );
+
 
         /*
         |--------------------------------------------------------------------------
-        | UPDATE WA_SENT
+        | BERSIHKAN ERROR
         |--------------------------------------------------------------------------
         */
-        if ($notification->attendance_id) {
+
+        if (
+            $notification
+                ->error_message
+            !==
+            null
+        ) {
+
+            $notification
+                ->forceFill([
+                    'error_message' =>
+                        null,
+                ])
+                ->save();
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE ATTENDANCE
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $notification
+                ->attendance_id
+        ) {
+
             Attendance::query()
                 ->whereKey(
-                    $notification->attendance_id
+                    $notification
+                        ->attendance_id
                 )
-                ->update(
-                    [
-                        'wa_sent' => true,
-                    ]
-                );
+                ->update([
+                    'wa_sent' =>
+                        true,
+                ]);
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LOG BERHASIL
+        |--------------------------------------------------------------------------
+        */
 
         Log::info(
             'WHATSAPP FONNTE BERHASIL',
             [
-                'notification_id' => $notification->id,
-                'notification_type' => $notification->notification_type,
-                'provider_message_id' => $providerMessageId,
-                'recipient_phone' => $this->maskPhone(
-                    $notification->recipient_phone
-                ),
-                'process' => $responseData['process'] ?? null,
-                'request_id' => $responseData['requestid'] ?? null,
-                'detail' => $responseData['detail'] ?? null,
+                'notification_id' =>
+                    $notification->id,
+
+                'provider_message_id' =>
+                    $providerMessageId,
+
+                'recipient_phone' =>
+                    $this->maskPhone(
+                        $notification
+                            ->recipient_phone
+                    ),
+
+                'process' =>
+                    $responseData[
+                        'process'
+                    ]
+                    ??
+                    null,
+
+                'request_id' =>
+                    $responseData[
+                        'requestid'
+                    ]
+                    ??
+                    null,
+
+                'detail' =>
+                    $responseData[
+                        'detail'
+                    ]
+                    ??
+                    null,
             ]
         );
     }
 
+
     /*
     |--------------------------------------------------------------------------
-    | CEK RESPONSE FONNTE SUKSES
+    | RESPONSE FONNTE BERHASIL
     |--------------------------------------------------------------------------
     */
+
     private function isSuccessfulFonnteResponse(
         array $responseData
     ): bool {
+
         $status =
-            $responseData['status']
-            ?? false;
+            $responseData[
+                'status'
+            ]
+            ??
+            false;
+
 
         if (
             $status === true
@@ -789,278 +1001,664 @@ class WhatsAppService
             ||
             $status === '1'
         ) {
+
             return true;
         }
 
-        return
-            is_string($status)
+
+        if (
+            is_string(
+                $status
+            )
             &&
             strtolower(
-                trim($status)
-            ) === 'true';
+                trim(
+                    $status
+                )
+            )
+            ===
+            'true'
+        ) {
+
+            return true;
+        }
+
+
+        return false;
     }
+
 
     /*
     |--------------------------------------------------------------------------
-    | EXTRACT PROVIDER MESSAGE ID
+    | PROVIDER MESSAGE ID
     |--------------------------------------------------------------------------
     */
+
     private function extractProviderMessageId(
         array $responseData,
         WhatsAppNotification $notification
     ): string {
+
+        /*
+        |--------------------------------------------------------------------------
+        | FONNTE MESSAGE ID ARRAY
+        |--------------------------------------------------------------------------
+        */
+
         $messageIds =
-            $responseData['id']
-            ?? null;
+            $responseData[
+                'id'
+            ]
+            ??
+            null;
+
 
         if (
-            is_array($messageIds)
+            is_array(
+                $messageIds
+            )
             &&
-            isset($messageIds[0])
+            isset(
+                $messageIds[0]
+            )
             &&
             $messageIds[0] !== null
             &&
             $messageIds[0] !== ''
         ) {
+
             return
                 'FONNTE-MSG-'
-                . (string) $messageIds[0];
+                .
+                (string) $messageIds[0];
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | MESSAGE ID LANGSUNG
+        |--------------------------------------------------------------------------
+        */
+
         if (
-            !is_array($messageIds)
+            !is_array(
+                $messageIds
+            )
             &&
             $messageIds !== null
             &&
             $messageIds !== ''
         ) {
+
             return
                 'FONNTE-MSG-'
-                . (string) $messageIds;
+                .
+                (string) $messageIds;
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | REQUEST ID
+        |--------------------------------------------------------------------------
+        */
+
         $requestId =
-            $responseData['requestid']
-            ?? null;
+            $responseData[
+                'requestid'
+            ]
+            ??
+            null;
+
 
         if (
             $requestId !== null
             &&
             $requestId !== ''
         ) {
+
             return
                 'FONNTE-REQ-'
-                . (string) $requestId;
+                .
+                (string) $requestId;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FALLBACK
+        |--------------------------------------------------------------------------
+        */
 
         return
             'FONNTE-NOTIF-'
-            . $notification->id
-            . '-'
-            . now('Asia/Jakarta')->timestamp;
+            .
+            $notification->id
+            .
+            '-'
+            .
+            now(
+                self::TIMEZONE
+            )
+                ->timestamp;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | BUILD ATTENDANCE CORRECTION MESSAGE
-    |--------------------------------------------------------------------------
-    */
-    private function buildAttendanceCorrectionMessage(
-        Student $student,
-        Attendance $attendance
-    ): string {
-        $student->loadMissing(
-            'user'
-        );
-
-        $studentName =
-            $student->user?->name
-            ?? 'Siswa';
-
-        $attendanceDate =
-            $attendance->attendance_date
-            ?? $attendance->created_at;
-
-        if ($attendanceDate) {
-            $formattedDate =
-                Carbon::parse(
-                    $attendanceDate
-                )
-                    ->locale('id')
-                    ->translatedFormat(
-                        'd F Y'
-                    );
-        } else {
-            $formattedDate =
-                now('Asia/Jakarta')
-                    ->locale('id')
-                    ->translatedFormat(
-                        'd F Y'
-                    );
-        }
-
-        $status =
-            strtolower(
-                (string) $attendance->status
-            );
-
-        $statusLabel =
-            $status === 'sick'
-                ? 'SAKIT'
-                : 'IZIN';
-
-        return
-            "Yth. Orang Tua/Wali {$studentName},\n\n"
-            . "Kami informasikan bahwa status presensi {$studentName} "
-            . "yang sebelumnya tercatat ALFA telah diperbarui menjadi "
-            . "{$statusLabel} setelah pengajuan disetujui.\n\n"
-            . "Tanggal: {$formattedDate}\n"
-            . "Status terbaru: {$statusLabel}\n\n"
-            . "Mohon abaikan pemberitahuan ALFA sebelumnya.\n\n"
-            . "Pesan ini dikirim otomatis oleh Sistem Presensi KKO SMANDA.";
-    }
 
     /*
     |--------------------------------------------------------------------------
     | BUILD ATTENDANCE MESSAGE
     |--------------------------------------------------------------------------
     */
+
     private function buildAttendanceMessage(
         Student $student,
         Attendance $attendance
     ): string {
-        $student->loadMissing(
-            'user'
-        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | USER
+        |--------------------------------------------------------------------------
+        */
+
+        $student
+            ->loadMissing(
+                'user'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NAMA
+        |--------------------------------------------------------------------------
+        */
 
         $studentName =
-            $student->user?->name
-            ?? 'Siswa';
+            $student
+                ->user?->name
+            ??
+            'Siswa';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL
+        |--------------------------------------------------------------------------
+        */
 
         $attendanceDate =
-            $attendance->attendance_date
-            ?? $attendance->date
-            ?? $attendance->created_at;
+            $attendance
+                ->attendance_date
+            ??
+            $attendance
+                ->date
+            ??
+            $attendance
+                ->created_at;
 
-        if ($attendanceDate) {
+
+        if (
+            $attendanceDate
+        ) {
+
             $formattedDate =
                 Carbon::parse(
                     $attendanceDate
                 )
-                    ->locale('id')
+                    ->locale(
+                        'id'
+                    )
                     ->translatedFormat(
                         'd F Y'
                     );
+
         } else {
+
             $formattedDate =
-                now('Asia/Jakarta')
-                    ->locale('id')
+                now(
+                    self::TIMEZONE
+                )
+                    ->locale(
+                        'id'
+                    )
                     ->translatedFormat(
                         'd F Y'
                     );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS
+        |--------------------------------------------------------------------------
+        */
+
         $status =
             strtolower(
-                (string) $attendance->status
+                (string) $attendance
+                    ->status
             );
+
 
         /*
         |--------------------------------------------------------------------------
         | HADIR
         |--------------------------------------------------------------------------
         */
-        if ($status === 'present') {
+
+        if (
+            $status === 'present'
+        ) {
+
             $time =
-                $this->formatAttendanceTime(
-                    $attendance
-                );
+                $this
+                    ->formatAttendanceTime(
+                        $attendance
+                    );
+
 
             return
                 "Yth. Orang Tua/Wali {$studentName},\n\n"
-                . "Kami informasikan bahwa {$studentName} telah tercatat HADIR "
-                . "di SMA Negeri 2 Cilacap.\n\n"
-                . "Tanggal: {$formattedDate}\n"
-                . "Waktu: {$time} WIB\n\n"
-                . "Pesan ini dikirim otomatis oleh Sistem Presensi KKO SMANDA.";
+                .
+                "Kami informasikan bahwa {$studentName} telah tercatat HADIR "
+                .
+                "di SMA Negeri 2 Cilacap.\n\n"
+                .
+                "Tanggal: {$formattedDate}\n"
+                .
+                "Waktu: {$time} WIB\n\n"
+                .
+                "Pesan ini dikirim otomatis oleh Sistem Presensi KKO SMANDA.";
         }
+
 
         /*
         |--------------------------------------------------------------------------
-        | TERLAMBAT
+        | DATA TERLAMBAT LAMA
         |--------------------------------------------------------------------------
+        |
+        | Scanner sekolah baru tidak lagi membuat status late.
+        |
+        | Ini dipertahankan hanya agar data lama tetap kompatibel.
+        |
         */
-        if ($status === 'late') {
+
+        if (
+            $status === 'late'
+        ) {
+
             $time =
-                $this->formatAttendanceTime(
-                    $attendance
-                );
+                $this
+                    ->formatAttendanceTime(
+                        $attendance
+                    );
+
 
             return
                 "Yth. Orang Tua/Wali {$studentName},\n\n"
-                . "Kami informasikan bahwa {$studentName} telah tercatat "
-                . "TERLAMBAT hadir di SMA Negeri 2 Cilacap.\n\n"
-                . "Tanggal: {$formattedDate}\n"
-                . "Waktu: {$time} WIB\n\n"
-                . "Pesan ini dikirim otomatis oleh Sistem Presensi KKO SMANDA.";
+                .
+                "Kami informasikan bahwa {$studentName} telah tercatat "
+                .
+                "TERLAMBAT hadir di SMA Negeri 2 Cilacap.\n\n"
+                .
+                "Tanggal: {$formattedDate}\n"
+                .
+                "Waktu: {$time} WIB\n\n"
+                .
+                "Pesan ini dikirim otomatis oleh Sistem Presensi KKO SMANDA.";
         }
+
 
         /*
         |--------------------------------------------------------------------------
-        | ALFA
+        | ALFA - WAKTU DINAMIS
         |--------------------------------------------------------------------------
         */
+
+        $schoolTimes =
+            $this
+                ->getSchoolAttendanceTimes();
+
+
         return
             "Yth. Orang Tua/Wali {$studentName},\n\n"
-            . "Kami informasikan bahwa hingga batas waktu presensi, "
-            . "{$studentName} belum tercatat hadir di sekolah dan tercatat ALFA.\n\n"
-            . "Tanggal: {$formattedDate}\n"
-            . "Batas Presensi: 07.00 WIB\n\n"
-            . "Pesan ini dikirim otomatis oleh Sistem Presensi KKO SMANDA.";
+            .
+            "Kami informasikan bahwa hingga batas waktu presensi, "
+            .
+            "{$studentName} belum tercatat hadir di sekolah dan tercatat ALFA.\n\n"
+            .
+            "Tanggal: {$formattedDate}\n"
+            .
+            "Jam Presensi: {$schoolTimes['start']} - {$schoolTimes['end']} WIB\n"
+            .
+            "Toleransi Hadir: {$schoolTimes['tolerance']} menit\n"
+            .
+            "Batas Toleransi: {$schoolTimes['tolerance_end']} WIB\n"
+            .
+            "Mulai Alfa: {$schoolTimes['alpha_start']} WIB\n\n"
+            .
+            "Pesan ini dikirim otomatis oleh Sistem Presensi KKO SMANDA.";
     }
+
 
     /*
     |--------------------------------------------------------------------------
-    | FORMAT WAKTU
+    | WAKTU PRESENSI SEKOLAH DINAMIS
+    |--------------------------------------------------------------------------
+    |
+    | Contoh:
+    |
+    | Jam Mulai   : 06:00
+    | Jam Selesai : 07:00
+    | Toleransi   : 10
+    |
+    | Hasil:
+    |
+    | 06:00 - 07:00 = presensi
+    | 07:01 - 07:10 = toleransi
+    | 07:11         = mulai Alfa
+    |
+    */
+
+    private function getSchoolAttendanceTimes(): array
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | SETTING
+        |--------------------------------------------------------------------------
+        */
+
+        $settings =
+            AttendanceSetting::first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FALLBACK
+        |--------------------------------------------------------------------------
+        */
+
+        $startRaw =
+            $settings
+                ? (
+                    $settings
+                        ->attendance_start_time
+                    ??
+                    '06:00:00'
+                )
+                : '06:00:00';
+
+
+        $endRaw =
+            $settings
+                ? (
+                    $settings
+                        ->attendance_end_time
+                    ??
+                    '07:00:00'
+                )
+                : '07:00:00';
+
+
+        $tolerance =
+            $settings
+                ? max(
+                    0,
+                    (int) (
+                        $settings
+                            ->late_after_minutes
+                        ??
+                        0
+                    )
+                )
+                : 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL ACUAN
+        |--------------------------------------------------------------------------
+        */
+
+        $today =
+            Carbon::now(
+                self::TIMEZONE
+            )
+                ->toDateString();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATETIME
+        |--------------------------------------------------------------------------
+        */
+
+        $start =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $today
+                .
+                ' '
+                .
+                $this->normalizeTime(
+                    $startRaw
+                ),
+                self::TIMEZONE
+            );
+
+
+        $end =
+            Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                $today
+                .
+                ' '
+                .
+                $this->normalizeTime(
+                    $endRaw
+                ),
+                self::TIMEZONE
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FALLBACK JAM TIDAK VALID
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $end
+                ->lessThanOrEqualTo(
+                    $start
+                )
+        ) {
+
+            $end =
+                $start
+                    ->copy()
+                    ->addHour();
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS TOLERANSI
+        |--------------------------------------------------------------------------
+        */
+
+        $toleranceEnd =
+            $end
+                ->copy()
+                ->addMinutes(
+                    $tolerance
+                )
+                ->endOfMinute();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MULAI ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        $alphaStart =
+            $toleranceEnd
+                ->copy()
+                ->addSecond();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN
+        |--------------------------------------------------------------------------
+        */
+
+        return [
+            'start' =>
+                $start
+                    ->format(
+                        'H:i'
+                    ),
+
+            'end' =>
+                $end
+                    ->format(
+                        'H:i'
+                    ),
+
+            'tolerance' =>
+                $tolerance,
+
+            'tolerance_end' =>
+                $toleranceEnd
+                    ->format(
+                        'H:i'
+                    ),
+
+            'alpha_start' =>
+                $alphaStart
+                    ->format(
+                        'H:i'
+                    ),
+        ];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | NORMALISASI FORMAT TIME
     |--------------------------------------------------------------------------
     */
+
+    private function normalizeTime(
+        mixed $time
+    ): string {
+
+        $time =
+            (string) $time;
+
+
+        if (
+            strlen(
+                $time
+            )
+            ===
+            5
+        ) {
+
+            return
+                $time
+                .
+                ':00';
+        }
+
+
+        return substr(
+            $time,
+            0,
+            8
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMAT WAKTU CHECK-IN
+    |--------------------------------------------------------------------------
+    */
+
     private function formatAttendanceTime(
         Attendance $attendance
     ): string {
-        if ($attendance->check_in_time) {
+
+        if (
+            $attendance
+                ->check_in_time
+        ) {
+
             try {
+
                 return Carbon::parse(
-                    $attendance->check_in_time
-                )->format(
-                    'H:i'
-                );
-            } catch (Throwable $exception) {
+                    $attendance
+                        ->check_in_time
+                )
+                    ->format(
+                        'H:i'
+                    );
+
+            } catch (
+                Throwable $exception
+            ) {
+
                 return substr(
-                    (string) $attendance->check_in_time,
+                    (string) $attendance
+                        ->check_in_time,
                     0,
                     5
                 );
             }
         }
 
+
         return now(
-            'Asia/Jakarta'
-        )->format(
-            'H:i'
-        );
+            self::TIMEZONE
+        )
+            ->format(
+                'H:i'
+            );
     }
+
 
     /*
     |--------------------------------------------------------------------------
     | NORMALIZE PHONE
     |--------------------------------------------------------------------------
     */
+
     private function normalizePhone(
         ?string $phone
     ): ?string {
-        if (!$phone) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | KOSONG
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$phone
+        ) {
+
             return null;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HANYA ANGKA
+        |--------------------------------------------------------------------------
+        */
 
         $phone =
             preg_replace(
@@ -1069,56 +1667,71 @@ class WhatsAppService
                 $phone
             );
 
-        if (!$phone) {
+
+        if (
+            !$phone
+        ) {
+
             return null;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | 08... -> 628...
         |--------------------------------------------------------------------------
         */
+
         if (
             str_starts_with(
                 $phone,
                 '0'
             )
         ) {
+
             $phone =
                 '62'
-                . substr(
+                .
+                substr(
                     $phone,
                     1
                 );
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | 8... -> 628...
         |--------------------------------------------------------------------------
         */
+
         elseif (
             str_starts_with(
                 $phone,
                 '8'
             )
         ) {
+
             $phone =
                 '62'
-                . $phone;
+                .
+                $phone;
         }
+
 
         /*
         |--------------------------------------------------------------------------
-        | PREFIX HARUS 62
+        | PREFIX 62
         |--------------------------------------------------------------------------
         */
+
         if (
             !str_starts_with(
                 $phone,
                 '62'
             )
         ) {
+
             Log::warning(
                 'Format nomor WhatsApp tidak dikenali.',
                 [
@@ -1129,19 +1742,31 @@ class WhatsAppService
                 ]
             );
 
+
             return null;
         }
+
 
         /*
         |--------------------------------------------------------------------------
         | PANJANG NOMOR
         |--------------------------------------------------------------------------
         */
+
         if (
-            strlen($phone) < 10
+            strlen(
+                $phone
+            )
+            <
+            10
             ||
-            strlen($phone) > 16
+            strlen(
+                $phone
+            )
+            >
+            16
         ) {
+
             Log::warning(
                 'Panjang nomor WhatsApp tidak valid.',
                 [
@@ -1152,38 +1777,53 @@ class WhatsAppService
                 ]
             );
 
+
             return null;
         }
+
 
         return $phone;
     }
 
+
     /*
     |--------------------------------------------------------------------------
-    | MASK PHONE UNTUK LOG
+    | MASK PHONE
     |--------------------------------------------------------------------------
     */
+
     private function maskPhone(
         ?string $phone
     ): ?string {
-        if (!$phone) {
+
+        if (
+            !$phone
+        ) {
+
             return null;
         }
+
 
         $length =
             strlen(
                 $phone
             );
 
-        if ($length <= 7) {
+
+        if (
+            $length <= 7
+        ) {
+
             return
                 substr(
                     $phone,
                     0,
                     2
                 )
-                . '***';
+                .
+                '***';
         }
+
 
         return
             substr(
@@ -1191,14 +1831,16 @@ class WhatsAppService
                 0,
                 5
             )
-            . str_repeat(
+            .
+            str_repeat(
                 '*',
                 max(
                     3,
                     $length - 8
                 )
             )
-            . substr(
+            .
+            substr(
                 $phone,
                 -3
             );

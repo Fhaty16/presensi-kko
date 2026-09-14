@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -35,13 +36,23 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Anybody:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Anybody:wght@400;500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
 
     <!-- =====================================================
-         CSS KKO
+         MATERIAL SYMBOLS
+    ====================================================== -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         CSS UTAMA
     ====================================================== -->
 
     <link
@@ -50,106 +61,1402 @@
     >
 
 
-    <!-- =====================================================
-         QR SCANNER
-    ====================================================== -->
-
-    <script
-        src="https://unpkg.com/html5-qrcode"
-    ></script>
-
-
     <style>
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATUS TERLAMBAT
-        |--------------------------------------------------------------------------
-        */
-
-        .attendance-success-status.attendance-status-late {
-            color: #ffb866;
-
-            background:
-                rgba(255, 184, 102, .10);
-
-            border:
-                1px solid
-                rgba(255, 184, 102, .25);
+        * {
+            box-sizing: border-box;
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATUS HADIR
-        |--------------------------------------------------------------------------
-        */
+        body {
+            margin: 0;
 
-        .attendance-success-status.attendance-status-present {
-            color: #8ce8c3;
+            min-height: 100vh;
+
+            color: #ffffff;
 
             background:
-                rgba(80, 200, 150, .10);
+                #0b1117;
 
-            border:
-                1px solid
-                rgba(80, 200, 150, .22);
+            font-family:
+                'Hanken Grotesk',
+                sans-serif;
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | DETAIL WAKTU PRESENSI
-        |--------------------------------------------------------------------------
-        */
-
-        .attendance-success-rules {
-            width: 100%;
-
-            margin-top: 14px;
-            padding: 12px;
-
-            background:
-                rgba(157, 202, 255, .05);
-
-            border:
-                1px solid
-                rgba(157, 202, 255, .12);
-
-            border-radius: 10px;
+        button,
+        a {
+            font: inherit;
         }
 
 
-        .attendance-success-rule-row {
+        a {
+            color: inherit;
+
+            text-decoration: none;
+        }
+
+
+        .material-symbols-outlined {
+            font-family:
+                'Material Symbols Outlined'
+                !important;
+
+            font-weight:
+                normal !important;
+
+            font-style:
+                normal;
+
+            line-height:
+                1;
+
+            font-feature-settings:
+                'liga';
+
+            -webkit-font-feature-settings:
+                'liga';
+        }
+
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .scan-page {
+            width:
+                min(
+                    760px,
+                    calc(
+                        100%
+                        -
+                        32px
+                    )
+                );
+
+            margin:
+                0 auto;
+
+            padding:
+                24px
+                0
+                45px;
+        }
+
+
+        /* =====================================================
+           TOP BAR
+        ===================================================== */
+
+        .scan-topbar {
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
 
-            gap: 10px;
+            gap: 15px;
 
-            padding: 4px 0;
+            margin-bottom:
+                22px;
+        }
 
-            color: #7f8c96;
+
+        .scan-back {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color:
+                #c9d3da;
+
+            background:
+                #111a22;
+
+            border:
+                1px solid
+                #263542;
+
+            border-radius:
+                10px;
+        }
+
+
+        .scan-back
+        .material-symbols-outlined {
+            font-size:
+                20px;
+        }
+
+
+        .scan-page-title {
+            flex:
+                1;
+        }
+
+
+        .scan-page-title
+        span {
+            display:
+                block;
+
+            color:
+                #718390;
 
             font-family:
                 'JetBrains Mono',
                 monospace;
 
-            font-size: 7px;
+            font-size:
+                7px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                .8px;
         }
 
 
-        .attendance-success-rule-row strong {
-            color: #c8d2d9;
+        .scan-page-title
+        h1 {
+            margin:
+                4px
+                0
+                0;
 
-            font-size: 7px;
+            color:
+                #ffffff;
+
+            font-family:
+                'Anybody',
+                sans-serif;
+
+            font-size:
+                20px;
+
+            font-weight:
+                800;
         }
 
 
-        @media (max-width: 600px) {
+        .student-mini-profile {
+            display: flex;
 
-            .attendance-success-rules {
-                padding: 10px;
+            align-items: center;
+
+            gap:
+                9px;
+
+            padding:
+                7px
+                9px;
+
+            background:
+                #111a22;
+
+            border:
+                1px solid
+                #263542;
+
+            border-radius:
+                11px;
+        }
+
+
+        .student-mini-avatar {
+            width:
+                31px;
+
+            height:
+                31px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            color:
+                #0b1117;
+
+            background:
+                #9dcaff;
+
+            border-radius:
+                8px;
+
+            font-family:
+                'Anybody',
+                sans-serif;
+
+            font-size:
+                12px;
+
+            font-weight:
+                900;
+        }
+
+
+        .student-mini-profile
+        strong {
+            display:
+                block;
+
+            max-width:
+                145px;
+
+            overflow:
+                hidden;
+
+            color:
+                #e5ebef;
+
+            font-size:
+                9px;
+
+            white-space:
+                nowrap;
+
+            text-overflow:
+                ellipsis;
+        }
+
+
+        .student-mini-profile
+        span {
+            display:
+                block;
+
+            margin-top:
+                2px;
+
+            color:
+                #728390;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size:
+                6px;
+        }
+
+
+        /* =====================================================
+           EXISTING ATTENDANCE
+        ===================================================== */
+
+        .existing-attendance {
+            margin-bottom:
+                18px;
+
+            padding:
+                14px
+                15px;
+
+            background:
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .06
+                );
+
+            border:
+                1px solid
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .18
+                );
+
+            border-radius:
+                12px;
+        }
+
+
+        .existing-attendance-head {
+            display: flex;
+
+            align-items: center;
+
+            gap:
+                9px;
+        }
+
+
+        .existing-attendance-head
+        .material-symbols-outlined {
+            color:
+                #74e4bc;
+
+            font-size:
+                19px;
+        }
+
+
+        .existing-attendance-head
+        strong {
+            color:
+                #e8efec;
+
+            font-size:
+                10px;
+        }
+
+
+        .existing-attendance
+        p {
+            margin:
+                6px
+                0
+                0
+                28px;
+
+            color:
+                #82948e;
+
+            font-size:
+                8px;
+
+            line-height:
+                1.55;
+        }
+
+
+        .existing-status {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            margin-left:
+                5px;
+
+            padding:
+                3px
+                7px;
+
+            border-radius:
+                20px;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size:
+                6px;
+
+            font-weight:
+                900;
+        }
+
+
+        .existing-status.present {
+            color:
+                #74e4bc;
+
+            background:
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .10
+                );
+        }
+
+
+        .existing-status.late {
+            color:
+                #f6c453;
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    .10
+                );
+        }
+
+
+        .existing-status.permission {
+            color:
+                #9dcaff;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
+        }
+
+
+        .existing-status.sick {
+            color:
+                #bdb2ff;
+
+            background:
+                rgba(
+                    180,
+                    160,
+                    255,
+                    .10
+                );
+        }
+
+
+        .existing-status.absent {
+            color:
+                #ff9e9e;
+
+            background:
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .10
+                );
+        }
+
+
+        /* =====================================================
+           SCANNER CARD
+        ===================================================== */
+
+        .scanner-card {
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            padding:
+                20px;
+
+            background:
+                #111a22;
+
+            border:
+                1px solid
+                #263542;
+
+            border-radius:
+                17px;
+
+            box-shadow:
+                0
+                20px
+                55px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .24
+                );
+        }
+
+
+        .scanner-card::before {
+            position:
+                absolute;
+
+            top:
+                -80px;
+
+            right:
+                -70px;
+
+            width:
+                190px;
+
+            height:
+                190px;
+
+            content:
+                '';
+
+            background:
+                rgba(
+                    0,
+                    114,
+                    188,
+                    .12
+                );
+
+            border-radius:
+                50%;
+
+            filter:
+                blur(
+                    35px
+                );
+
+            pointer-events:
+                none;
+        }
+
+
+        .scanner-card-header {
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap:
+                15px;
+
+            margin-bottom:
+                17px;
+        }
+
+
+        .scanner-card-header
+        h2 {
+            margin:
+                0;
+
+            color:
+                #ffffff;
+
+            font-family:
+                'Anybody',
+                sans-serif;
+
+            font-size:
+                16px;
+
+            font-weight:
+                800;
+        }
+
+
+        .scanner-card-header
+        p {
+            margin:
+                5px
+                0
+                0;
+
+            color:
+                #738591;
+
+            font-size:
+                8px;
+
+            line-height:
+                1.5;
+        }
+
+
+        .scanner-live-badge {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                5px;
+
+            min-height:
+                24px;
+
+            padding:
+                0
+                8px;
+
+            color:
+                #74e4bc;
+
+            background:
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .07
+                );
+
+            border:
+                1px solid
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .17
+                );
+
+            border-radius:
+                20px;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size:
+                5px;
+
+            font-weight:
+                900;
+        }
+
+
+        .scanner-live-badge::before {
+            width:
+                5px;
+
+            height:
+                5px;
+
+            content:
+                '';
+
+            background:
+                currentColor;
+
+            border-radius:
+                50%;
+
+            box-shadow:
+                0
+                0
+                8px
+                currentColor;
+        }
+
+
+        /* =====================================================
+           QR READER
+        ===================================================== */
+
+        .reader-wrap {
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            min-height:
+                360px;
+
+            background:
+                #080d11;
+
+            border:
+                1px solid
+                #2a3946;
+
+            border-radius:
+                14px;
+        }
+
+
+        #reader {
+            width:
+                100%;
+
+            min-height:
+                360px;
+
+            overflow:
+                hidden;
+
+            border:
+                0 !important;
+        }
+
+
+        #reader
+        video {
+            width:
+                100%
+                !important;
+
+            min-height:
+                360px;
+
+            object-fit:
+                cover;
+
+            border-radius:
+                13px;
+        }
+
+
+        #reader
+        img {
+            display:
+                none;
+        }
+
+
+        #reader
+        button {
+            min-height:
+                38px;
+
+            padding:
+                0 13px;
+
+            color:
+                #0b1117;
+
+            background:
+                #9dcaff;
+
+            border:
+                0;
+
+            border-radius:
+                8px;
+
+            font-size:
+                8px;
+
+            font-weight:
+                800;
+
+            cursor:
+                pointer;
+        }
+
+
+        #reader
+        select {
+            min-height:
+                36px;
+
+            padding:
+                0 10px;
+
+            color:
+                #ffffff;
+
+            background:
+                #111a22;
+
+            border:
+                1px solid
+                #334653;
+
+            border-radius:
+                7px;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .scan-status {
+            display:
+                none;
+
+            align-items:
+                flex-start;
+
+            gap:
+                10px;
+
+            margin-top:
+                14px;
+
+            padding:
+                13px
+                14px;
+
+            border-radius:
+                10px;
+        }
+
+
+        .scan-status.show {
+            display:
+                flex;
+        }
+
+
+        .scan-status
+        .material-symbols-outlined {
+            flex:
+                0 0 auto;
+
+            font-size:
+                20px;
+        }
+
+
+        .scan-status
+        strong {
+            display:
+                block;
+
+            font-size:
+                9px;
+        }
+
+
+        .scan-status
+        p {
+            margin:
+                4px
+                0
+                0;
+
+            font-size:
+                8px;
+
+            line-height:
+                1.5;
+        }
+
+
+        .scan-status.info {
+            color:
+                #9dcaff;
+
+            background:
+                rgba(
+                    0,
+                    114,
+                    188,
+                    .08
+                );
+
+            border:
+                1px solid
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .15
+                );
+        }
+
+
+        .scan-status.success {
+            color:
+                #74e4bc;
+
+            background:
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .07
+                );
+
+            border:
+                1px solid
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .16
+                );
+        }
+
+
+        .scan-status.error {
+            color:
+                #ff9e9e;
+
+            background:
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .07
+                );
+
+            border:
+                1px solid
+                rgba(
+                    231,
+                    70,
+                    70,
+                    .17
+                );
+        }
+
+
+        .scan-status.warning {
+            color:
+                #f6c453;
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    .07
+                );
+
+            border:
+                1px solid
+                rgba(
+                    245,
+                    158,
+                    11,
+                    .17
+                );
+        }
+
+
+        /* =====================================================
+           RULE INFORMATION
+        ===================================================== */
+
+        .attendance-rule-card {
+            display:
+                none;
+
+            margin-top:
+                14px;
+
+            padding:
+                14px;
+
+            background:
+                #0d151c;
+
+            border:
+                1px solid
+                #263744;
+
+            border-radius:
+                11px;
+        }
+
+
+        .attendance-rule-card.show {
+            display:
+                block;
+        }
+
+
+        .attendance-rule-title {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                6px;
+
+            margin-bottom:
+                9px;
+
+            color:
+                #9dcaff;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size:
+                7px;
+
+            font-weight:
+                900;
+        }
+
+
+        .attendance-rule-title
+        .material-symbols-outlined {
+            font-size:
+                15px;
+        }
+
+
+        .attendance-rule-row {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                15px;
+
+            padding:
+                7px
+                0;
+
+            color:
+                #72838f;
+
+            font-size:
+                8px;
+
+            border-bottom:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+        }
+
+
+        .attendance-rule-row:last-child {
+            border-bottom:
+                0;
+        }
+
+
+        .attendance-rule-row
+        strong {
+            color:
+                #e3e9ed;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size:
+                7px;
+
+            text-align:
+                right;
+        }
+
+
+        /* =====================================================
+           RESULT
+        ===================================================== */
+
+        .attendance-result {
+            display:
+                none;
+
+            margin-top:
+                16px;
+
+            padding:
+                17px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        80,
+                        200,
+                        150,
+                        .08
+                    ),
+                    rgba(
+                        157,
+                        202,
+                        255,
+                        .04
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    80,
+                    200,
+                    150,
+                    .20
+                );
+
+            border-radius:
+                13px;
+        }
+
+
+        .attendance-result.show {
+            display:
+                block;
+        }
+
+
+        .result-head {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            margin-bottom:
+                13px;
+        }
+
+
+        .result-icon {
+            width:
+                38px;
+
+            height:
+                38px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            color:
+                #0b1117;
+
+            background:
+                #74e4bc;
+
+            border-radius:
+                10px;
+        }
+
+
+        .result-icon
+        .material-symbols-outlined {
+            font-size:
+                21px;
+        }
+
+
+        .result-head
+        strong {
+            display:
+                block;
+
+            color:
+                #ffffff;
+
+            font-size:
+                11px;
+        }
+
+
+        .result-head
+        span {
+            display:
+                block;
+
+            margin-top:
+                2px;
+
+            color:
+                #74e4bc;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size:
+                7px;
+
+            font-weight:
+                800;
+        }
+
+
+        .result-grid {
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                9px;
+        }
+
+
+        .result-item {
+            padding:
+                10px;
+
+            background:
+                rgba(
+                    4,
+                    8,
+                    12,
+                    .22
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .045
+                );
+
+            border-radius:
+                8px;
+        }
+
+
+        .result-item
+        span {
+            display:
+                block;
+
+            margin-bottom:
+                4px;
+
+            color:
+                #71828e;
+
+            font-size:
+                6px;
+
+            font-weight:
+                700;
+        }
+
+
+        .result-item
+        strong {
+            color:
+                #e4eaee;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size:
+                8px;
+        }
+
+
+        /* =====================================================
+           FOOTER INFO
+        ===================================================== */
+
+        .scan-help {
+            display:
+                flex;
+
+            align-items:
+                flex-start;
+
+            gap:
+                9px;
+
+            margin-top:
+                16px;
+
+            padding:
+                12px
+                13px;
+
+            color:
+                #71838f;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .015
+                );
+
+            border:
+                1px solid
+                #1d2a34;
+
+            border-radius:
+                10px;
+
+            font-size:
+                7px;
+
+            line-height:
+                1.55;
+        }
+
+
+        .scan-help
+        .material-symbols-outlined {
+            color:
+                #9dcaff;
+
+            font-size:
+                17px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (
+            max-width: 600px
+        ) {
+
+            .scan-page {
+                width:
+                    min(
+                        100%
+                        -
+                        24px,
+                        760px
+                    );
+
+                padding-top:
+                    14px;
+            }
+
+
+            .student-mini-profile
+            div:last-child {
+                display:
+                    none;
+            }
+
+
+            .reader-wrap,
+            #reader,
+            #reader video {
+                min-height:
+                    310px;
+            }
+
+
+            .result-grid {
+                grid-template-columns:
+                    1fr;
             }
 
         }
@@ -159,62 +1466,99 @@
 </head>
 
 
-<body class="scanner-page">
+<body>
 
 
-<main class="scanner-container">
-
-
-    <!-- =====================================================
-         KEMBALI
-    ====================================================== -->
-
-    <a
-        href="{{ route('siswa.dashboard') }}"
-        class="scanner-back"
-    >
-        ← Kembali ke Dashboard
-    </a>
+<main class="scan-page">
 
 
     <!-- =====================================================
-         LOGO
+         TOP
     ====================================================== -->
 
-    <img
-        src="{{ asset('images/logo-kko.png') }}"
-        alt="Logo KKO SMANDA"
-        class="scanner-logo"
-    >
+    <div class="scan-topbar">
 
 
-    <span class="scanner-label">
-        PRESENSI SISWA
-    </span>
+        <a
+            href="{{ route('siswa.dashboard') }}"
+            class="scan-back"
+            aria-label="Kembali"
+        >
+
+            <span class="material-symbols-outlined">
+                arrow_back
+            </span>
+
+        </a>
 
 
-    <h1>
-        Scan Barcode
-    </h1>
+        <div class="scan-page-title">
+
+            <span>
+                PRESENSI SEKOLAH
+            </span>
+
+            <h1>
+                Scan Kehadiran
+            </h1>
+
+        </div>
 
 
-    <p>
-        Arahkan kamera ke barcode presensi KKO
-        yang ditampilkan di sekolah.
-    </p>
+        <div class="student-mini-profile">
+
+            <div class="student-mini-avatar">
+
+                {{
+                    strtoupper(
+                        substr(
+                            auth()->user()->name,
+                            0,
+                            1
+                        )
+                    )
+                }}
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    {{ auth()->user()->name }}
+                </strong>
+
+                <span>
+                    NIS {{ $student->nis }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
     <!-- =====================================================
-         SUDAH PRESENSI
+         STATUS HARI INI
     ====================================================== -->
 
-    @if($todayAttendance)
+    @if(
+        $todayAttendance
+    )
 
         @php
 
-            $statusLabel =
-                match (
-                    $todayAttendance->status
+            $attendanceStatus =
+                strtolower(
+                    (string) $todayAttendance
+                        ->status
+                );
+
+
+            $attendanceLabel =
+                match(
+                    $attendanceStatus
                 ) {
                     'present' =>
                         'HADIR',
@@ -233,102 +1577,528 @@
 
                     default =>
                         strtoupper(
-                            $todayAttendance->status
+                            $attendanceStatus
                         ),
                 };
 
 
-            $statusClass =
-                match (
-                    $todayAttendance->status
+            $attendanceIcon =
+                match(
+                    $attendanceStatus
                 ) {
                     'present' =>
-                        'attendance-status-present',
+                        'check_circle',
 
                     'late' =>
-                        'attendance-status-late',
+                        'schedule',
+
+                    'permission' =>
+                        'assignment_turned_in',
+
+                    'sick' =>
+                        'medical_information',
+
+                    'absent' =>
+                        'cancel',
 
                     default =>
-                        '',
+                        'info',
                 };
 
         @endphp
 
 
-        <div class="scanner-already">
+        <div class="existing-attendance">
 
-            <strong>
-                Kamu sudah memiliki presensi hari ini.
-            </strong>
+            <div class="existing-attendance-head">
 
-
-            <br><br>
-
-
-            Status:
-
-            <span
-                class="{{ $statusClass }}"
-            >
-                {{ $statusLabel }}
-            </span>
+                <span class="material-symbols-outlined">
+                    {{ $attendanceIcon }}
+                </span>
 
 
-            @if($todayAttendance->check_in_time)
+                <strong>
 
-                <br>
+                    Presensi hari ini sudah tercatat
 
-                Jam:
+                    <span
+                        class="
+                            existing-status
+                            {{ $attendanceStatus }}
+                        "
+                    >
+                        {{ $attendanceLabel }}
+                    </span>
 
-                {{
-                    substr(
-                        $todayAttendance->check_in_time,
-                        0,
-                        5
-                    )
-                }}
+                </strong>
 
-                WIB
+            </div>
+
+
+            <p>
+
+                @if(
+                    $todayAttendance->check_in_time
+                )
+
+                    Waktu tercatat:
+
+                    {{
+                        \Carbon\Carbon::parse(
+                            $todayAttendance
+                                ->check_in_time
+                        )
+                            ->format(
+                                'H:i'
+                            )
+                    }}
+
+                    WIB.
+
+                @else
+
+                    Status kehadiran hari ini sudah tersimpan.
+
+                @endif
+
+            </p>
+
+        </div>
+
+    @endif
+
+
+    <!-- =====================================================
+         SCANNER
+    ====================================================== -->
+
+    <section class="scanner-card">
+
+
+        <div class="scanner-card-header">
+
+            <div>
+
+                <h2>
+                    Scan Barcode Presensi
+                </h2>
+
+                <p>
+                    Arahkan kamera ke barcode yang ditampilkan Guru.
+                </p>
+
+            </div>
+
+
+            @if(
+                !$todayAttendance
+            )
+
+                <span class="scanner-live-badge">
+                    SCANNER
+                </span>
 
             @endif
 
         </div>
 
 
-    @else
+        <!-- =================================================
+             READER
+        ================================================== -->
+
+        @if(
+            !$todayAttendance
+        )
+
+            <div class="reader-wrap">
+
+                <div id="reader"></div>
+
+            </div>
 
 
-        <!-- =====================================================
-             CAMERA
-        ====================================================== -->
+        @else
 
-        <section class="scanner-card">
+            <div
+                class="scan-status show info"
+            >
 
-            <div id="reader"></div>
+                <span class="material-symbols-outlined">
+                    task_alt
+                </span>
 
-        </section>
+
+                <div>
+
+                    <strong>
+                        Scanner tidak perlu digunakan
+                    </strong>
+
+                    <p>
+                        Kamu sudah memiliki data presensi untuk hari ini.
+                    </p>
+
+                </div>
+
+            </div>
+
+        @endif
 
 
-        <!-- =====================================================
-             MESSAGE
-        ====================================================== -->
+        <!-- =================================================
+             STATUS
+        ================================================== -->
 
         <div
-            id="scannerMessage"
-            class="scanner-message"
+            class="scan-status"
+            id="scanStatus"
         >
-            Mengaktifkan kamera...
+
+            <span
+                class="material-symbols-outlined"
+                id="statusIcon"
+            >
+                info
+            </span>
+
+
+            <div>
+
+                <strong id="statusTitle">
+                    Status Scanner
+                </strong>
+
+                <p id="statusMessage">
+                    -
+                </p>
+
+            </div>
+
         </div>
 
 
-    @endif
+        <!-- =================================================
+             ATURAN DINAMIS
+        ================================================== -->
+
+        <div
+            class="attendance-rule-card"
+            id="attendanceRuleCard"
+        >
+
+            <div class="attendance-rule-title">
+
+                <span class="material-symbols-outlined">
+                    schedule
+                </span>
+
+                ATURAN PRESENSI HARI INI
+
+            </div>
+
+
+            <div class="attendance-rule-row">
+
+                <span>
+                    Jam Presensi
+                </span>
+
+                <strong id="ruleAttendanceTime">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="attendance-rule-row">
+
+                <span>
+                    Toleransi Hadir
+                </span>
+
+                <strong id="ruleTolerance">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="attendance-rule-row">
+
+                <span>
+                    Presensi Ditutup
+                </span>
+
+                <strong id="ruleCloseTime">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="attendance-rule-row">
+
+                <span>
+                    Auto Alfa
+                </span>
+
+                <strong id="ruleAutoAlpha">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RESULT
+        ================================================== -->
+
+        <div
+            class="attendance-result"
+            id="attendanceResult"
+        >
+
+            <div class="result-head">
+
+                <div class="result-icon">
+
+                    <span class="material-symbols-outlined">
+                        check
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Presensi Berhasil
+                    </strong>
+
+                    <span id="resultStatus">
+                        HADIR
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-grid">
+
+
+                <div class="result-item">
+
+                    <span>
+                        NAMA
+                    </span>
+
+                    <strong id="resultStudent">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span>
+                        NIS
+                    </span>
+
+                    <strong id="resultNis">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span>
+                        WAKTU PRESENSI
+                    </span>
+
+                    <strong id="resultTime">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="result-item">
+
+                    <span>
+                        STATUS
+                    </span>
+
+                    <strong id="resultAttendanceStatus">
+                        HADIR
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HELP
+        ================================================== -->
+
+        <div class="scan-help">
+
+            <span class="material-symbols-outlined">
+                location_on
+            </span>
+
+
+            <span>
+                Presensi hanya dapat dilakukan di area sekolah.
+                Lokasi perangkat akan diperiksa saat barcode berhasil terbaca.
+            </span>
+
+        </div>
+
+    </section>
 
 </main>
 
 
-@if(!$todayAttendance)
+<!-- =====================================================
+     HTML5 QR CODE
+===================================================== -->
+
+<script
+    src="https://unpkg.com/html5-qrcode"
+></script>
+
 
 <script>
+
+    /*
+    |--------------------------------------------------------------------------
+    | CONFIG
+    |--------------------------------------------------------------------------
+    */
+
+    const storeUrl =
+        @json(
+            route(
+                'siswa.presensi.store'
+            )
+        );
+
+
+    const csrfToken =
+        document
+            .querySelector(
+                'meta[name="csrf-token"]'
+            )
+            ?.getAttribute(
+                'content'
+            );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ELEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    const scanStatus =
+        document.getElementById(
+            'scanStatus'
+        );
+
+
+    const statusIcon =
+        document.getElementById(
+            'statusIcon'
+        );
+
+
+    const statusTitle =
+        document.getElementById(
+            'statusTitle'
+        );
+
+
+    const statusMessage =
+        document.getElementById(
+            'statusMessage'
+        );
+
+
+    const attendanceRuleCard =
+        document.getElementById(
+            'attendanceRuleCard'
+        );
+
+
+    const ruleAttendanceTime =
+        document.getElementById(
+            'ruleAttendanceTime'
+        );
+
+
+    const ruleTolerance =
+        document.getElementById(
+            'ruleTolerance'
+        );
+
+
+    const ruleCloseTime =
+        document.getElementById(
+            'ruleCloseTime'
+        );
+
+
+    const ruleAutoAlpha =
+        document.getElementById(
+            'ruleAutoAlpha'
+        );
+
+
+    const attendanceResult =
+        document.getElementById(
+            'attendanceResult'
+        );
+
+
+    const resultStudent =
+        document.getElementById(
+            'resultStudent'
+        );
+
+
+    const resultNis =
+        document.getElementById(
+            'resultNis'
+        );
+
+
+    const resultTime =
+        document.getElementById(
+            'resultTime'
+        );
+
+
+    const resultStatus =
+        document.getElementById(
+            'resultStatus'
+        );
+
+
+    const resultAttendanceStatus =
+        document.getElementById(
+            'resultAttendanceStatus'
+        );
+
 
     /*
     |--------------------------------------------------------------------------
@@ -336,257 +2106,411 @@
     |--------------------------------------------------------------------------
     */
 
+    let scanner =
+        null;
+
+
+    let scannerRunning =
+        false;
+
+
     let processing =
         false;
 
 
-    let qrScanner =
-        null;
-
-
     /*
     |--------------------------------------------------------------------------
-    | MESSAGE
+    | ESCAPE HTML
     |--------------------------------------------------------------------------
     */
 
-    function setMessage(
-        message,
-        type = 'normal'
+    function escapeHtml(
+        value
     ) {
 
         const element =
-            document.getElementById(
-                'scannerMessage'
-            );
-
-
-        if (!element) {
-            return;
-        }
+            document
+                .createElement(
+                    'div'
+                );
 
 
         element.textContent =
-            message;
+            value
+            ??
+            '';
 
 
-        element.className =
-            'scanner-message';
-
-
-        if (
-            type === 'error'
-        ) {
-
-            element.classList.add(
-                'scanner-message-error'
-            );
-        }
+        return element.innerHTML;
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | START SCANNER
+    | STATUS MESSAGE
     |--------------------------------------------------------------------------
     */
 
-    async function startScanner()
-    {
-        try {
-
-            qrScanner =
-                new Html5Qrcode(
-                    'reader'
-                );
-
-
-            await qrScanner.start(
-
-                {
-                    facingMode:
-                        'environment'
-                },
-
-                {
-                    fps:
-                        10,
-
-                    qrbox: {
-                        width:
-                            250,
-
-                        height:
-                            250
-                    }
-                },
-
-                onScanSuccess,
-
-                function () {
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SCAN GAGAL SEMENTARA
-                    |--------------------------------------------------------------------------
-                    |
-                    | Diabaikan karena kamera terus mencoba membaca QR.
-                    |
-                    */
-                }
-            );
-
-
-            setMessage(
-                'Arahkan kamera ke barcode KKO.'
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            setMessage(
-                'Kamera tidak dapat dibuka. Pastikan izin kamera sudah diberikan.',
-                'error'
-            );
-        }
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | QR BERHASIL TERBACA
-    |--------------------------------------------------------------------------
-    */
-
-    function onScanSuccess(
-        decodedText
+    function showStatus(
+        type,
+        icon,
+        title,
+        message
     ) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | SEDANG DIPROSES
-        |--------------------------------------------------------------------------
-        */
-
         if (
-            processing
+            !scanStatus
         ) {
             return;
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI PREFIX
-        |--------------------------------------------------------------------------
-        */
+        scanStatus.className =
+            'scan-status show '
+            +
+            type;
 
+
+        statusIcon.textContent =
+            icon;
+
+
+        statusTitle.textContent =
+            title;
+
+
+        statusMessage.textContent =
+            message;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STOP SCANNER
+    |--------------------------------------------------------------------------
+    */
+
+    async function stopScanner()
+    {
         if (
-            !decodedText.startsWith(
-                'KKO:'
-            )
+            !scanner
+            ||
+            !scannerRunning
         ) {
-
-            setMessage(
-                'Barcode bukan barcode presensi KKO.',
-                'error'
-            );
-
             return;
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | LOCK PROCESS
-        |--------------------------------------------------------------------------
-        */
+        try {
 
-        processing =
-            true;
+            await scanner.stop();
 
-
-        setMessage(
-            'Barcode terbaca. Memeriksa lokasi...'
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | GEOLOCATION TIDAK TERSEDIA
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            !navigator.geolocation
+        } catch (
+            error
         ) {
 
-            processing =
-                false;
-
-
-            setMessage(
-                'Browser tidak mendukung lokasi GPS.',
-                'error'
-            );
-
-            return;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | AMBIL GPS
-        |--------------------------------------------------------------------------
-        */
-
-        navigator.geolocation.getCurrentPosition(
-
-            function (
-                position
-            ) {
-
-                sendAttendance(
-                    decodedText,
-                    position
-                );
-            },
-
-
-            function (
+            console.warn(
+                'Scanner gagal dihentikan:',
                 error
+            );
+        }
+
+
+        scannerRunning =
+            false;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TAMPILKAN ATURAN
+    |--------------------------------------------------------------------------
+    */
+
+    function showAttendanceRules(
+        attendance
+    ) {
+
+        if (
+            !attendance
+        ) {
+            return;
+        }
+
+
+        attendanceRuleCard
+            ?.classList
+            .add(
+                'show'
+            );
+
+
+        const start =
+            attendance
+                .attendance_start_time
+            ??
+            '-';
+
+
+        const end =
+            attendance
+                .attendance_end_time
+            ??
+            '-';
+
+
+        const tolerance =
+            Number(
+                attendance
+                    .tolerance_minutes
+                ??
+                0
+            );
+
+
+        const toleranceStart =
+            attendance
+                .tolerance_start_time
+            ??
+            null;
+
+
+        const toleranceEnd =
+            attendance
+                .tolerance_end_time
+            ??
+            '-';
+
+
+        const closeTime =
+            attendance
+                .alpha_start_time
+            ??
+            '-';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JAM UTAMA
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ruleAttendanceTime
+        ) {
+
+            ruleAttendanceTime
+                .textContent =
+                    start
+                    +
+                    ' - '
+                    +
+                    end
+                    +
+                    ' WIB';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOLERANSI
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ruleTolerance
+        ) {
+
+            if (
+                tolerance > 0
             ) {
 
-                console.error(
-                    error
-                );
+                ruleTolerance
+                    .textContent =
+                        (
+                            toleranceStart
+                            ?
+                            toleranceStart
+                            +
+                            ' - '
+                            :
+                            ''
+                        )
+                        +
+                        toleranceEnd
+                        +
+                        ' WIB ('
+                        +
+                        tolerance
+                        +
+                        ' menit)';
+
+            } else {
+
+                ruleTolerance
+                    .textContent =
+                        'Tidak ada toleransi';
+            }
+        }
 
 
-                processing =
-                    false;
+        /*
+        |--------------------------------------------------------------------------
+        | DITUTUP
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ruleCloseTime
+        ) {
+
+            ruleCloseTime
+                .textContent =
+                    closeTime
+                    +
+                    ' WIB';
+        }
 
 
-                setMessage(
-                    'Lokasi tidak dapat diakses. Aktifkan GPS dan izinkan akses lokasi.',
-                    'error'
-                );
-            },
+        /*
+        |--------------------------------------------------------------------------
+        | AUTO ALFA
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ruleAutoAlpha
+        ) {
+
+            ruleAutoAlpha
+                .textContent =
+                    attendance
+                        .auto_alpha
+                        ? 'AKTIF'
+                        : 'NONAKTIF';
+        }
+    }
 
 
-            {
-                enableHighAccuracy:
-                    true,
+    /*
+    |--------------------------------------------------------------------------
+    | HASIL BERHASIL
+    |--------------------------------------------------------------------------
+    */
 
-                timeout:
-                    15000,
+    function showAttendanceResult(
+        data
+    ) {
 
-                maximumAge:
-                    0
+        attendanceResult
+            ?.classList
+            .add(
+                'show'
+            );
+
+
+        resultStudent.textContent =
+            data.student
+            ??
+            '-';
+
+
+        resultNis.textContent =
+            data.nis
+            ??
+            '-';
+
+
+        resultTime.textContent =
+            (
+                data.time
+                ??
+                '-'
+            )
+            +
+            ' WIB';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS
+        |--------------------------------------------------------------------------
+        |
+        | Scanner sekolah baru hanya menghasilkan HADIR
+        | selama masih berada dalam waktu presensi + toleransi.
+        |
+        */
+
+        const status =
+            data.status
+            ??
+            'HADIR';
+
+
+        resultStatus.textContent =
+            status;
+
+
+        resultAttendanceStatus
+            .textContent =
+                status;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ATURAN
+        |--------------------------------------------------------------------------
+        */
+
+        showAttendanceRules(
+            data.attendance
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | GPS
+    |--------------------------------------------------------------------------
+    */
+
+    function getCurrentPosition()
+    {
+        return new Promise(
+            function (
+                resolve,
+                reject
+            ) {
+
+                if (
+                    !navigator.geolocation
+                ) {
+
+                    reject(
+                        new Error(
+                            'Perangkat tidak mendukung GPS.'
+                        )
+                    );
+
+                    return;
+                }
+
+
+                navigator.geolocation
+                    .getCurrentPosition(
+                        resolve,
+                        reject,
+                        {
+                            enableHighAccuracy:
+                                true,
+
+                            timeout:
+                                15000,
+
+                            maximumAge:
+                                0,
+                        }
+                    );
             }
         );
     }
@@ -598,32 +2522,39 @@
     |--------------------------------------------------------------------------
     */
 
-    async function sendAttendance(
-        token,
-        position
+    async function submitAttendance(
+        decodedText
     ) {
+
+        if (
+            processing
+        ) {
+            return;
+        }
+
+
+        processing =
+            true;
+
+
+        showStatus(
+            'info',
+            'location_searching',
+            'Memeriksa lokasi',
+            'Barcode terbaca. Sedang memeriksa posisi perangkat...'
+        );
+
 
         try {
 
-            setMessage(
-                'Memvalidasi presensi...'
-            );
-
-
             /*
             |--------------------------------------------------------------------------
-            | CSRF
+            | GPS
             |--------------------------------------------------------------------------
             */
 
-            const csrfToken =
-                document
-                    .querySelector(
-                        'meta[name="csrf-token"]'
-                    )
-                    ?.getAttribute(
-                        'content'
-                    );
+            const position =
+                await getCurrentPosition();
 
 
             /*
@@ -634,7 +2565,7 @@
 
             const response =
                 await fetch(
-                    "{{ route('siswa.presensi.store') }}",
+                    storeUrl,
                     {
                         method:
                             'POST',
@@ -647,30 +2578,36 @@
                                 'application/json',
 
                             'X-CSRF-TOKEN':
-                                csrfToken
+                                csrfToken,
                         },
 
                         body:
                             JSON.stringify({
                                 token:
-                                    token,
+                                    decodedText,
 
                                 latitude:
-                                    position.coords.latitude,
+                                    position
+                                        .coords
+                                        .latitude,
 
                                 longitude:
-                                    position.coords.longitude,
+                                    position
+                                        .coords
+                                        .longitude,
 
                                 accuracy:
-                                    position.coords.accuracy
-                            })
+                                    position
+                                        .coords
+                                        .accuracy,
+                            }),
                     }
                 );
 
 
             /*
             |--------------------------------------------------------------------------
-            | RESPONSE JSON
+            | JSON
             |--------------------------------------------------------------------------
             */
 
@@ -680,239 +2617,353 @@
 
             /*
             |--------------------------------------------------------------------------
-            | GAGAL
+            | ATURAN DARI BACKEND
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                data.attendance
+            ) {
+
+                showAttendanceRules(
+                    data.attendance
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | ERROR BACKEND
             |--------------------------------------------------------------------------
             */
 
             if (
                 !response.ok
+                ||
+                !data.success
             ) {
 
-                throw new Error(
+                showStatus(
+                    'error',
+                    'error',
+                    'Presensi gagal',
                     data.message
-                    ||
-                    'Presensi gagal.'
+                    ??
+                    'Presensi tidak dapat diproses.'
                 );
+
+
+                processing =
+                    false;
+
+
+                return;
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | STOP CAMERA
+            | SUKSES
             |--------------------------------------------------------------------------
             */
 
+            await stopScanner();
+
+
+            showStatus(
+                'success',
+                'check_circle',
+                'Presensi berhasil',
+                data.message
+                ??
+                'Kamu berhasil tercatat Hadir.'
+            );
+
+
+            showAttendanceResult(
+                data
+            );
+
+
+            processing =
+                false;
+
+
+        } catch (
+            error
+        ) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | GPS / NETWORK ERROR
+            |--------------------------------------------------------------------------
+            */
+
+            let message =
+                'Terjadi kesalahan saat memproses presensi.';
+
+
             if (
-                qrScanner
+                error
+                &&
+                typeof error.code
+                !==
+                'undefined'
             ) {
 
-                try {
-
-                    await qrScanner.stop();
-
-                } catch (
-                    stopError
+                switch (
+                    error.code
                 ) {
 
-                    console.warn(
-                        'Scanner sudah berhenti.',
-                        stopError
-                    );
+                    case 1:
+
+                        message =
+                            'Izin lokasi ditolak. Aktifkan izin lokasi untuk melakukan presensi.';
+
+                        break;
+
+
+                    case 2:
+
+                        message =
+                            'Lokasi perangkat tidak dapat ditemukan. Pastikan GPS aktif.';
+
+                        break;
+
+
+                    case 3:
+
+                        message =
+                            'Pencarian lokasi terlalu lama. Silakan coba lagi.';
+
+                        break;
                 }
             }
 
 
+            showStatus(
+                'error',
+                'location_off',
+                'Presensi gagal',
+                message
+            );
+
+
+            processing =
+                false;
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | QR SUCCESS
+    |--------------------------------------------------------------------------
+    */
+
+    function onScanSuccess(
+        decodedText
+    ) {
+
+        if (
+            processing
+        ) {
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HANYA BARCODE SEKOLAH
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !decodedText
+            ||
+            !decodedText
+                .startsWith(
+                    'KKO:'
+                )
+        ) {
+
+            showStatus(
+                'warning',
+                'qr_code_scanner',
+                'Barcode tidak sesuai',
+                'Gunakan barcode presensi sekolah KKO SMANDA.'
+            );
+
+
+            return;
+        }
+
+
+        submitAttendance(
+            decodedText
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | START SCANNER
+    |--------------------------------------------------------------------------
+    */
+
+    async function startScanner()
+    {
+        const reader =
+            document.getElementById(
+                'reader'
+            );
+
+
+        if (
+            !reader
+        ) {
+            return;
+        }
+
+
+        showStatus(
+            'info',
+            'photo_camera',
+            'Menyiapkan kamera',
+            'Izinkan akses kamera untuk mulai scan barcode.'
+        );
+
+
+        scanner =
+            new Html5Qrcode(
+                'reader'
+            );
+
+
+        try {
+
             /*
             |--------------------------------------------------------------------------
-            | DATA STATUS
+            | CAMERA
             |--------------------------------------------------------------------------
             */
 
-            const attendanceStatus =
-                data.status
-                ||
-                'HADIR';
-
-
-            const attendanceStatusClass =
-                attendanceStatus
-                === 'TERLAMBAT'
-                    ? 'attendance-status-late'
-                    : 'attendance-status-present';
-
-
-            const attendanceData =
-                data.attendance
-                ||
-                {};
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | DETAIL WAKTU
-            |--------------------------------------------------------------------------
-            */
-
-            const attendanceStart =
-                attendanceData
-                    .attendance_start_time
-                ||
-                '-';
-
-
-            const lateLimit =
-                attendanceData
-                    .late_limit
-                ||
-                '-';
-
-
-            const cutoffTime =
-                attendanceData
-                    .cutoff_time
-                ||
-                '-';
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | SUCCESS UI
-            |--------------------------------------------------------------------------
-            */
-
-            const scannerCard =
-                document.querySelector(
-                    '.scanner-card'
-                );
+            const cameras =
+                await Html5Qrcode
+                    .getCameras();
 
 
             if (
-                scannerCard
+                !cameras
+                ||
+                cameras.length === 0
             ) {
 
-                scannerCard.innerHTML = `
-
-                    <div class="attendance-success">
-
-                        <div class="attendance-success-icon">
-                            ✓
-                        </div>
-
-                        <span>
-                            PRESENSI BERHASIL
-                        </span>
-
-                        <h2>
-                            ${escapeHtml(
-                                data.student
-                                || ''
-                            )}
-                        </h2>
-
-                        <p>
-                            NIS ${escapeHtml(
-                                data.nis
-                                || '-'
-                            )}
-                        </p>
-
-                        <strong>
-                            ${escapeHtml(
-                                data.time
-                                || '-'
-                            )} WIB
-                        </strong>
-
-
-                        <div
-                            class="
-                                attendance-success-status
-                                ${attendanceStatusClass}
-                            "
-                        >
-                            ${escapeHtml(
-                                attendanceStatus
-                            )}
-                        </div>
-
-
-                        <div class="attendance-success-rules">
-
-                            <div class="attendance-success-rule-row">
-
-                                <span>
-                                    Mulai Presensi
-                                </span>
-
-                                <strong>
-                                    ${escapeHtml(
-                                        attendanceStart
-                                    )} WIB
-                                </strong>
-
-                            </div>
-
-
-                            <div class="attendance-success-rule-row">
-
-                                <span>
-                                    Batas Hadir
-                                </span>
-
-                                <strong>
-                                    ${escapeHtml(
-                                        lateLimit
-                                    )} WIB
-                                </strong>
-
-                            </div>
-
-
-                            <div class="attendance-success-rule-row">
-
-                                <span>
-                                    Batas Presensi
-                                </span>
-
-                                <strong>
-                                    ${escapeHtml(
-                                        cutoffTime
-                                    )} WIB
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <a href="{{ route('siswa.dashboard') }}">
-                            Kembali ke Dashboard
-                        </a>
-
-                    </div>
-                `;
+                throw new Error(
+                    'Kamera tidak ditemukan.'
+                );
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | SEMBUNYIKAN MESSAGE
+            | PILIH KAMERA BELAKANG
             |--------------------------------------------------------------------------
             */
 
-            const scannerMessage =
-                document.getElementById(
-                    'scannerMessage'
+            let cameraId =
+                cameras[0]
+                    .id;
+
+
+            const backCamera =
+                cameras.find(
+                    function (
+                        camera
+                    ) {
+
+                        const label =
+                            (
+                                camera.label
+                                ??
+                                ''
+                            )
+                                .toLowerCase();
+
+
+                        return (
+                            label.includes(
+                                'back'
+                            )
+                            ||
+                            label.includes(
+                                'rear'
+                            )
+                            ||
+                            label.includes(
+                                'environment'
+                            )
+                        );
+                    }
                 );
 
 
             if (
-                scannerMessage
+                backCamera
             ) {
 
-                scannerMessage.style.display =
-                    'none';
+                cameraId =
+                    backCamera.id;
             }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | START
+            |--------------------------------------------------------------------------
+            */
+
+            await scanner.start(
+                cameraId,
+                {
+                    fps:
+                        10,
+
+                    qrbox: {
+                        width:
+                            240,
+
+                        height:
+                            240,
+                    },
+
+                    aspectRatio:
+                        1,
+                },
+                onScanSuccess,
+                function () {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SCAN ERROR FRAME
+                    |--------------------------------------------------------------------------
+                    |
+                    | Tidak perlu menampilkan error setiap frame.
+                    |
+                    */
+                }
+            );
+
+
+            scannerRunning =
+                true;
+
+
+            showStatus(
+                'info',
+                'qr_code_scanner',
+                'Scanner aktif',
+                'Arahkan kamera ke barcode presensi sekolah.'
+            );
 
 
         } catch (
@@ -924,21 +2975,11 @@
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | BUKA LOCK SUPAYA BISA SCAN ULANG
-            |--------------------------------------------------------------------------
-            */
-
-            processing =
-                false;
-
-
-            setMessage(
-                error.message
-                ||
-                'Presensi gagal.',
-                'error'
+            showStatus(
+                'error',
+                'no_photography',
+                'Kamera tidak dapat digunakan',
+                'Pastikan izin kamera diberikan dan coba buka halaman kembali.'
             );
         }
     }
@@ -946,61 +2987,47 @@
 
     /*
     |--------------------------------------------------------------------------
-    | ESCAPE HTML
+    | INITIAL
     |--------------------------------------------------------------------------
-    |
-    | Data siswa berasal dari backend.
-    | Tetap di-escape sebelum dimasukkan ke innerHTML.
-    |
     */
 
-    function escapeHtml(
-        value
-    ) {
+    @if(
+        !$todayAttendance
+    )
 
-        return String(
-            value
-        )
-            .replaceAll(
-                '&',
-                '&amp;'
-            )
-            .replaceAll(
-                '<',
-                '&lt;'
-            )
-            .replaceAll(
-                '>',
-                '&gt;'
-            )
-            .replaceAll(
-                '"',
-                '&quot;'
-            )
-            .replaceAll(
-                "'",
-                '&#039;'
-            );
-    }
+        startScanner();
+
+    @endif
 
 
     /*
     |--------------------------------------------------------------------------
-    | START
+    | CLEANUP
     |--------------------------------------------------------------------------
     */
 
-    document.addEventListener(
-        'DOMContentLoaded',
+    window.addEventListener(
+        'beforeunload',
         function () {
 
-            startScanner();
+            if (
+                scanner
+                &&
+                scannerRunning
+            ) {
+
+                scanner
+                    .stop()
+                    .catch(
+                        function () {
+                            //
+                        }
+                    );
+            }
         }
     );
 
 </script>
-
-@endif
 
 
 </body>

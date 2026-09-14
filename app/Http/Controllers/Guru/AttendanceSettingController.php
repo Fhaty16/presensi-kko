@@ -13,7 +13,17 @@ class AttendanceSettingController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | UPDATE PENGATURAN PRESENSI SEKOLAH
+    | TIMEZONE
+    |--------------------------------------------------------------------------
+    */
+
+    private const TIMEZONE =
+        'Asia/Jakarta';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE PENGATURAN PRESENSI
     |--------------------------------------------------------------------------
     */
 
@@ -23,13 +33,18 @@ class AttendanceSettingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI
+        | VALIDASI INPUT
         |--------------------------------------------------------------------------
         */
 
         $validated =
             $request->validate([
                 'attendance_start_time' => [
+                    'required',
+                    'date_format:H:i',
+                ],
+
+                'attendance_end_time' => [
                     'required',
                     'date_format:H:i',
                 ],
@@ -41,11 +56,6 @@ class AttendanceSettingController extends Controller
                     'max:180',
                 ],
 
-                'cutoff_time' => [
-                    'required',
-                    'date_format:H:i',
-                ],
-
                 'auto_alpha' => [
                     'required',
                     'boolean',
@@ -55,82 +65,151 @@ class AttendanceSettingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | TANGGAL ACUAN
+        |--------------------------------------------------------------------------
+        */
+
+        $today =
+            Carbon::now(
+                self::TIMEZONE
+            )
+                ->toDateString();
+
+
+        /*
+        |--------------------------------------------------------------------------
         | JAM MULAI
         |--------------------------------------------------------------------------
         */
 
-        $startAt =
+        $attendanceStart =
             Carbon::createFromFormat(
-                'H:i',
+                'Y-m-d H:i',
+                $today
+                .
+                ' '
+                .
                 $validated[
                     'attendance_start_time'
                 ],
-                'Asia/Jakarta'
-            )
-                ->setSecond(0);
+                self::TIMEZONE
+            );
 
 
         /*
         |--------------------------------------------------------------------------
-        | JAM MULAI TERLAMBAT
+        | JAM SELESAI
         |--------------------------------------------------------------------------
         */
 
-        $lateAt =
-            $startAt
+        $attendanceEnd =
+            Carbon::createFromFormat(
+                'Y-m-d H:i',
+                $today
+                .
+                ' '
+                .
+                $validated[
+                    'attendance_end_time'
+                ],
+                self::TIMEZONE
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI JAM SELESAI
+        |--------------------------------------------------------------------------
+        |
+        | Contoh valid:
+        |
+        | Mulai   : 06:00
+        | Selesai : 07:00
+        |
+        | Contoh tidak valid:
+        |
+        | Mulai   : 07:00
+        | Selesai : 06:00
+        |
+        */
+
+        if (
+            $attendanceEnd
+                ->lessThanOrEqualTo(
+                    $attendanceStart
+                )
+        ) {
+
+            throw ValidationException::withMessages([
+                'attendance_end_time' =>
+                    'Jam selesai presensi harus setelah jam mulai presensi.',
+            ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOLERANSI
+        |--------------------------------------------------------------------------
+        */
+
+        $toleranceMinutes =
+            max(
+                0,
+                (int) $validated[
+                    'late_after_minutes'
+                ]
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS AKHIR TOLERANSI
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Jam selesai : 07:00
+        | Toleransi   : 10 menit
+        |
+        | Presensi utama:
+        |
+        | 06:00 - 07:00:59
+        |
+        | Toleransi:
+        |
+        | 07:01 - 07:10:59
+        |
+        */
+
+        $toleranceEndsAt =
+            $attendanceEnd
                 ->copy()
                 ->addMinutes(
-                    (int) $validated[
-                        'late_after_minutes'
-                    ]
-                );
+                    $toleranceMinutes
+                )
+                ->endOfMinute();
 
 
         /*
         |--------------------------------------------------------------------------
-        | JAM BATAS ALFA
+        | JAM MULAI DITUTUP / ALFA
         |--------------------------------------------------------------------------
+        |
+        | 07:10:59
+        | +
+        | 1 detik
+        |
+        | =
+        |
+        | 07:11:00
+        |
         */
 
-        $cutoffAt =
-            Carbon::createFromFormat(
-                'H:i',
-                $validated[
-                    'cutoff_time'
-                ],
-                'Asia/Jakarta'
-            )
-                ->setSecond(0);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDASI URUTAN WAKTU
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            !$cutoffAt->gt(
-                $startAt
-            )
-        ) {
-            throw ValidationException::withMessages([
-                'cutoff_time' =>
-                    'Jam batas Alfa harus setelah jam mulai presensi.',
-            ]);
-        }
-
-
-        if (
-            !$lateAt->lt(
-                $cutoffAt
-            )
-        ) {
-            throw ValidationException::withMessages([
-                'late_after_minutes' =>
-                    'Toleransi Hadir terlalu panjang. Waktu mulai Terlambat harus sebelum Jam Batas Alfa.',
-            ]);
-        }
+        $cutoff =
+            $toleranceEndsAt
+                ->copy()
+                ->addSecond();
 
 
         /*
@@ -144,13 +223,16 @@ class AttendanceSettingController extends Controller
                 [],
                 [
                     'attendance_start_time' =>
-                        '06:50:00',
+                        '06:00:00',
+
+                    'attendance_end_time' =>
+                        '07:00:00',
 
                     'late_after_minutes' =>
                         10,
 
                     'cutoff_time' =>
-                        '07:01:00',
+                        '07:11:00',
 
                     'auto_alpha' =>
                         true,
@@ -166,25 +248,47 @@ class AttendanceSettingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | SIMPAN
+        | SIMPAN SETTING
         |--------------------------------------------------------------------------
+        |
+        | cutoff_time tetap kita simpan.
+        |
+        | Tujuannya:
+        |
+        | - kompatibel dengan fitur lama
+        | - scheduler
+        | - WhatsApp
+        | - Auto Alfa
+        |
+        | Tetapi cutoff_time TIDAK lagi diinput manual Guru.
+        |
+        | cutoff_time dihitung otomatis:
+        |
+        | Jam Selesai + Toleransi + 1 menit
+        |
         */
 
         $settings->update([
             'attendance_start_time' =>
-                $startAt->format(
-                    'H:i:s'
-                ),
+                $attendanceStart
+                    ->format(
+                        'H:i:s'
+                    ),
+
+            'attendance_end_time' =>
+                $attendanceEnd
+                    ->format(
+                        'H:i:s'
+                    ),
 
             'late_after_minutes' =>
-                (int) $validated[
-                    'late_after_minutes'
-                ],
+                $toleranceMinutes,
 
             'cutoff_time' =>
-                $cutoffAt->format(
-                    'H:i:s'
-                ),
+                $cutoff
+                    ->format(
+                        'H:i:s'
+                    ),
 
             'auto_alpha' =>
                 (bool) $validated[
@@ -195,7 +299,7 @@ class AttendanceSettingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | KEMBALI
+        | SUCCESS
         |--------------------------------------------------------------------------
         */
 
@@ -205,7 +309,7 @@ class AttendanceSettingController extends Controller
             )
             ->with(
                 'success',
-                'Pengaturan presensi sekolah berhasil diperbarui.'
+                'Pengaturan presensi berhasil diperbarui.'
             );
     }
 }

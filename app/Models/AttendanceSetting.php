@@ -17,6 +17,7 @@ class AttendanceSetting extends Model
         'auto_alpha',
 
         'attendance_start_time',
+        'attendance_end_time',
         'late_after_minutes',
 
         'school_latitude',

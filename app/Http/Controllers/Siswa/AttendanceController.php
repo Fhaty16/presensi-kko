@@ -25,6 +25,16 @@ class AttendanceController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
+        | TIMEZONE
+        |--------------------------------------------------------------------------
+        */
+
+        $timezone =
+            'Asia/Jakarta';
+
+
+        /*
+        |--------------------------------------------------------------------------
         | AMBIL SISWA LOGIN
         |--------------------------------------------------------------------------
         */
@@ -51,8 +61,9 @@ class AttendanceController extends Controller
                 ->whereDate(
                     'attendance_date',
                     now(
-                        'Asia/Jakarta'
-                    )->toDateString()
+                        $timezone
+                    )
+                        ->toDateString()
                 )
                 ->first();
 
@@ -75,7 +86,7 @@ class AttendanceController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | PROSES PRESENSI
+    | PROSES PRESENSI SEKOLAH
     |--------------------------------------------------------------------------
     */
 
@@ -122,7 +133,7 @@ class AttendanceController extends Controller
         | VALIDASI PREFIX QR
         |--------------------------------------------------------------------------
         |
-        | Semua QR presensi sekolah KKO harus memiliki format:
+        | Format barcode sekolah:
         |
         | KKO:TOKEN
         |
@@ -134,6 +145,7 @@ class AttendanceController extends Controller
                 'KKO:'
             )
         ) {
+
             return response()->json([
                 'success' =>
                     false,
@@ -146,7 +158,7 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL TOKEN ASLI
+        | TOKEN ASLI
         |--------------------------------------------------------------------------
         */
 
@@ -159,7 +171,7 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL DATA SISWA LOGIN
+        | SISWA LOGIN
         |--------------------------------------------------------------------------
         */
 
@@ -177,8 +189,28 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | SETTING PRESENSI
+        | PENGATURAN PRESENSI SEKOLAH
         |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Jam Mulai   : 06:00
+        | Jam Selesai : 07:00
+        | Toleransi   : 10 menit
+        |
+        | Maka:
+        |
+        | sebelum 06:00     = belum dibuka
+        | 06:00 - 07:00     = presensi utama
+        | 07:01 - 07:10     = toleransi Hadir
+        | mulai 07:11       = ditutup
+        |
+        | Tidak ada status TERLAMBAT.
+        |
+        | Selama scanner masih dibuka:
+        |
+        | status = present / HADIR
+        |
         */
 
         $settings =
@@ -186,13 +218,16 @@ class AttendanceController extends Controller
                 [],
                 [
                     'attendance_start_time' =>
-                        '06:50:00',
+                        '06:00:00',
+
+                    'attendance_end_time' =>
+                        '07:00:00',
 
                     'late_after_minutes' =>
                         10,
 
                     'cutoff_time' =>
-                        '07:01:00',
+                        '07:11:00',
 
                     'auto_alpha' =>
                         true,
@@ -208,7 +243,7 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDASI KONFIGURASI LOKASI SEKOLAH
+        | VALIDASI KONFIGURASI LOKASI
         |--------------------------------------------------------------------------
         */
 
@@ -217,6 +252,7 @@ class AttendanceController extends Controller
             ||
             $settings->school_longitude === null
         ) {
+
             return response()->json([
                 'success' =>
                     false,
@@ -229,13 +265,23 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | TIMEZONE
+        |--------------------------------------------------------------------------
+        */
+
+        $timezone =
+            'Asia/Jakarta';
+
+
+        /*
+        |--------------------------------------------------------------------------
         | WAKTU SEKARANG
         |--------------------------------------------------------------------------
         */
 
         $now =
             now(
-                'Asia/Jakarta'
+                $timezone
             );
 
 
@@ -249,50 +295,27 @@ class AttendanceController extends Controller
             $now
                 ->copy()
                 ->setTimeFromTimeString(
-                    $settings->attendance_start_time
-                    ?? '06:50:00'
+                    $settings
+                        ->attendance_start_time
+                    ??
+                    '06:00:00'
                 );
 
 
         /*
         |--------------------------------------------------------------------------
-        | BATAS HADIR
-        |--------------------------------------------------------------------------
-        |
-        | Contoh:
-        |
-        | Jam mulai       : 06:50
-        | Toleransi       : 10 menit
-        |
-        | 06:50:00        : Hadir
-        | 07:00:00        : masih Hadir
-        | 07:00:01        : Terlambat
-        |
-        */
-
-        $lateLimit =
-            $attendanceStart
-                ->copy()
-                ->addMinutes(
-                    (int) (
-                        $settings->late_after_minutes
-                        ?? 10
-                    )
-                );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | JAM BATAS ALFA / PENUTUPAN PRESENSI
+        | JAM SELESAI PRESENSI
         |--------------------------------------------------------------------------
         */
 
-        $cutoff =
+        $attendanceEnd =
             $now
                 ->copy()
                 ->setTimeFromTimeString(
-                    $settings->cutoff_time
-                    ?? '07:01:00'
+                    $settings
+                        ->attendance_end_time
+                    ??
+                    '07:00:00'
                 );
 
 
@@ -300,39 +323,90 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         | VALIDASI KONFIGURASI WAKTU
         |--------------------------------------------------------------------------
-        |
-        | Urutan harus:
-        |
-        | Jam Mulai
-        |     ↓
-        | Batas Hadir
-        |     ↓
-        | Jam Batas Alfa
-        |
         */
 
         if (
-            !$cutoff->gt(
-                $attendanceStart
-            )
-            ||
-            !$lateLimit->lt(
-                $cutoff
-            )
+            $attendanceEnd
+                ->lessThanOrEqualTo(
+                    $attendanceStart
+                )
         ) {
+
             return response()->json([
                 'success' =>
                     false,
 
                 'message' =>
-                    'Pengaturan waktu presensi sekolah tidak valid. Hubungi Guru KKO.',
+                    'Konfigurasi waktu presensi tidak valid. Jam selesai harus setelah jam mulai.',
             ], 422);
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | PRESENSI BELUM DIBUKA
+        | TOLERANSI HADIR
+        |--------------------------------------------------------------------------
+        */
+
+        $toleranceMinutes =
+            max(
+                0,
+                (int) (
+                    $settings
+                        ->late_after_minutes
+                    ??
+                    0
+                )
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAS AKHIR TOLERANSI
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | Jam selesai = 07:00
+        | Toleransi   = 10
+        |
+        | 07:10:59 masih dapat presensi.
+        |
+        */
+
+        $toleranceEndsAt =
+            $attendanceEnd
+                ->copy()
+                ->addMinutes(
+                    $toleranceMinutes
+                )
+                ->endOfMinute();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MULAI PRESENSI DITUTUP
+        |--------------------------------------------------------------------------
+        |
+        | Contoh:
+        |
+        | 07:10:59
+        | +
+        | 1 detik
+        |
+        | = 07:11:00
+        |
+        */
+
+        $attendanceClosesAt =
+            $toleranceEndsAt
+                ->copy()
+                ->addSecond();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BELUM MASUK JAM PRESENSI
         |--------------------------------------------------------------------------
         */
 
@@ -341,14 +415,53 @@ class AttendanceController extends Controller
                 $attendanceStart
             )
         ) {
+
             return response()->json([
                 'success' =>
                     false,
 
                 'message' =>
-                    'Presensi belum dibuka. Presensi mulai pukul '
-                    . $attendanceStart->format('H:i')
-                    . ' WIB.',
+                    'Presensi belum dibuka. Presensi dapat dilakukan mulai pukul '
+                    .
+                    $attendanceStart
+                        ->format(
+                            'H:i'
+                        )
+                    .
+                    ' WIB.',
+
+                'attendance' => [
+                    'attendance_start_time' =>
+                        $attendanceStart
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'attendance_end_time' =>
+                        $attendanceEnd
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'tolerance_minutes' =>
+                        $toleranceMinutes,
+
+                    'tolerance_end_time' =>
+                        $toleranceEndsAt
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'alpha_start_time' =>
+                        $attendanceClosesAt
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'auto_alpha' =>
+                        (bool) $settings
+                            ->auto_alpha,
+                ],
             ], 422);
         }
 
@@ -357,21 +470,44 @@ class AttendanceController extends Controller
         |--------------------------------------------------------------------------
         | PRESENSI SUDAH DITUTUP
         |--------------------------------------------------------------------------
+        |
+        | Tepat pada attendanceClosesAt scanner sudah ditutup.
+        |
+        | Contoh:
+        |
+        | 07:10:59 = masih boleh
+        | 07:11:00 = ditolak
+        |
         */
 
         if (
             $now->gte(
-                $cutoff
+                $attendanceClosesAt
             )
         ) {
+
             $message =
                 $settings->auto_alpha
-                    ? 'Presensi sudah ditutup. Mulai pukul '
-                        . $cutoff->format('H:i')
-                        . ' WIB siswa yang belum memiliki presensi diproses sebagai Alfa otomatis.'
-                    : 'Presensi sudah ditutup pada pukul '
-                        . $cutoff->format('H:i')
-                        . ' WIB. Auto Alfa sedang dinonaktifkan.';
+                    ? (
+                        'Presensi sudah ditutup. Mulai pukul '
+                        .
+                        $attendanceClosesAt
+                            ->format(
+                                'H:i'
+                            )
+                        .
+                        ' WIB siswa yang belum memiliki presensi akan diproses sebagai Alfa otomatis.'
+                    )
+                    : (
+                        'Presensi sudah ditutup mulai pukul '
+                        .
+                        $attendanceClosesAt
+                            ->format(
+                                'H:i'
+                            )
+                        .
+                        ' WIB. Auto Alfa sedang dinonaktifkan.'
+                    );
 
 
             return response()->json([
@@ -380,27 +516,41 @@ class AttendanceController extends Controller
 
                 'message' =>
                     $message,
+
+                'attendance' => [
+                    'attendance_start_time' =>
+                        $attendanceStart
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'attendance_end_time' =>
+                        $attendanceEnd
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'tolerance_minutes' =>
+                        $toleranceMinutes,
+
+                    'tolerance_end_time' =>
+                        $toleranceEndsAt
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'alpha_start_time' =>
+                        $attendanceClosesAt
+                            ->format(
+                                'H:i'
+                            ),
+
+                    'auto_alpha' =>
+                        (bool) $settings
+                            ->auto_alpha,
+                ],
             ], 422);
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | TENTUKAN HADIR / TERLAMBAT
-        |--------------------------------------------------------------------------
-        |
-        | Tepat pada batas toleransi masih Hadir.
-        |
-        | Setelah melewati batas toleransi menjadi Terlambat.
-        |
-        */
-
-        $status =
-            $now->lte(
-                $lateLimit
-            )
-                ? 'present'
-                : 'late';
 
 
         /*
@@ -411,13 +561,35 @@ class AttendanceController extends Controller
 
         $distance =
             $this->distanceInMeters(
-                (float) $request->latitude,
+                (float) $request
+                    ->latitude,
 
-                (float) $request->longitude,
+                (float) $request
+                    ->longitude,
 
-                (float) $settings->school_latitude,
+                (float) $settings
+                    ->school_latitude,
 
-                (float) $settings->school_longitude
+                (float) $settings
+                    ->school_longitude
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RADIUS SEKOLAH
+        |--------------------------------------------------------------------------
+        */
+
+        $locationRadius =
+            max(
+                1,
+                (int) (
+                    $settings
+                        ->location_radius_meters
+                    ??
+                    120
+                )
             );
 
 
@@ -430,8 +602,9 @@ class AttendanceController extends Controller
         if (
             $distance
             >
-            $settings->location_radius_meters
+            $locationRadius
         ) {
+
             return response()->json([
                 'success' =>
                     false,
@@ -445,20 +618,15 @@ class AttendanceController extends Controller
                     ),
 
                 'radius' =>
-                    $settings->location_radius_meters,
-
+                    $locationRadius,
             ], 422);
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | VARIABLE ATTENDANCE
+        | ATTENDANCE
         |--------------------------------------------------------------------------
-        |
-        | Setelah transaction berhasil, object Attendance
-        | akan disimpan di variable ini.
-        |
         */
 
         $attendance =
@@ -478,13 +646,12 @@ class AttendanceController extends Controller
                     function () use (
                         $student,
                         $token,
-                        $now,
-                        $status
+                        $now
                     ) {
 
                         /*
                         |--------------------------------------------------------------------------
-                        | CEK SUDAH PRESENSI
+                        | CEK PRESENSI HARI INI
                         |--------------------------------------------------------------------------
                         */
 
@@ -495,7 +662,8 @@ class AttendanceController extends Controller
                             )
                                 ->whereDate(
                                     'attendance_date',
-                                    $now->toDateString()
+                                    $now
+                                        ->toDateString()
                                 )
                                 ->lockForUpdate()
                                 ->exists();
@@ -504,6 +672,7 @@ class AttendanceController extends Controller
                         if (
                             $alreadyAttendance
                         ) {
+
                             throw new \RuntimeException(
                                 'Kamu sudah melakukan presensi hari ini.'
                             );
@@ -515,8 +684,8 @@ class AttendanceController extends Controller
                         | AMBIL BARCODE
                         |--------------------------------------------------------------------------
                         |
-                        | Barcode dikunci agar tidak dapat digunakan
-                        | dua siswa secara bersamaan.
+                        | Lock barcode untuk mencegah dua siswa memakai
+                        | token yang sama secara bersamaan.
                         |
                         */
 
@@ -538,6 +707,7 @@ class AttendanceController extends Controller
                         if (
                             !$barcode
                         ) {
+
                             throw new \RuntimeException(
                                 'Barcode tidak ditemukan.'
                             );
@@ -553,6 +723,7 @@ class AttendanceController extends Controller
                         if (
                             !$barcode->is_active
                         ) {
+
                             throw new \RuntimeException(
                                 'Barcode sudah digunakan. Silakan scan barcode terbaru.'
                             );
@@ -568,6 +739,7 @@ class AttendanceController extends Controller
                         if (
                             $barcode->used_at !== null
                         ) {
+
                             throw new \RuntimeException(
                                 'Barcode sudah digunakan oleh siswa lain.'
                             );
@@ -583,16 +755,12 @@ class AttendanceController extends Controller
                         if (
                             !$barcode->expired_at
                             ||
-                            $barcode->expired_at->lte(
-                                $now
-                            )
+                            $barcode
+                                ->expired_at
+                                ->lte(
+                                    $now
+                                )
                         ) {
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | MATIKAN BARCODE
-                            |--------------------------------------------------------------------------
-                            */
 
                             $barcode->update([
                                 'is_active' =>
@@ -610,6 +778,17 @@ class AttendanceController extends Controller
                         |--------------------------------------------------------------------------
                         | SIMPAN PRESENSI
                         |--------------------------------------------------------------------------
+                        |
+                        | Tidak ada status late untuk scanner sekolah.
+                        |
+                        | Selama masih berada dalam waktu:
+                        |
+                        | Jam Mulai
+                        | sampai
+                        | Akhir Toleransi
+                        |
+                        | tetap tercatat HADIR.
+                        |
                         */
 
                         $attendance =
@@ -621,26 +800,20 @@ class AttendanceController extends Controller
                                     $barcode->id,
 
                                 'attendance_date' =>
-                                    $now->toDateString(),
+                                    $now
+                                        ->toDateString(),
 
                                 'check_in_time' =>
-                                    $now->format(
-                                        'H:i:s'
-                                    ),
+                                    $now
+                                        ->format(
+                                            'H:i:s'
+                                        ),
 
                                 'status' =>
-                                    $status,
+                                    'present',
 
                                 'notes' =>
-                                    $status === 'present'
-                                        ? 'Presensi barcode dinamis - Hadir'
-                                        : 'Presensi barcode dinamis - Terlambat',
-
-                                /*
-                                |--------------------------------------------------------------------------
-                                | WA BELUM TERKIRIM
-                                |--------------------------------------------------------------------------
-                                */
+                                    'Presensi barcode dinamis - Hadir',
 
                                 'wa_sent' =>
                                     false,
@@ -649,11 +822,8 @@ class AttendanceController extends Controller
 
                         /*
                         |--------------------------------------------------------------------------
-                        | MATIKAN BARCODE
+                        | BARCODE ONE TIME USE
                         |--------------------------------------------------------------------------
-                        |
-                        | Barcode hanya boleh digunakan satu kali.
-                        |
                         */
 
                         $barcode->update([
@@ -670,43 +840,33 @@ class AttendanceController extends Controller
 
                         /*
                         |--------------------------------------------------------------------------
-                        | RETURN ATTENDANCE
+                        | RETURN
                         |--------------------------------------------------------------------------
-                        |
-                        | Object ini dibawa keluar dari transaction
-                        | untuk membuat WhatsApp Notification.
-                        |
                         */
 
                         return $attendance;
                     }
                 );
 
-        } catch (\RuntimeException $e) {
-
-            /*
-            |--------------------------------------------------------------------------
-            | ERROR PRESENSI
-            |--------------------------------------------------------------------------
-            */
+        } catch (
+            \RuntimeException $exception
+        ) {
 
             return response()->json([
                 'success' =>
                     false,
 
                 'message' =>
-                    $e->getMessage(),
+                    $exception
+                        ->getMessage(),
             ], 422);
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | GENERATE BARCODE BERIKUTNYA
+        | GENERATE / AMBIL BARCODE SELANJUTNYA
         |--------------------------------------------------------------------------
-        |
-        | Presensi sudah COMMIT pada tahap ini.
-        |
         */
 
         $barcodeService
@@ -715,23 +875,19 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | BUAT NOTIFIKASI WHATSAPP
+        | NOTIFIKASI WHATSAPP
         |--------------------------------------------------------------------------
         |
-        | PENTING:
+        | WhatsApp diproses setelah transaction selesai.
         |
-        | Method ini dijalankan SETELAH transaction presensi selesai.
-        |
-        | Jadi:
-        |
-        | - Presensi tidak bergantung pada WhatsApp.
-        | - Jika WhatsApp error, presensi tetap berhasil.
+        | Jika WhatsApp gagal, presensi tetap berhasil.
         |
         */
 
         if (
             $attendance
         ) {
+
             try {
 
                 $whatsAppService
@@ -740,13 +896,9 @@ class AttendanceController extends Controller
                         $attendance
                     );
 
-            } catch (\Throwable $e) {
-
-                /*
-                |--------------------------------------------------------------------------
-                | JANGAN GAGALKAN PRESENSI
-                |--------------------------------------------------------------------------
-                */
+            } catch (
+                \Throwable $exception
+            ) {
 
                 Log::error(
                     'Gagal membuat WhatsApp Notification setelah presensi.',
@@ -760,11 +912,9 @@ class AttendanceController extends Controller
                         'attendance_id' =>
                             $attendance->id,
 
-                        'attendance_status' =>
-                            $attendance->status,
-
                         'error' =>
-                            $e->getMessage(),
+                            $exception
+                                ->getMessage(),
                     ]
                 );
             }
@@ -782,49 +932,84 @@ class AttendanceController extends Controller
                 true,
 
             'message' =>
-                $status === 'present'
-                    ? 'Presensi berhasil. Kamu tercatat Hadir.'
-                    : 'Presensi berhasil. Kamu tercatat Terlambat.',
+                'Presensi berhasil. Kamu tercatat Hadir.',
 
             'student' =>
-                auth()->user()->name,
+                auth()->user()
+                    ->name,
 
             'nis' =>
                 $student->nis,
 
             'time' =>
-                $now->format(
-                    'H:i'
-                ),
+                $now
+                    ->format(
+                        'H:i'
+                    ),
 
             'status' =>
-                $status === 'present'
-                    ? 'HADIR'
-                    : 'TERLAMBAT',
+                'HADIR',
+
+            /*
+            |--------------------------------------------------------------------------
+            | DETAIL ATURAN
+            |--------------------------------------------------------------------------
+            |
+            | Data ini dapat digunakan oleh scan.blade.php
+            | untuk menampilkan aturan secara dinamis.
+            |
+            */
 
             'attendance' => [
                 'id' =>
                     $attendance->id,
 
                 'status' =>
-                    $status,
+                    'present',
 
                 'status_label' =>
-                    $status === 'present'
-                        ? 'Hadir'
-                        : 'Terlambat',
+                    'Hadir',
+
+                'check_in_time' =>
+                    $now
+                        ->format(
+                            'H:i'
+                        ),
 
                 'attendance_start_time' =>
                     $attendanceStart
-                        ->format('H:i'),
+                        ->format(
+                            'H:i'
+                        ),
 
-                'late_limit' =>
-                    $lateLimit
-                        ->format('H:i'),
+                'attendance_end_time' =>
+                    $attendanceEnd
+                        ->format(
+                            'H:i'
+                        ),
 
-                'cutoff_time' =>
-                    $cutoff
-                        ->format('H:i'),
+                'tolerance_minutes' =>
+                    $toleranceMinutes,
+
+                'tolerance_start_time' =>
+                    $attendanceEnd
+                        ->copy()
+                        ->addMinute()
+                        ->format(
+                            'H:i'
+                        ),
+
+                'tolerance_end_time' =>
+                    $toleranceEndsAt
+                        ->format(
+                            'H:i'
+                        ),
+
+                'alpha_start_time' =>
+                    $attendanceClosesAt
+                        ->format(
+                            'H:i'
+                        ),
 
                 'auto_alpha' =>
                     (bool) $settings
@@ -859,7 +1044,7 @@ class AttendanceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | KONVERSI KE RADIAN
+        | KONVERSI RADIAN
         |--------------------------------------------------------------------------
         */
 
