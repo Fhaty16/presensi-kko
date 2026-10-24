@@ -11,7 +11,7 @@
     >
 
     <title>
-        Rekap Presensi Sekolah - KKO SMANDA
+        Data Kehadiran Siswa - KKO SMANDA
     </title>
 
 
@@ -2555,6 +2555,1295 @@
 
         }
 
+
+        /* REPORT UI V2 */
+
+        /*
+        =====================================================
+        ALIGN HEADER + CONTENT
+        =====================================================
+        */
+
+        .kko-header-inner,
+        .recap-container,
+        .recap-container.daily-container,
+        .recap-container.monthly-container {
+            width:
+                min(
+                    1280px,
+                    calc(
+                        100%
+                        -
+                        48px
+                    )
+                ) !important;
+
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+
+        /*
+        =====================================================
+        MAIN REPORT TABS
+        =====================================================
+        */
+
+        .report-main-tabs {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-bottom: 18px;
+
+            padding: 5px;
+
+            background: #151b20;
+
+            border:
+                1px solid
+                #303c48;
+
+            border-radius: 10px;
+        }
+
+
+        .report-main-tab {
+            min-height: 38px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            padding:
+                0
+                14px;
+
+            color: #7d8c97;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            transition:
+                color .18s ease,
+                background .18s ease;
+        }
+
+
+        .report-main-tab:hover {
+            color: #dce7ef;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .05
+                );
+        }
+
+
+        .report-main-tab.active {
+            color: #101415;
+
+            background: #9dcaff;
+        }
+
+
+        .report-main-tab
+        .material-symbols-outlined {
+            font-size: 17px;
+        }
+
+
+        /*
+        =====================================================
+        SECONDARY NAVIGATION
+        =====================================================
+        */
+
+        .recap-subnav-label {
+            margin:
+                2px
+                0
+                7px;
+
+            color: #687783;
+
+            font-family:
+                'JetBrains Mono',
+                monospace;
+
+            font-size: 7px;
+            font-weight: 800;
+
+            letter-spacing: .8px;
+        }
+
+
+        .recap-tabs {
+            margin-bottom: 22px;
+        }
+
+
+        /*
+        =====================================================
+        HEADING
+        =====================================================
+        */
+
+        .recap-label {
+            color: #9dcaff;
+        }
+
+
+        .recap-heading h1 {
+            color: #e0e3e5;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE
+        =====================================================
+        */
+
+        @media (max-width: 700px) {
+
+            .kko-header-inner,
+            .recap-container,
+            .recap-container.daily-container,
+            .recap-container.monthly-container {
+                width:
+                    calc(
+                        100%
+                        -
+                        28px
+                    ) !important;
+            }
+
+
+            .report-main-tabs {
+                width: 100%;
+
+                display: grid;
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
+            }
+
+
+            .report-main-tab {
+                padding:
+                    0
+                    8px;
+
+                font-size: 9px;
+            }
+
+        }
+
+
+        /* DOWNLOAD ROW FINAL */
+
+        /*
+        =====================================================
+        CONTROL ACTION ROW
+        =====================================================
+        */
+
+        .control-actions {
+            margin-left: auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            gap: 8px;
+        }
+
+
+        .control-form {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        /*
+        =====================================================
+        DATE / SELECT
+        =====================================================
+        */
+
+        .control-input {
+            width: 150px;
+            height: 42px;
+
+            padding:
+                0
+                13px;
+
+            border:
+                1px solid
+                #404751;
+
+            border-radius: 9px;
+
+            background: #151b20;
+
+            color: #e0e3e5;
+        }
+
+
+        /*
+        =====================================================
+        TAMPILKAN
+        =====================================================
+        */
+
+        .control-button {
+            min-width: 116px;
+            height: 42px;
+
+            padding:
+                0
+                15px;
+
+            border-radius: 9px;
+        }
+
+
+        /*
+        =====================================================
+        DOWNLOAD BUTTON
+        =====================================================
+        */
+
+        .download-dropdown {
+            position: relative;
+
+            flex:
+                0
+                0
+                auto;
+
+            display: block;
+
+            margin: 0;
+        }
+
+
+        .download-toggle {
+            width: 132px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            margin: 0;
+
+            padding:
+                0
+                12px;
+
+            border:
+                1px solid
+                #3b4b5a;
+
+            border-radius: 9px;
+
+            background: #151b20;
+
+            color: #9dcaff;
+
+            cursor: pointer;
+
+            list-style: none;
+
+            font-family:
+                'Hanken Grotesk',
+                sans-serif;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            line-height: 1;
+
+            white-space: nowrap;
+
+            transition:
+                background .18s ease,
+                border-color .18s ease,
+                color .18s ease;
+        }
+
+
+        .download-toggle::-webkit-details-marker {
+            display: none;
+        }
+
+
+        .download-toggle::marker {
+            content: '';
+        }
+
+
+        .download-toggle:hover {
+            border-color: #6887a3;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .06
+                );
+
+            color: #c6e1ff;
+        }
+
+
+        .download-dropdown[open]
+        .download-toggle {
+            border-color: #9dcaff;
+
+            background:
+                rgba(
+                    157,
+                    202,
+                    255,
+                    .10
+                );
+
+            color: #cfe6ff;
+        }
+
+
+        .download-toggle
+        .material-symbols-outlined {
+            font-size: 17px;
+        }
+
+
+        .download-arrow {
+            margin-left: 2px;
+
+            font-size: 15px !important;
+
+            opacity: .7;
+
+            transition:
+                transform .18s ease;
+        }
+
+
+        .download-dropdown[open]
+        .download-arrow {
+            transform:
+                rotate(
+                    180deg
+                );
+        }
+
+
+        /*
+        =====================================================
+        DOWNLOAD MENU
+        =====================================================
+        */
+
+        .download-menu {
+            position: absolute;
+
+            top:
+                calc(
+                    100%
+                    +
+                    8px
+                );
+
+            right: 0;
+
+            z-index: 999;
+
+            width: 220px;
+
+            padding: 6px;
+
+            border:
+                1px solid
+                #34485d;
+
+            border-radius: 11px;
+
+            background: #131c24;
+
+            box-shadow:
+                0
+                16px
+                40px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .38
+                );
+        }
+
+
+        /*
+        =====================================================
+        DOWNLOAD OPTIONS
+        =====================================================
+        */
+
+        .download-option {
+            width: 100%;
+            min-height: 50px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            padding:
+                9px
+                10px;
+
+            border:
+                1px solid
+                transparent;
+
+            border-radius: 8px;
+
+            color: #cbd6dd;
+
+            text-decoration: none;
+
+            transition:
+                background .16s ease,
+                border-color .16s ease;
+        }
+
+
+        .download-option:hover {
+            border-color: #304253;
+
+            background: #1b2732;
+
+            color: white;
+        }
+
+
+        .download-option
+        > .material-symbols-outlined {
+            width: 32px;
+            height: 32px;
+
+            flex:
+                0
+                0
+                32px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            font-size: 18px;
+        }
+
+
+        /*
+        =====================================================
+        EXCEL
+        =====================================================
+        */
+
+        .download-option.excel
+        > .material-symbols-outlined {
+            background:
+                rgba(
+                    85,
+                    201,
+                    139,
+                    .10
+                );
+
+            color: #7bd7a5;
+        }
+
+
+        /*
+        =====================================================
+        PDF
+        =====================================================
+        */
+
+        .download-option.pdf
+        > .material-symbols-outlined {
+            background:
+                rgba(
+                    255,
+                    116,
+                    116,
+                    .10
+                );
+
+            color: #ff9999;
+        }
+
+
+        .download-option-text strong {
+            display: block;
+
+            color: #e5edf3;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+
+        .download-option-text span {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #71808b;
+
+            font-size: 8px;
+        }
+
+
+        /*
+        =====================================================
+        MONTHLY FIELD ALIGNMENT
+        =====================================================
+        */
+
+        .control-field {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+
+        .control-select {
+            height: 42px;
+        }
+
+
+        /*
+        =====================================================
+        RESPONSIVE
+        =====================================================
+        */
+
+        @media (max-width: 900px) {
+
+            .control-actions {
+                width: 100%;
+
+                margin-left: 0;
+
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+
+            .control-form {
+                width: 100%;
+            }
+
+
+            .control-input {
+                flex: 1;
+
+                width: auto;
+            }
+
+
+            .download-dropdown,
+            .download-toggle {
+                width: 100%;
+            }
+
+
+            .download-menu {
+                width: 100%;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .control-form {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .control-input,
+            .control-select,
+            .control-button {
+                width: 100%;
+            }
+
+        }
+
+
+        /* CONTROL PERFECT ALIGNMENT */
+
+        /*
+        =====================================================
+        CONTROL PANEL
+        =====================================================
+        */
+
+        .control-panel {
+            align-items: center !important;
+        }
+
+
+        /*
+        =====================================================
+        RIGHT ACTION GROUP
+        =====================================================
+        */
+
+        .control-actions {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+
+            gap: 8px !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            line-height: 1 !important;
+        }
+
+
+        /*
+        =====================================================
+        FORM
+        =====================================================
+        */
+
+        .control-form {
+            display: flex !important;
+            align-items: center !important;
+
+            gap: 8px !important;
+
+            height: 42px !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+
+        /*
+        =====================================================
+        SEMUA CONTROL = UKURAN SAMA
+        =====================================================
+        */
+
+        .control-input,
+        .control-button,
+        .download-dropdown,
+        .download-toggle {
+            height: 42px !important;
+            min-height: 42px !important;
+            max-height: 42px !important;
+
+            box-sizing: border-box !important;
+
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+
+        /*
+        =====================================================
+        DATE INPUT
+        =====================================================
+        */
+
+        .control-input {
+            display: block !important;
+
+            width: 150px !important;
+
+            padding:
+                0
+                13px !important;
+
+            line-height: 40px !important;
+        }
+
+
+        /*
+        =====================================================
+        TAMPILKAN
+        =====================================================
+        */
+
+        .control-button {
+            display: inline-flex !important;
+
+            align-items: center !important;
+            justify-content: center !important;
+
+            min-width: 116px !important;
+
+            padding:
+                0
+                15px !important;
+
+            line-height: 1 !important;
+
+            vertical-align: top !important;
+        }
+
+
+        .control-button
+        .material-symbols-outlined {
+            display: flex !important;
+
+            align-items: center !important;
+            justify-content: center !important;
+
+            line-height: 1 !important;
+        }
+
+
+        /*
+        =====================================================
+        DOWNLOAD WRAPPER
+        =====================================================
+        */
+
+        .download-dropdown {
+            position: relative !important;
+
+            display: flex !important;
+
+            align-items: stretch !important;
+            justify-content: center !important;
+
+            width: 132px !important;
+
+            padding: 0 !important;
+
+            vertical-align: top !important;
+        }
+
+
+        /*
+        =====================================================
+        DOWNLOAD BUTTON
+        =====================================================
+        */
+
+        .download-toggle {
+            width: 132px !important;
+
+            display: flex !important;
+
+            align-items: center !important;
+            justify-content: center !important;
+
+            gap: 7px !important;
+
+            padding:
+                0
+                12px !important;
+
+            line-height: 1 !important;
+
+            box-sizing: border-box !important;
+
+            vertical-align: top !important;
+        }
+
+
+        .download-toggle
+        .material-symbols-outlined {
+            display: flex !important;
+
+            align-items: center !important;
+            justify-content: center !important;
+
+            line-height: 1 !important;
+        }
+
+
+        /*
+        =====================================================
+        HILANGKAN OFFSET BAWAAN DETAILS / SUMMARY
+        =====================================================
+        */
+
+        details.download-dropdown {
+            margin-block: 0 !important;
+
+            padding-block: 0 !important;
+        }
+
+
+        summary.download-toggle {
+            margin-block: 0 !important;
+
+            padding-block: 0 !important;
+        }
+
+
+        /*
+        =====================================================
+        DROPDOWN TETAP DI BAWAH BUTTON
+        =====================================================
+        */
+
+        .download-menu {
+            top:
+                calc(
+                    42px
+                    +
+                    8px
+                ) !important;
+        }
+
+
+        /*
+        =====================================================
+        DESKTOP
+        =====================================================
+        */
+
+        @media (min-width: 901px) {
+
+            .control-actions {
+                height: 42px !important;
+            }
+
+
+            .control-form {
+                height: 42px !important;
+            }
+
+
+            .download-dropdown {
+                height: 42px !important;
+            }
+
+        }
+
+
+        /*
+        =====================================================
+        MOBILE
+        =====================================================
+        */
+
+        @media (max-width: 900px) {
+
+            .control-actions {
+                height: auto !important;
+
+                align-items: stretch !important;
+            }
+
+
+            .control-form {
+                height: auto !important;
+            }
+
+
+            .control-input,
+            .control-button,
+            .download-dropdown,
+            .download-toggle {
+                width: 100% !important;
+            }
+
+
+            .download-dropdown {
+                height: 42px !important;
+            }
+
+        }
+
+
+        /* HEADER CONTENT ALIGNMENT FINAL */
+
+        /*
+        =====================================================
+        HEADER DAN CONTENT HARUS SATU GARIS
+        =====================================================
+        */
+
+        .kko-header-inner,
+        .recap-container,
+        .recap-container.daily-container,
+        .recap-container.monthly-container {
+            width:
+                min(
+                    1600px,
+                    calc(
+                        100%
+                        -
+                        96px
+                    )
+                ) !important;
+
+            max-width: 1600px !important;
+
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+
+        /*
+        =====================================================
+        HEADER
+        =====================================================
+        */
+
+        .kko-header-inner {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE / TABLET
+        =====================================================
+        */
+
+        @media (max-width: 900px) {
+
+            .kko-header-inner,
+            .recap-container,
+            .recap-container.daily-container,
+            .recap-container.monthly-container {
+                width:
+                    calc(
+                        100%
+                        -
+                        32px
+                    ) !important;
+
+                max-width: none !important;
+            }
+
+        }
+
+
+        /* SAME POSITION AS TRAINING PAGE */
+
+        .recap-container,
+        .recap-container.daily-container,
+        .recap-container.monthly-container {
+            width:
+                min(
+                    1120px,
+                    calc(
+                        100%
+                        -
+                        40px
+                    )
+                ) !important;
+
+            max-width: 1120px !important;
+
+            margin:
+                0
+                auto !important;
+
+            padding:
+                34px
+                0
+                100px !important;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .recap-container,
+            .recap-container.daily-container,
+            .recap-container.monthly-container {
+                width:
+                    calc(
+                        100%
+                        -
+                        28px
+                    ) !important;
+
+                max-width: none !important;
+
+                padding:
+                    24px
+                    0
+                    90px !important;
+            }
+
+        }
+
+
+        /* RECAP POSITION MATCH STUDENT FINAL */
+
+        /*
+        =====================================================
+        POSISI REKAP = MANAJEMEN SISWA
+        =====================================================
+        */
+
+        main.recap-container,
+        main.recap-container.daily-container,
+        main.recap-container.monthly-container {
+            width:
+                min(
+                    1120px,
+                    calc(
+                        100%
+                        -
+                        40px
+                    )
+                ) !important;
+
+            min-width: 0 !important;
+            max-width: 1120px !important;
+
+            margin-top: 0 !important;
+            margin-right: auto !important;
+            margin-bottom: 0 !important;
+            margin-left: auto !important;
+
+            padding-top: 34px !important;
+            padding-right: 0 !important;
+            padding-bottom: 100px !important;
+            padding-left: 0 !important;
+
+            box-sizing: border-box !important;
+
+            position: relative !important;
+
+            left: auto !important;
+            right: auto !important;
+
+            transform: none !important;
+        }
+
+
+        /*
+        =====================================================
+        PASTIKAN SEMUA BAGIAN MENGIKUTI CONTAINER
+        =====================================================
+        */
+
+        .recap-back,
+        .recap-heading,
+        .report-main-tabs,
+        .recap-subnav-label,
+        .recap-tabs,
+        .control-panel,
+        .stats-grid,
+        .percentage-panel,
+        .recap-toolbar,
+        .table-card,
+        .table-wrapper {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE
+        =====================================================
+        */
+
+        @media (max-width: 600px) {
+
+            main.recap-container,
+            main.recap-container.daily-container,
+            main.recap-container.monthly-container {
+                width:
+                    calc(
+                        100%
+                        -
+                        28px
+                    ) !important;
+
+                max-width: none !important;
+
+                padding-top: 24px !important;
+                padding-bottom: 90px !important;
+            }
+
+        }
+
+
+        /* RECAP EXACT STUDENT POSITION V2 */
+
+        /*
+        =====================================================
+        PAKSA POSISI SAMA DENGAN MANAJEMEN SISWA
+        =====================================================
+        */
+
+        body.dashboard-page .recap-container,
+        body.dashboard-page .recap-container.daily-container,
+        body.dashboard-page .recap-container.monthly-container {
+            width: calc(100% - 40px) !important;
+            max-width: 1120px !important;
+            min-width: 0 !important;
+
+            margin-left: auto !important;
+            margin-right: auto !important;
+
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+
+            box-sizing: border-box !important;
+
+            left: auto !important;
+            right: auto !important;
+
+            transform: none !important;
+        }
+
+
+        /*
+        =====================================================
+        SEMUA KONTEN MENGISI CONTAINER
+        =====================================================
+        */
+
+        body.dashboard-page .recap-container > * {
+            max-width: none !important;
+        }
+
+
+        body.dashboard-page .control-panel,
+        body.dashboard-page .stats-grid,
+        body.dashboard-page .percentage-panel,
+        body.dashboard-page .recap-toolbar {
+            width: 100% !important;
+
+            box-sizing: border-box !important;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE
+        =====================================================
+        */
+
+        @media (max-width: 600px) {
+
+            body.dashboard-page .recap-container,
+            body.dashboard-page .recap-container.daily-container,
+            body.dashboard-page .recap-container.monthly-container {
+                width: calc(100% - 28px) !important;
+                max-width: none !important;
+            }
+
+        }
+
+
+        /* RESTORE HEADER LIKE STUDENT MANAGEMENT */
+
+        /*
+        =====================================================
+        HEADER REKAP = HEADER MANAJEMEN SISWA
+        =====================================================
+        */
+
+        .kko-header-inner {
+            width: 100% !important;
+
+            max-width: 1200px !important;
+
+            height: 72px !important;
+
+            margin-left: auto !important;
+            margin-right: auto !important;
+
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+
+            box-sizing: border-box !important;
+        }
+
+
+        /*
+        =====================================================
+        JANGAN UBAH CONTAINER ISI
+        =====================================================
+        */
+
+        main.recap-container,
+        .recap-container.daily-container,
+        .recap-container.monthly-container {
+            width: calc(100% - 40px) !important;
+            max-width: 1120px !important;
+
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+
+        /*
+        =====================================================
+        MOBILE
+        =====================================================
+        */
+
+        @media (max-width: 600px) {
+
+            .kko-header-inner {
+                width: 100% !important;
+
+                padding-left: 14px !important;
+                padding-right: 14px !important;
+            }
+
+
+            main.recap-container,
+            .recap-container.daily-container,
+            .recap-container.monthly-container {
+                width: calc(100% - 28px) !important;
+            }
+
+        }
+
     </style>
 
 </head>
@@ -2686,11 +3975,11 @@
     <section class="recap-heading">
 
         <span class="recap-label">
-            MONITORING KEHADIRAN
+            LAPORAN SISWA
         </span>
 
         <h1>
-            Rekap Presensi Sekolah
+            Data Kehadiran Siswa
         </h1>
 
         <p>
@@ -2711,8 +4000,49 @@
 
 
     <!-- =================================================
-         TABS
+         REPORT MAIN NAVIGATION V2
     ================================================== -->
+
+    <nav class="report-main-tabs">
+
+        <a
+            href="{{ route('guru.students.index') }}"
+            class="report-main-tab"
+        >
+
+            <span class="material-symbols-outlined">
+                groups
+            </span>
+
+            Manajemen Siswa
+
+        </a>
+
+
+        <a
+            href="{{ route('guru.attendance.recap') }}"
+            class="report-main-tab active"
+        >
+
+            <span class="material-symbols-outlined">
+                analytics
+            </span>
+
+            Data Kehadiran Siswa
+
+        </a>
+
+    </nav>
+
+
+    <!-- =================================================
+         SUB NAVIGATION
+    ================================================== -->
+
+    <div class="recap-subnav-label">
+        MODE REKAP
+    </div>
+
 
     <nav class="recap-tabs">
 
@@ -3992,7 +5322,7 @@
 
                                             NIS {{ $student->nis ?? '-' }}
 
-                                            ·
+                                            Â·
 
                                             {{
                                                 $student->class?->name
@@ -4275,7 +5605,7 @@
 
                                 NIS {{ $student->nis ?? '-' }}
 
-                                ·
+                                Â·
 
                                 {{
                                     $student->class?->name

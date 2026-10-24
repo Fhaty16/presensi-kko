@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -2374,7 +2374,7 @@
                 {{ auth()->user()->name }}
 
                 <span>
-                    •
+                    â€¢
                 </span>
 
                 Administrator KKO
@@ -2989,7 +2989,7 @@
 
 
             <a
-                href="{{ route('guru.attendance.recap') }}"
+                href="{{ route('guru.students.index') }}"
                 class="management-card"
             >
 
@@ -3009,7 +3009,7 @@
                     </strong>
 
                     <p>
-                        Rekap data kehadiran
+                        Rekap data dan kehadiran siswa
                     </p>
 
                 </div>

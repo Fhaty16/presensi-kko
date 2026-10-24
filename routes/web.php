@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
+use App\Http\Controllers\Guru\StudentManagementController;
+use App\Http\Controllers\Guru\StudentAcademicController;
+use App\Http\Controllers\Guru\StudentImportController;
 use App\Http\Controllers\Guru\LeaveRequestController as GuruLeaveRequestController;
 use App\Http\Controllers\Guru\AttendanceRecapController;
 use App\Http\Controllers\Guru\ManualAttendanceController;
@@ -165,6 +168,165 @@ Route::middleware([
         )
             ->name(
                 'dashboard'
+            );
+        /*
+        |--------------------------------------------------------------------------
+        | MANAJEMEN SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/siswa',
+            [
+                StudentManagementController::class,
+                'index',
+            ]
+        )
+            ->name(
+                'students.index'
+            );
+
+
+        Route::get(
+            '/siswa/tambah',
+            [
+                StudentManagementController::class,
+                'create',
+            ]
+        )
+            ->name(
+                'students.create'
+            );
+
+
+        Route::post(
+            '/siswa',
+            [
+                StudentManagementController::class,
+                'store',
+            ]
+        )
+            ->name(
+                'students.store'
+            );
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | IMPORT SISWA EXCEL
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post(
+            '/siswa/import',
+            [
+                StudentImportController::class,
+                'store',
+            ]
+        )
+            ->name(
+                'students.import.store'
+            );
+
+
+        Route::get(
+            '/siswa/template-excel',
+            [
+                StudentImportController::class,
+                'template',
+            ]
+        )
+            ->name(
+                'students.import.template'
+            );
+
+        Route::get(
+            '/siswa/{student}',
+            [
+                StudentManagementController::class,
+                'show',
+            ]
+        )
+            ->name(
+                'students.show'
+            );
+
+
+        Route::get(
+            '/siswa/{student}/edit',
+            [
+                StudentManagementController::class,
+                'edit',
+            ]
+        )
+            ->name(
+                'students.edit'
+            );
+
+
+        Route::put(
+            '/siswa/{student}',
+            [
+                StudentManagementController::class,
+                'update',
+            ]
+        )
+            ->name(
+                'students.update'
+            );
+
+
+                /*
+        |--------------------------------------------------------------------------
+        | STATUS AKADEMIK SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post(
+            '/siswa/{student}/akademik',
+            [
+                StudentAcademicController::class,
+                'update',
+            ]
+        )
+            ->name(
+                'students.academic.update'
+            );
+
+        Route::post(
+            '/siswa/{student}/lulus',
+            [
+                StudentManagementController::class,
+                'graduate',
+            ]
+        )
+            ->name(
+                'students.graduate'
+            );
+
+
+        Route::post(
+            '/siswa/{student}/nonaktif',
+            [
+                StudentManagementController::class,
+                'deactivate',
+            ]
+        )
+            ->name(
+                'students.deactivate'
+            );
+
+
+        Route::post(
+            '/siswa/{student}/aktifkan',
+            [
+                StudentManagementController::class,
+                'reactivate',
+            ]
+        )
+            ->name(
+                'students.reactivate'
             );
 
 
